@@ -34,10 +34,12 @@ Set up client side:
 ### Dev Commands
 __Backend (runs on localhost:5000):__ Inside the __server__ directory, you can run several commands:
 * ```npm start dev``` Starts the development server with nodemon (use this for development)
-* ```node server``` Starts the backend server and connects to MongoDB
+* ```node src/server.js``` Starts the backend server and connects to MongoDB
 
 __Frontend (runs on localhost:3000):__ Inside the __client__ directory, you can run several commands:
-* ```npm start``` Starts the development server
+* ```npm start``` Starts the frontend React app server; you must start the backend before starting the frontend so the frontend can fetch the backend
+
+Other npm commands that can be run on frontend and backend:
 * ```npm run build``` Bundles the app into static files for production.
 * ```npm test``` Starts the test runner
 * ```npm run eject``` Removes this tool and copies build dependencies, configuration files and scripts into the app directory. If you do this, you can’t go back!

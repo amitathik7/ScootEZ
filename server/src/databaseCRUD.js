@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 // Function that connects to MongoDB cluster
 // take parameter for uri, instantiates a MongoClient
 // asynchronously connects, logs error if cannot connect
-export async function connectToCluster(uri) {
+async function connectToCluster(uri) {
     let mongoClient;
 
     try {
