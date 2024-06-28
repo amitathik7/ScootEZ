@@ -47,3 +47,4 @@ Other npm commands that can be run on frontend and backend:
 ### External Resources and References
 * <a href="https://youtu.be/w3vs4a03y3I?feature=shared" target="_blank">Resource for setting up Node, React, Express</a>
 * <a href="https://youtu.be/bhiEJW5poHU?feature=shared" target="_blank">Resource for setting up MongoDB and connecting it to Node.js app</a>
+* <a href="https://www.mongodb.com/resources/languages/mongodb-and-npm-tutorial" target="_blank">Connect MongoDB and CRUD operations</a>
