@@ -1,0 +1,94 @@
+/* Global style variables defined here */
+
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+*, *::before, *::after {
+    padding: 0;
+    margin: 0;
+
+    --dark: #2e2e2e;
+    --light: #fbfffa;
+    --neon-green: #96ea59;
+    --gray1: #d9d9d9;
+    --gray2: #cccccc;
+    --gray3: #999999;
+
+    --bodyFontFamily: 'Roboto', sans-serif;
+    --bodyFontStyle: normal;
+    --bodyFontWeight: 100;
+
+    --headerFontFamily: 'Roboto', sans-serif; 
+    --headerFontStyle: italic;
+    --headerFontWeight: 900;
+}
+
+nav {
+    background-color: var(--dark);
+    padding: 20px;
+    margin: 0px;
+    color: var(--neon-green);
+    font-size: 50px;
+    font-family: var(--headerFontFamily);
+    font-style: var(--headerFontStyle);
+    font-weight: var(--headerFontWeight);
+    font-variant: small-caps;
+}
+
+body {
+    width: 100%;
+    min-height: 80vh;
+    display: grid;
+    background-color: var(--light);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+}
+
+.loginBox {
+    place-self: center;
+    width: 400px;
+    height: 500px;
+    padding: 15px;
+    background-color: var(--gray1);
+
+    line-height:300%;
+}
+
+.button1 {
+    color: var(--dark);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 18px;
+
+    background-color: var(--neon-green);
+    border-width: 3px;
+    border-color: var(--light);
+    width: 50%;
+    height: 30px;
+    padding: 5px;
+}
+
+.button2 {
+    color: var(--dark);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 14px;
+
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.button3 {
+    color: white;
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 14px;
+
+    background-color: var(--dark);
+    padding: 5px;
+}
+
+
