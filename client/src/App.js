@@ -1,9 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import styles from "./styles.css";
 
+import HomePage from "./Home.js";
 import LoginPage from "./Login.js";
 
 function App() {
+  // The display case for the screen
+  // 0=home
+  // 1=LoginPage (create account)
+  // 2=LoginPage (login)
+  const [displayCase, setDisplayCase] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  function CreateAccountButton() {
+    function handleClick() {
+      setDisplayCase(1);
+    }
+    return (
+      <button className="button1" onClick={handleClick}>
+          Create Account
+      </button>
+    );
+  }
+
+  function LoginButton() {
+    function handleClick() {
+      setDisplayCase(2);
+    }
+    return (
+      <button className="button4" onClick={handleClick}>
+          Login
+      </button>
+    );
+  }
 
   // create state variables
   //const [backendData, setBackendData] = useState([{}])
@@ -21,23 +50,32 @@ function App() {
   //   )
   // }, [])
 
+
+
   // declare variable for what will be displayed
   let pageContent;
 
   // set the variable for pageContent
-  pageContent = < LoginPage />;
-  // if (isLoggedIn) {
-  //   content = <LoginPage />;
-  // } else {
-  //   content = <LoginForm />;
-  // }
+  if (displayCase == 1) {
+    pageContent = null;
+    pageContent = <LoginPage  displayStartCase={0}/>;
+  }
+  else if (displayCase == 2) {
+    pageContent = null;
+    pageContent = <LoginPage  displayStartCase={1}/>;
+  }
+  else {
+    pageContent = <HomePage/>;
+  }
 
   // What is displayed on the webpage
   return (
     <>
       {/* Nav bar */}
       <nav>
-        ScootEZ
+        <span style={{float: "left"}}>ScootEZ</span>
+        <span style={{float: "right"}}> <CreateAccountButton/> </span>
+        <span style={{float: "right"}}> <LoginButton/> </span>
       </nav>
       <body>
         {pageContent}

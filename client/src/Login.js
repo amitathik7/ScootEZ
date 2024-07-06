@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import axios from "axios";
 import styles from "./styles.css";
 
-export default function LoginPage() {
-    const [displayCase, setDisplayCase] = useState(0);
+export default function LoginPage({displayStartCase}) {
+    const [displayCase, setDisplayCase] = useState(displayStartCase);
     // Profile state variables for name (only use for creating new account)
     const [name, setName] = useState({
         firstName: '',
@@ -38,7 +39,7 @@ export default function LoginPage() {
         });
     }
 
-    // buttons
+    // button that creates a new account
     function CreateAccountButton() {
         function handleClick() {
             alert('create account clicked.');
@@ -49,19 +50,48 @@ export default function LoginPage() {
             </button>
         );
     }
-    
+
+    // function that submits the info for the create new account
+    async function Login() {
+        // e.preventDefault();
+        alert('login function started.');
+        try {
+            await axios.post("http://localhost:5000/api", {loginInfo});
+            alert('login sent to backend.');
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    // button that logs into account
     function LoginButton() {
         function handleClick() {
-            alert('login clicked.');
-            setDisplayCase(1);
+            alert('create account clicked.');
+            Login();
         }
         return (
-            <button className="button2" onClick={handleClick}>
-                Already have an account? Login
+            <button className="button1" onClick={handleClick}>
+                Login
             </button>
         );
     }
     
+    // button that switches between login box or create new account box
+    // caseIndex 0=create new account, 1=login, 2=forgot password
+    function SwitchButton({buttonText, caseIndex}) {
+        function handleClick() {
+            // change whether to display the login box or create new account box
+            setDisplayCase(caseIndex);
+        }
+        return (
+            <button className="button2" onClick={handleClick}>
+                {buttonText}
+            </button>
+        );
+    }
+    
+    // button that skips the login process
     function SkipButton() {
         function handleClick() {
             alert('skip for now clicked.');
@@ -78,48 +108,41 @@ export default function LoginPage() {
                 {/* Draw a box */}
                 <div className="loginBox">
                     <h1>Welcome!</h1>
-                    <h2>Create your free account now!</h2>
+                    <h2>Create your free account now!</h2> <br></br>
+
                     <label>
-                        First name:
-                        <input
+                        First name: <br></br>
+                        <input className="input1"
                             value={name.firstName}
                             onChange={handleFirstNameChange}
                         />
                     </label> <br></br>
                     <label>
-                        Last name:
-                        <input
+                        Last name: <br></br>
+                        <input className="input1"
                             value={name.lastName}
                             onChange={handleLastNameChange}
                         />
                     </label> <br></br>
                     <label>
-                        Email:
-                        <input
+                        Email: <br></br>
+                        <input className="input1"
                             value={loginInfo.email}
                             onChange={handleEmailChange}
                         />
                     </label> <br></br>
                     <label>
-                        Password:
-                        <input
+                        Password: <br></br>
+                        <input className="input1"
                             value={loginInfo.password}
                             onChange={handlePasswordChange}
                         />
                     </label> <br></br>
     
                     <CreateAccountButton/> <br></br>
-                    <LoginButton/> <br></br>
+                    <SwitchButton buttonText={"Already have an account? Login"} caseIndex={1}/> <br></br>
                     <SkipButton/> <br></br>
                 </div>
-    
-                <p>
-                    This is a debug check: <br></br>
-                    firstname: {name.firstName} <br></br>
-                    lastname: {name.lastName} <br></br>
-                    email: {loginInfo.email} <br></br>
-                    password: {loginInfo.password}
-                </p>
             </>
         );
     }
@@ -131,29 +154,23 @@ export default function LoginPage() {
                     <h1>Welcome back!</h1>
                     <label>
                         Email:
-                        <input
+                        <input className="input1"
                             value={loginInfo.email}
                             onChange={handleEmailChange}
                         />
                     </label> <br></br>
                     <label>
                         Password:
-                        <input
+                        <input className="input1"
                             value={loginInfo.password}
                             onChange={handlePasswordChange}
                         />
                     </label> <br></br>
     
-                    <CreateAccountButton/> <br></br>
                     <LoginButton/> <br></br>
+                    <SwitchButton buttonText={"New? Create an account"} caseIndex={0}/> <br></br>
                     <SkipButton/> <br></br>
                 </div>
-    
-                <p>
-                    This is a debug check: <br></br>
-                    email: {loginInfo.email} <br></br>
-                    password: {loginInfo.password}
-                </p>
             </>
         );
     }

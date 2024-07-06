@@ -45,6 +45,7 @@ Other npm commands that can be run on frontend and backend:
 * ```npm run eject``` Removes this tool and copies build dependencies, configuration files and scripts into the app directory. If you do this, you can’t go back!
 
 ### External Resources and References
-* <a href="https://youtu.be/w3vs4a03y3I?feature=shared" target="_blank">Resource for setting up Node, React, Express</a>
-* <a href="https://youtu.be/bhiEJW5poHU?feature=shared" target="_blank">Resource for setting up MongoDB and connecting it to Node.js app</a>
-* <a href="https://www.mongodb.com/resources/languages/mongodb-and-npm-tutorial" target="_blank">Connect MongoDB and CRUD operations</a>
+* <a href="https://youtu.be/w3vs4a03y3I?feature=shared" target="_blank">VIDEO: Resource for setting up Node, React, Express</a>
+* <a href="https://youtu.be/bhiEJW5poHU?feature=shared" target="_blank">VIDEO: Resource for setting up MongoDB and connecting it to Node.js app</a>
+* <a href="https://www.mongodb.com/resources/languages/mongodb-and-npm-tutorial" target="_blank">DOCUMENT: Connect MongoDB and CRUD operations</a>
+* <a href="https://youtu.be/KZB6gtKQ9_I?feature=shared" target="_blank">VIDEO: Send data from frontend to backend and store in DB</a>
