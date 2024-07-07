@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
 import styles from "./styles.css";
 
 export default function LoginPage({displayStartCase}) {
@@ -53,15 +52,17 @@ export default function LoginPage({displayStartCase}) {
 
     // function that submits the info for the create new account
     async function Login() {
-        // e.preventDefault();
-        alert('login function started.');
-        try {
-            await axios.post("http://localhost:5000/api", {loginInfo});
-            alert('login sent to backend.');
-        }
-        catch (error) {
-            console.log(error);
-        }
+        //e.preventDefault();
+    
+        console.log(loginInfo);
+    
+        const response = await fetch(
+            
+            `http://localhost:5000/api?email_input=${loginInfo.email}&password_input=${loginInfo.password}`,
+            {
+                method: 'GET'
+            }
+        );
     }
 
     // button that logs into account

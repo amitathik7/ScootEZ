@@ -22,14 +22,21 @@ console.log(process.env.DB_URI);
 // call functions for CRUD from database
 await executeCrudOperations();
 
-// setup route for api
-app.get("/api", (request, response) => {
-    response.json({"users": ["user1, user2, user3"]});   // "users" is a JSON array of users
-})
-
 app.post ("/api", async(request, response) => {
     const {data}=request.body;
     console.log(data);
+})
+
+app.get('/api', async (reqest, response) => {
+    try {
+        const { email_input, password_input } = reqest.query;
+
+        console.log('New login request');
+
+        console.log(`New login request -> Email: ${email_input}, Password: ${password_input}`);
+    } catch (err) {
+        console.error('Unable to login', err);
+    }
 })
 
 // startup backend
