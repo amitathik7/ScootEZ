@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>ScootEZ: Home Page</title>
+		<link rel="stylesheet" href="home_page_styles.css" />
+	</head>
+	<body>
+		<h1>ScootEZ Home</h1>
+
+		<!-- Creating a new user account with name, email, password, and optional fields (address, credit card) -->
+		<h2>Create New Account</h2>
+        <form id="newAccountForm">
+            <label for="firstName">First Name: </label>
+            <input type="text" id="firstName" name="firstName" required>
+            <br>
+            <label for="lastName">Last Name: </label>
+            <input type="text" id="lastName" name="lastName" required>
+            <br>
+            <label for="email">Email Address: </label>
+            <input type="text" id="email" name="email" required>
+            <br>
+            <label for="password">Password: </label>
+            <input type="text" id="password" name="password" required>
+            <br>
+            <label for="address">Address (Optional): </label>
+            <input type="text" id="address" name="address">
+            <br>
+            <label for="creditCard">Credit Card (Optional): </label>
+            <input type="text" id="creditCard" name="creditCard">
+            <br>
+            <button type="submit">Create</button>
+        </form>
+
+		<!-- Display users based on first name and last name-->
+		<h2>Find By Name</h2>
+		<form id="nameSearchForm">
+			<label for="firstName">First Name:</label>
+			<input type="text" id="firstName" name="firstName" required />
+			<br />
+			<label for="lastName">Last Name:</label>
+			<input type="text" id="lastName" name="lastName" required />
+			<br />
+			<button type="submit">Search</button>
+		</form>
+
+		<!-- Displaying all users -->
+		<h2>Find All Users with Names</h2>
+		<button id="findAllButton">Find All</button>
+		<div id="searchResults"></div>
+
+		<script src="home_page_tech.js"></script>
+	</body>
+</html>
