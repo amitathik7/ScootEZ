@@ -66,7 +66,7 @@ async function emailSearch(event) {
 	console.log(input.value);
 
 	const res = await fetch(
-		baseUrl + `users/search/email?email_input=${input.value}`,
+		baseUrl + `api/users/search/email?email_input=${input.value}`,
 		{
 			method: "GET",
 		}
@@ -84,7 +84,7 @@ async function nameSearch(event) {
 
 	const res = await fetch(
 		baseUrl +
-			`users/search/name?firstName_input=${input.value}&lastName_input=${input2.value}`,
+			`api/users/search/name?firstName_input=${input.value}&lastName_input=${input2.value}`,
 		{
 			method: "GET",
 		}
@@ -115,7 +115,7 @@ createAccount_form.addEventListener("submit", async (event) => {
 
 	// Now that we have the form data we can make the api POST call
 	try {
-		const res = await fetch(baseUrl + "users/create", {
+		const res = await fetch(baseUrl + "api/users/create", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

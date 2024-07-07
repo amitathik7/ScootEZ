@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const path = require("path");
 
 const app = express();
 
@@ -8,7 +9,7 @@ const port = 8383;
 const uri =
 	"mongodb+srv://TEST_USER:TEST_USER_PASSWORD@testcluster.jopajlh.mongodb.net/?retryWrites=true&w=majority&appName=TestCluster";
 
-app.use(express.static("../public"));
+app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
 
 mongoose.connect(uri);
@@ -18,12 +19,6 @@ db.on("error", console.error.bind(console, "Connection Error"));
 db.once("open", () => {
 	console.log("Connected to MongoDB");
 });
-
-// const collection = db.collection("accounts");
-
-// async function addAccountDocument(document) {
-// 	await collection.insertOne(document);
-// }
 
 const accountSchema = new mongoose.Schema({
 	firstName: String,
@@ -38,7 +33,7 @@ const Account = mongoose.model("account", accountSchema);
 
 /* CRUD Operations */
 
-app.post("/users/create", async (req, res) => {
+app.post("/api/users/create", async (req, res) => {
 	const { firstName, lastName, email, password, address, creditCard } =
 		req.body;
 
@@ -71,7 +66,7 @@ app.post("/users/create", async (req, res) => {
 	// addAccountDocument(accountDocument);
 });
 
-app.get("/users/search/:field", async (req, res) => {
+app.get("/api/users/search/:field", async (req, res) => {
 	const { field } = req.params;
 
 	if (field === "name") {
@@ -92,6 +87,16 @@ app.get("/users/search/:field", async (req, res) => {
 	}
 
 	res.status(200);
+});
+
+const tempScooters = [
+	{ id: 1, lat: 29.64993459, lng: -82.349},
+	{ id: 2, lat: 29.64885678, lng: -82.342234242},
+	{ id: 3, lat: 29.64712367, lng: -82.343234233},
+];
+
+app.get("/api/scooters", async (req, res) => {
+	res.json(tempScooters);
 });
 
 // app.get("/info/:dynamic", (req, res) => {
