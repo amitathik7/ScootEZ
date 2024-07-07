@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<h1>Search Accounts</h1>
+		<input type="text" id="input" />
+		<input type="text" id="input2" />
+		<br />
+		<button id="nameButton">Name Search</button>
+		<button id="emailButton">Email Search</button>
+
+		<div id="results">
+			<p>Empty...</p>
+		</div>
+
+		<br />
+
+		<h1>Create Accounts</h1>
+		<form id="createAccount">
+			<label for="firstName">First Name: </label>
+			<input type="text" id="firstName" name="firstName" required />
+			<br />
+			<label for="lastName">Last Name: </label>
+			<input type="text" id="lastName" name="lastName" required />
+			<br />
+			<label for="email">Email: </label>
+			<input type="text" id="email" name="email" required />
+			<br />
+			<label for="password">Password: </label>
+			<input type="text" id="password" name="password" required />
+			<br />
+			<label for="Address">Address: </label>
+			<input type="text" id="address" name="address" />
+			<br />
+			<label for="creditCard">Credit Card: </label>
+			<input type="text" id="creditCard" name="creditCard" />
+			<br />
+			<button type="submit">Create Account</button>
+		</form>
+
+		<script src="client.js"></script>
+	</body>
+</html>
