@@ -2,7 +2,18 @@
 import express from 'express';  // import express
 import { config } from 'dotenv';
 import { executeCrudOperations } from './databaseCRUD.js';
-const app = express()   // create app
+const app = express();   // create app
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+
+
+import cors from 'cors';
+const corsOptions ={
+    origin: ['http://localhost:3000'], 
+    credentials:true,            //access-control-allow-credentials:true
+    methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.use(cors(corsOptions));
 
 // get variables from .env into process.env
 config();
@@ -11,9 +22,21 @@ console.log(process.env.DB_URI);
 // call functions for CRUD from database
 await executeCrudOperations();
 
-// setup route for api
-app.get("/api", (request, response) => {
-    response.json({"users": ["user1, user2, user3"]})   // "users" is a JSON array of users
+app.post ("/api", async(request, response) => {
+    const {data}=request.body;
+    console.log(data);
+})
+
+app.get('/api', async (reqest, response) => {
+    try {
+        const { email_input, password_input } = reqest.query;
+
+        console.log('New login request');
+
+        console.log(`New login request -> Email: ${email_input}, Password: ${password_input}`);
+    } catch (err) {
+        console.error('Unable to login', err);
+    }
 })
 
 // startup backend

@@ -1,0 +1,184 @@
+/*========================GLOBAL STYLE VARIABLES========================*/
+
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+*, *::before, *::after {
+    padding: 0;
+    margin: 0;
+
+    --dark: #2e2e2e;
+    --light: #fbfffa;
+    --neon-green: #96ea59;
+    --mid-green: #61ad2b;
+    --dark-green: #38611b;
+    --gray1: #d9d9d9;
+    --gray2: #cccccc;
+    --gray3: #999999;
+
+    --bodyFontFamily: 'Roboto', sans-serif;
+    --bodyFontStyle: normal;
+    --bodyFontWeight: 100;
+
+    --headerFontFamily: 'Roboto', sans-serif; 
+    --headerFontStyle: italic;
+    --headerFontWeight: 900;
+}
+
+/*========================PAGE SECTIONS========================*/
+
+nav {
+    background-color: var(--dark);
+    padding: 0px;
+    margin: 0px;
+
+    width: 100%;
+    height: 70px;
+
+    color: var(--neon-green);
+    font-size: 50px;
+    font-family: var(--headerFontFamily);
+    font-style: var(--headerFontStyle);
+    font-weight: var(--headerFontWeight);
+    font-variant: small-caps;
+}
+
+body {
+    width: 100%;
+    min-height: 80vh;
+    display: grid;
+    background-color: var(--light);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+}
+
+/*========================OTHER CONTAINERS========================*/
+
+span {
+    display: inline-block;
+}
+.navbarRight {
+    float:inline-end;
+}
+
+/*========================BOXES========================*/
+
+.loginBox {
+    place-self: center;
+    width: 400px;
+    height: 500px;
+    padding: 20px;
+    background-color: white;
+    border: 3px solid var(--dark);
+    border-radius: 20px;
+}
+
+/*========================INPUT FIELDS========================*/
+
+/* input for login */
+.input1 {
+    background-color: transparent;
+    border:none;
+    border-bottom: 3px solid var(--gray3);
+
+    width: 90%;
+    height: 20px;
+
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.input1:focus {
+    outline: none;
+    border-bottom: 3px solid var(--dark);
+}
+
+/*========================BUTTONS========================*/
+
+/* Big green button */
+.button1 {
+    color: var(--dark);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 18px;
+
+    background-color: var(--neon-green);
+    border-color: transparent;
+    width: 170px;
+    height: 50px;
+    padding: 5px;
+    border-radius: 10px;
+}
+.button1:hover {
+    background-color: var(--mid-green);
+}
+.button1:active {
+    color: white;
+    background-color: var(--dark-green);
+}
+
+/* Text button */
+.button2 {
+    color: var(--dark);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 14px;
+
+    background-color: transparent;
+    border-color: transparent;
+}
+.button2:hover {
+    color: var(--mid-green);
+}
+.button2:active {
+    color: var(--neon-green);
+}
+
+/* Smaller dark button */
+.button3 {
+    color: var(--dark);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 14px;
+
+    background-color: transparent;
+    border-style: solid;
+    border-color: var(--dark);
+    padding: 5px;
+}
+.button3:hover {
+    color: white;
+    background-color: var(--dark);
+}
+.button3:active {
+    color: var(--dark);
+    background-color: white;
+}
+
+/* Smaller nav login button */
+.button4 {
+    color: var(--dark);
+    font-family: var(--bodyFontFamily);
+    font-style: var(--bodyFontStyle);
+    font-weight: var(--bodyFontWeight);
+    font-size: 18px;
+
+    background-color: var(--gray2);
+    border-color: transparent;
+    width: 100px;
+    height: 50px;
+    padding: 5px;
+    border-radius: 10px;
+}
+.button4:hover {
+    background-color: var(--neon-green);
+}
+.button4:active {
+    color: white;
+    background-color: var(--dark-green);
+}
+
+
