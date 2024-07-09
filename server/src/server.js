@@ -20,7 +20,7 @@ config();
 console.log(process.env.DB_URI);
 
 // call functions for CRUD from database
-await executeCrudOperations();
+//await executeCrudOperations();
 
 app.post ("/api", async(request, response) => {
     const {data}=request.body;
