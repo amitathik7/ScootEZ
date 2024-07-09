@@ -43,7 +43,7 @@ export default function LoginPage() {
         }
         return (
             <button className="button1" onClick={handleClick}>
-                Login
+                LOGIN
             </button>
         );
     }

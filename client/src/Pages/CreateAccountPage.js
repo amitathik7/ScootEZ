@@ -42,7 +42,7 @@ export default function CreateAccountPage() {
         }
         return (
             <button className="button1" onClick={handleClick}>
-                Login
+                CREATE ACCOUNT
             </button>
         );
     }
