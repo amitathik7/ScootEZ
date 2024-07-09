@@ -4,6 +4,8 @@ import styles from "./styles.css";
 import HomePage from "./Home.js";
 import LoginPage from "./Login.js";
 
+// test change
+
 function App() {
   // The display case for the screen
   // 0=home
