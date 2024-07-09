@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import styles from './styles.css';
 import { NavLink, useNavigate} from 'react-router-dom';
 
+import { ReactComponent as Logo} from './ScootezLogo.svg';
+
 import HomePage from "./Pages/HomePage.js";
 import LoginPage from "./Pages/LoginPage.js";
+import AboutPage from './Pages/AboutPage.js';
 import ScooterPage from './Pages/ScooterPage.js';
+import MapPage from './Pages/MapPage.js';
 
 
 export default function NavBar() {
@@ -18,23 +22,24 @@ export default function NavBar() {
         }
         return (
         <button className="button1" onClick={handleClick}>
-            Ride
+            RENT YOUR RIDE
         </button>
         );
     }
 
     return(
         <nav>
-            <span style={{float:"left"}}>
-                <NavLink to="/" element={<HomePage />}>ScootEZ</NavLink>
-            </span>
-            <span className="navBarLinks">
-                <NavLink to="/" element={<HomePage />}>About</NavLink>
-                <NavLink to="/" element={<HomePage />}>Scooters</NavLink>
-                <NavLink to="/" element={<HomePage />}>Map</NavLink>
-                <NavLink to="/" element={<HomePage />}>Contact</NavLink>
-            </span>
-            <span style={{float:"right"}}> <RideButton /> </span>
+            <div style={{width: "96%", marginLeft: "2%", display: "flex", justifyContent:"space-between"}}>
+                <div><NavLink className="navbarLink" to="/" element={<HomePage />}>
+                    <Logo height={50} fill="#96ea59" />
+                </NavLink></div>
+                <div style={{width: "30%", display: "flex", justifyContent:"space-between"}}>
+                    <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT</NavLink></div>
+                    <div><NavLink className="navbarLink" to="/scooters" element={<HomePage />}>SCOOTERS</NavLink></div>
+                    <div><NavLink className="navbarLink" to="/map" element={<HomePage />}>MAP</NavLink></div>
+                </div>
+                <div><RideButton /></div>
+            </div>
         </nav>
     );
 }

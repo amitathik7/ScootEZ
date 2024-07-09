@@ -39,7 +39,6 @@ export default function LoginPage() {
     // button that logs into account
     function LoginButton() {
         function handleClick() {
-            alert('create account clicked.');
             Login();
         }
         return (
@@ -56,49 +55,39 @@ export default function LoginPage() {
             navigate("/create-account", {})
         }
         return (
-            <button className="button2" onClick={handleClick}>
-                Dont have an account? Create one now!
-            </button>
-        );
-    }
-    
-    // button that skips the login process
-    function SkipButton() {
-        function handleClick() {
-            alert('skip for now clicked.');
-        }
-        return (
-            <button className="button3" onClick={handleClick}>
-                Skip for now
+            <button className="button1" onClick={handleClick}>
+                CREATE ACCOUNT
             </button>
         );
     }
 
     return (
-        <>
-            {/* Draw a box */}
-            <div className="loginBox">
-                <h1>Welcome Back!</h1>
-                <label>
-                    Email: <br></br>
+        <div style={{width: "100%", height: "100%", display: "flex", justifyContent:"space-between", margin: "0px"}}>
+            <div className="leftBox">
+                <div style={{width: "60%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>Welcome Back!</h1>
+                    <p>Email:</p>
                     <input className="input1"
                         value={loginInfo.email}
                         onChange={handleEmailChange}
                     />
-                </label> <br></br>
-                <label>
-                    Password: <br></br>
+                    <p>Password:</p>
                     <input className="input1"
                         value={loginInfo.password}
                         onChange={handlePasswordChange}
                     />
-                </label> <br></br>
 
-                <LoginButton/> <br></br>
-                <SwitchButton /> <br></br>
-                <SkipButton/> <br></br>
+                    <LoginButton /> <br></br>
+                </div>
             </div>
-        </>
+            <div className="rightBox">
+                <div style={{width: "80%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>New here?</h1>
+                    <h2>Create your free account here!</h2>
+                    <SwitchButton /> <br></br>
+                </div>
+            </div>
+        </div>
     );
 
 

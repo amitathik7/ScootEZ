@@ -38,7 +38,6 @@ export default function CreateAccountPage() {
     // button that logs into account
     function CreateAccountButton() {
         function handleClick() {
-            alert('create account clicked.');
             CreateAccount();
         }
         return (
@@ -50,8 +49,6 @@ export default function CreateAccountPage() {
 
     // function that submits the info for the create new account
     async function CreateAccount() {
-        //e.preventDefault();
-    
         console.log(accountInfo);
     
         const response = await fetch(
@@ -79,58 +76,38 @@ export default function CreateAccountPage() {
         );
     }
     
-    // button that skips the login process
-    function SkipButton() {
-        function handleClick() {
-            alert('skip for now clicked.');
-        }
-        return (
-            <button className="button3" onClick={handleClick}>
-                Skip for now
-            </button>
-        );
-    }
-        return (
-            <>
-                {/* Draw a box */}
-                <div className="loginBox">
-                    <h1>Welcome!</h1>
-                    <h1>Create your account!</h1>
-                    <label>
-                        First Name:
-                        <input className="input1"
-                            value={accountInfo.firstName}
-                            onChange={handleFirstNameChange}
-                        />
-                    </label> <br></br>
-                    <label>
-                        Last Name:
-                        <input className="input1"
-                            value={accountInfo.lastName}
-                            onChange={handleLastNameChange}
-                        />
-                    </label> <br></br>
-                    <label>
-                        Email:
-                        <input className="input1"
-                            value={accountInfo.email}
-                            onChange={handleEmailChange}
-                        />
-                    </label> <br></br>
-                    <label>
-                        Password:
-                        <input className="input1"
-                            value={accountInfo.password}
-                            onChange={handlePasswordChange}
-                        />
-                    </label> <br></br>
-    
-                    <CreateAccountButton/> <br></br>
-                    <SwitchButton /> <br></br>
-                    <SkipButton/> <br></br>
-                </div>
-            </>
-        );
+
+    return (
+        <div className="fullBox">
+            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                <h1>Welcome!</h1>
+                <h2>Create your account!</h2>
+                <p>First Name:</p>
+                <input className="input1"
+                    value={accountInfo.firstName}
+                    onChange={handleFirstNameChange}
+                />
+                <p>Last Name:</p>
+                <input className="input1"
+                    value={accountInfo.lastName}
+                    onChange={handleLastNameChange}
+                />
+                <p>Email:</p>
+                <input className="input1"
+                    value={accountInfo.email}
+                    onChange={handleEmailChange}
+                />
+                <p>Password:</p>
+                <input className="input1"
+                    value={accountInfo.password}
+                    onChange={handlePasswordChange}
+                />
+
+                <CreateAccountButton/> <br></br>
+                <SwitchButton /> <br></br>
+            </div>
+        </div>
+    );
 
 
 }

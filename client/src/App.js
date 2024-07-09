@@ -2,12 +2,19 @@ import React, { useEffect, useState } from 'react';
 import styles from "./styles.css";
 import { Routes, Route} from 'react-router-dom';
 
+
+import { ReactComponent as Logo} from './ScootezLogo.svg';
+
+
 import HomePage from "./Pages/HomePage.js";
 import ErrorPage from "./Pages/RouterErrorPage.js";
 import LoginPage from "./Pages/LoginPage.js";
 import CreateAccountPage from './Pages/CreateAccountPage.js';
+import AboutPage from './Pages/AboutPage.js';
 import ScooterProductPage from './Pages/ScooterProductPage.js'
 import ScooterPage from './Pages/ScooterPage.js';
+import MapPage from './Pages/MapPage.js';
+
 
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
@@ -41,10 +48,12 @@ function App() {
           <Route path="/" element={<HomePage />}/>
           <Route path="/login" element={<LoginPage />}/>
           <Route path="/create-account" element={<CreateAccountPage/>} />
-          <Route path="/scooter">
+          <Route path="/about" element={<AboutPage/>} />
+          <Route path="/scooters">
             <Route index element={<ScooterPage/>} />
             <Route path=":id" element={<ScooterProductPage/>} />
           </Route>
+          <Route path="/map" element={<MapPage/>} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
 
