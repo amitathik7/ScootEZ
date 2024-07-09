@@ -50,4 +50,4 @@ Other npm commands that can be run on frontend and backend:
 * <a href="https://youtu.be/bhiEJW5poHU?feature=shared" target="_blank">VIDEO: Resource for setting up MongoDB and connecting it to Node.js app</a>
 * <a href="https://www.mongodb.com/resources/languages/mongodb-and-npm-tutorial" target="_blank">DOCUMENT: Connect MongoDB and CRUD operations</a>
 * <a href="https://youtu.be/KZB6gtKQ9_I?feature=shared" target="_blank">VIDEO: Send data from frontend to backend and store in DB</a>
-* <a href="https://youtu.be/xMNhDf5-hvk?feature=shared" target="_blank">VIDEO: Create multi-page website using react-router-dom</a>
+* <a href="https://youtu.be/Ul3y1LXxzdU?feature=shared" target="_blank">VIDEO: Using react-router-dom</a>
