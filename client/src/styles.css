@@ -28,6 +28,7 @@
 
 nav {
     background-color: var(--dark);
+    position: fixed;
     padding: 0px;
     margin: 0px;
 
@@ -54,11 +55,18 @@ body {
 
 /*========================OTHER CONTAINERS========================*/
 
+.navBarBuffer {
+    width: 100%;
+    height: 80px;
+}
 span {
     display: inline-block;
 }
-.navbarRight {
-    float:inline-end;
+.navBarFlexContainer {
+    justify-content: space-between;
+}
+.navBarFlexItems {
+    
 }
 
 /*========================BOXES========================*/
@@ -71,6 +79,20 @@ span {
     background-color: white;
     border: 3px solid var(--dark);
     border-radius: 20px;
+}
+.footer {
+    background-color: var(--dark);
+    padding: 0px;
+    margin-top: 70px;
+
+    width: 100%;
+    height: 500px;
+
+    color: var(--neon-green);
+    font-size: 20px;
+    font-family: var(--headerFontFamily);
+    font-style: var(--headerFontStyle);
+    font-weight: var(--headerFontWeight);
 }
 
 /*========================INPUT FIELDS========================*/
