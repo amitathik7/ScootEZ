@@ -9,6 +9,7 @@
     --dark: #2e2e2e;
     --light: #fbfffa;
     --neon-green: #96ea59;
+    --light-green: #d5f1c0;
     --mid-green: #61ad2b;
     --dark-green: #38611b;
     --gray1: #d9d9d9;
@@ -16,61 +17,96 @@
     --gray3: #999999;
 
     --bodyFontFamily: 'Roboto', sans-serif;
-    --bodyFontStyle: normal;
     --bodyFontWeight: 100;
 
     --headerFontFamily: 'Roboto', sans-serif; 
-    --headerFontStyle: italic;
-    --headerFontWeight: 900;
+    --headerFontWeight: 500;
 }
 
 /*========================PAGE SECTIONS========================*/
 
 nav {
     background-color: var(--dark);
-    padding: 0px;
+    position: fixed;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    
+    padding-top: 20px;
     margin: 0px;
 
     width: 100%;
-    height: 70px;
+    height: 80px;
 
     color: var(--neon-green);
-    font-size: 50px;
+    font-size: 20px;
     font-family: var(--headerFontFamily);
-    font-style: var(--headerFontStyle);
     font-weight: var(--headerFontWeight);
-    font-variant: small-caps;
 }
 
 body {
     width: 100%;
     min-height: 80vh;
-    display: grid;
     background-color: var(--light);
     font-family: var(--bodyFontFamily);
-    font-style: var(--bodyFontStyle);
     font-weight: var(--bodyFontWeight);
 }
 
-/*========================OTHER CONTAINERS========================*/
 
-span {
-    display: inline-block;
-}
-.navbarRight {
-    float:inline-end;
-}
 
 /*========================BOXES========================*/
 
-.loginBox {
-    place-self: center;
-    width: 400px;
-    height: 500px;
-    padding: 20px;
-    background-color: white;
-    border: 3px solid var(--dark);
-    border-radius: 20px;
+.navBarBuffer {
+    width: 100%;
+    height: 100px;
+}
+
+.leftBox {
+    width: 60%;
+    height: 700px;
+    display: grid;
+    margin: 0px;
+    background-color: var(--light);
+}
+.rightBox {
+    width: 40%;
+    height: 700px;
+    display: grid;
+    margin: 0px;
+    background-color: var(--mid-green);
+}
+.fullBox {
+    width: 100%;
+    display: grid;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    background-color: var(--light);
+}
+.footer {
+    background-color: var(--dark);
+    display: block;
+    padding: 8%;
+    padding-top: 50px;
+    width: 84%;
+    height: 200px;
+    color: white;
+    line-height: 50px;
+}
+
+/*========================LINKS========================*/
+
+.navbarLink {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+.navbarLink:hover {
+    color: var(--neon-green);
+}
+.active {
+    color: var(--neon-green);
 }
 
 /*========================INPUT FIELDS========================*/
@@ -82,7 +118,7 @@ span {
     border-bottom: 3px solid var(--gray3);
 
     width: 90%;
-    height: 20px;
+    height: 30px;
 
     padding: 5px;
     margin-top: 10px;
@@ -93,13 +129,37 @@ span {
     border-bottom: 3px solid var(--dark);
 }
 
+/*========================TEXT========================*/
+
+h1 {
+    font-size: 40px;
+    font-family: var(--headerFontFamily);
+    font-weight: var(--headerFontWeight);
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+h2 {
+    font-size: 30px;
+    font-family: var(--headerFontFamily);
+    font-weight: var(--headerFontWeight);
+}
+p {
+    font-size: 20px;
+    font-family: var(--bodyFontFamily);
+    font-weight: var(--bodyFontWeight);
+}
+label {
+    margin-top: 30px;
+    margin-bottom: 30px
+}
+
 /*========================BUTTONS========================*/
 
 /* Big green button */
 .button1 {
     color: var(--dark);
     font-family: var(--bodyFontFamily);
-    font-style: var(--bodyFontStyle);
     font-weight: var(--bodyFontWeight);
     font-size: 18px;
 
@@ -122,7 +182,6 @@ span {
 .button2 {
     color: var(--dark);
     font-family: var(--bodyFontFamily);
-    font-style: var(--bodyFontStyle);
     font-weight: var(--bodyFontWeight);
     font-size: 14px;
 
@@ -140,7 +199,6 @@ span {
 .button3 {
     color: var(--dark);
     font-family: var(--bodyFontFamily);
-    font-style: var(--bodyFontStyle);
     font-weight: var(--bodyFontWeight);
     font-size: 14px;
 
@@ -162,7 +220,6 @@ span {
 .button4 {
     color: var(--dark);
     font-family: var(--bodyFontFamily);
-    font-style: var(--bodyFontStyle);
     font-weight: var(--bodyFontWeight);
     font-size: 18px;
 
