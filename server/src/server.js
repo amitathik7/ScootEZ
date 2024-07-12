@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
 
 const port = 5000;
 
@@ -80,18 +81,36 @@ app.listen(port, () => { console.log(`Server Started Port ${port}`); });
 app.post('/api/users/create', async (req, res) => {
     const { firstName, lastName, email, password, address, creditCard } = req.body;
 
-    const accountDocument = new Account({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        address: address,
-        creditCard: creditCard
-    });
-
     try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const accountDocument = new Account({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: hashedPassword,
+            address: address,
+            creditCard: creditCard
+        });
+
         await accountDocument.save();
         res.status(201);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.get('/api/users/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const account = await Account.findOne({ email: email });
+
+        if (user && await bcrypt.compare(password, user.password)) {
+            console.log('Successful login');
+        } else {
+            console.log('Unsuccessful login');
+        }
     } catch (error) {
         res.status(500).send(error);
     }
