@@ -2,10 +2,27 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
+const cors = require('cors');
 
 const port = 5000;
 
+// import cors from 'cors';
+// const corsOptions ={
+//     origin: ['http://localhost:3000'], 
+//     credentials:true,            //access-control-allow-credentials:true
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+// };
+// app.use(cors(corsOptions));
+
 const app = express();
+
+const corsOptions = {
+    origin: '*',
+    credentials: true,
+    optionSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 dotenv.config();
 
