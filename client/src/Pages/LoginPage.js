@@ -40,7 +40,6 @@ export default function LoginPage() {
             
             if (response.ok) {
                 localStorage.setItem("token", data.token);
-                alert(data.message);
             }
             else {
                 alert(data.message);
@@ -84,16 +83,21 @@ export default function LoginPage() {
                 <div style={{width: "60%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
                     <h1>Welcome Back!</h1>
                     <p>Email:</p>
-                    <input className="input1"
+                    <input className="input1" required
+                        type="email"
+                        placeholder="Email"
                         value={loginInfo.email}
                         onChange={handleEmailChange}
                     />
                     <p>Password:</p>
-                    <input className="input1"
+                    <input className="input1" required
+                        type="password"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                        title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" 
+                        placeholder="Password"
                         value={loginInfo.password}
                         onChange={handlePasswordChange}
                     />
-
                     <LoginButton /> <br></br>
                 </div>
             </div>

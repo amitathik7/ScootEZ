@@ -128,6 +128,29 @@ body {
     outline: none;
     border-bottom: 3px solid var(--dark);
 }
+.input1:invalid:focus {
+    outline: none;
+    border-bottom: 3px solid red;
+}
+.input1:valid:focus {
+    outline: none;
+    border-bottom: 3px solid green;
+}
+
+/* The message box is shown when the user clicks on the password field */
+.passwordMessage {
+    display:none;
+    background: #f1f1f1;
+    color: #000;
+    position: relative;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.passwordMessage p {
+    padding: 10px 35px;
+    font-size: 18px;
+}
 
 /*========================TEXT========================*/
 
