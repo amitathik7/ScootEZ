@@ -1,12 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const bcrypt = require("bcryptjs");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-
-const port = 5000;
-
+//#region imports ================================================================
+const express = require('express');
+const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const app = express();
 
 // import files
