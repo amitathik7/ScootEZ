@@ -23,17 +23,34 @@ export default function LoginPage() {
 
     // function that submits the info for the create new account
     async function Login() {
-        //e.preventDefault();
+        try {
+            console.log(loginInfo);
     
-        console.log(loginInfo);
-    
-        const response = await fetch(
+            const response = await fetch(
+                "http://localhost:5000/api/users/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(loginInfo)
+                }
+            );
+            const data = await response.json();
             
-            `http://localhost:5000/api?email_input=${loginInfo.email}&password_input=${loginInfo.password}`,
-            {
-                method: 'GET'
+            if (response.ok) {
+                localStorage.setItem("token", data.token);
+                alert(data.message);
             }
-        );
+            else {
+                alert(data.message);
+            }
+        }
+        catch (error) {
+            alert("An error occured while logging in");
+            console.error("error detected: ", error);
+        }
+        
     }
 
     // button that logs into account

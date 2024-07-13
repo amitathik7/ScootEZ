@@ -9,136 +9,80 @@ const port = 5000;
 
 const app = express();
 
+// import files
+const database = require('./database.js');
+
+// set up cors
 const corsOptions = {
 	origin: "*",
 	credentials: true,
 	optionSuccessStatus: 200,
 };
-
 app.use(cors(corsOptions));
 
+// import and configure environment variables from .env
 dotenv.config();
+const PORT = process.env.PORT;
 
+// use express JSON
 app.use(express.json());
 if (process.env.NODE_ENV !== 'test') {
     mongoose.connect(process.env.DB_URI);
 }
 
-const db = mongoose.connection;
+//#endregion ======================================================================
 
-db.on("error", console.error.bind(console, "MongoDB Connection Error"));
+// print out message if the server has been started on port 5000
+app.listen(PORT, () => { console.log(`Server Started Port ${PORT}`); });
 
-db.once("open", () => {
-	console.log("MongoDB Connected");
+//#region API calls ================================================================
+
+app.post('/api/users/create', async (req, res) => {
+    try {
+        const {firstName, lastName, email, password, address, creditCard} = req.body;
+
+        // hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // save it to DB, if successful, returns true
+        if(await database.CreateAccount({firstName, lastName, email, hashedPassword, address, creditCard})) {
+            res.status(201).json({ message: "Account created" });
+        }
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
-const accountSchema = new mongoose.Schema({
-	firstName: String,
-	lastName: String,
-	email: String,
-	password: String,
-	address: String,
-	creditCard: String,
+app.post('/api/users/login', async (req, res) => {
+    try {
+        // get the data from the frontend
+        const { email, password } = req.body;
+
+        // First try to find the account in the DB by email
+        const account = await database.FindAccount(email);
+
+        // send response if the account is not found
+        if (account == null) {
+            console.log("The email entered was not found in the DB");
+            res.status(401).json({message: "invalid credentials"});
+        }
+        else {
+            // Now check the password
+            console.log("Comparing password...");
+            if (await bcrypt.compare(password, account.password)) {
+                console.log("Password matches, login successful");
+                const token = jwt.sign({ id: account._id }, "supposed_to_be_our_secret");
+                res.json({ token });
+            }
+            else {
+                console.log("Password does not match, login unsuccessful");
+                res.status(401).json({ message: "invalid credentials" });
+            }
+        }
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
-const scooterSchema = new mongoose.Schema({
-	latitude: Number,
-	longitude: Number,
-	battery: Number,
-	model: String,
-	availability: Boolean,
-	rentalPrice: Number,
-	id: Number,
-});
-
-const employeeSchema = new mongoose.Schema({
-	firstName: String,
-	lastName: String,
-	email: String,
-	password: String,
-	address: String,
-});
-
-const adminSchema = new mongoose.Schema({
-	firstName: String,
-	lastName: String,
-	email: String,
-	password: String,
-	address: String,
-});
-
-const rentalHistorySchema = new mongoose.Schema({
-	scooter: {
-		type: scooterSchema,
-	},
-	timeRented: {
-		type: Date,
-	},
-	user: {
-		type: accountSchema,
-	},
-	cost: Number,
-	startLatitude: Number,
-	startLongitude: Number,
-	endLatitude: Number,
-	endLongitude: Number,
-});
-
-const Account = mongoose.model("account", accountSchema);
-const Scooter = mongoose.model("scooter", scooterSchema);
-const Employee = mongoose.model("employee", employeeSchema);
-const Admin = mongoose.model("admin", adminSchema);
-const RentalHistory = mongoose.model("history", rentalHistorySchema);
-
-app.listen(port, () => {
-	console.log(`Server Started Port ${port}`);
-});
-
-async function createAccount(req, res) {
-	const { firstName, lastName, email, password, address, creditCard } =
-		req.body;
-
-	try {
-		const hashedPassword = await bcrypt.hash(password, 10);
-
-		const accountDocument = new Account({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			password: hashedPassword,
-			address: address,
-			creditCard: creditCard,
-		});
-
-		await accountDocument.save();
-		res.status(201).send('Account created successfully');
-	} catch (error) {
-        console.log(error);
-		res.status(500).send(error);
-	}
-}
-
-async function loginAccount(req, res) {
-	const { email, password } = req.body;
-
-	try {
-		const account = await Account.findOne({ email: email });
-
-		if (account && (await bcrypt.compare(password, account.password))) {
-			console.log("Successful login");
-			const token = jwt.sign({ id: account._id }, "secret");
-			res.json({ token });
-            res.status(201).send('Successful login');
-		} else {
-			console.log("Unsuccessful login");
-		}
-	} catch (error) {
-		res.status(500).send(error);
-	}
-}
-
-app.post("/api/users/create", createAccount);
-
-app.post("/api/users/login", loginAccount);
-
-module.exports = { app, createAccount, loginAccount };
+//#endregion =============================================================================
