@@ -21,6 +21,9 @@ import CurrentRentalsPage from './Pages/CurrentRentalsPage.js';
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
 
+import EmployeeLoginPage from './Pages/EmployeeLoginPage.js';
+import AdminLoginPage from './Pages/AdminLoginPage.js';
+
 export const AccountContext = React.createContext(null);
 export const IsLoggedInContext = React.createContext(false);
 
@@ -66,7 +69,11 @@ function App() {
             </Route>
             <Route path="/profile" element={<ProfilePage/>} />
             <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
+            <Route path="/employee-login" element={<EmployeeLoginPage/>} />
+            <Route path="/admin-login" element={<AdminLoginPage/>} />
             <Route path="*" element={<ErrorPage />} />
+            
+            
           </Routes>
 
           <Footer />
