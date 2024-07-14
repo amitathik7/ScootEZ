@@ -92,6 +92,16 @@ body {
     color: white;
     line-height: 50px;
 }
+.accountCircle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--mid-green);
+    color: white;
+    font-size: 18px;
+}
+
+
 
 /*========================LINKS========================*/
 
@@ -106,6 +116,14 @@ body {
     color: var(--neon-green);
 }
 .active {
+    color: var(--neon-green);
+}
+
+.footerLink {
+    color: white;
+    text-decoration: none;
+}
+.footerLink:hover {
     color: var(--neon-green);
 }
 

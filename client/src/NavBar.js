@@ -6,10 +6,10 @@ import { ReactComponent as Logo} from './ScootezLogo.svg';
 
 import { AccountContext, IsLoggedInContext } from './App.js';
 import HomePage from "./Pages/HomePage.js";
-import LoginPage from "./Pages/LoginPage.js";
 import AboutPage from './Pages/AboutPage.js';
-import ScooterPage from './Pages/ScooterPage.js';
 import MapPage from './Pages/MapPage.js';
+import FaqPage from './Pages/FaqPage.js';
+
 import ProfilePage from './Pages/ProfilePage.js';
 
 
@@ -38,9 +38,10 @@ export default function NavBar() {
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
                     <div style={{width: "30%", display: "flex", justifyContent:"space-between"}}>
-                        <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/scooters" element={<HomePage />}>SCOOTERS</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>MAP</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/" element={<HomePage />}>HOME</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT US</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>RENT NOW</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/faq" element={<FaqPage />}>FAQ</NavLink></div>
                     </div>
                     <div><RideButton /></div>
                 </div>
@@ -55,10 +56,12 @@ export default function NavBar() {
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
                     <div style={{width: "30%", display: "flex", justifyContent:"space-between"}}>
-                        <div><NavLink className="navbarLink" to="/" element={<HomePage />}>HOME</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/profile" element={<ProfilePage />}>PROFILE</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/home" element={<HomePage />}>HOME</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT US</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>RENT NOW</NavLink></div>
+                        <div><NavLink className="navbarLink" to="/faq" element={<FaqPage />}>FAQ</NavLink></div>
                     </div>
-                    <div>{account}</div>
+                    <div className="accountCircle">{account}</div>
                 </div>
             </nav>
         );
