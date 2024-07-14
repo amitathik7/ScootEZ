@@ -11,6 +11,7 @@ export default function LoginPage() {
     // states
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [showPasswordMessage, setShowPasswordMessage] = useState(false);
+    const [isLoginButtonActive, setIsLoginButtonActive] = useState(false);
     const [passwordValidity, setPasswordValidity] = useState(false);
 
     // get references to the HTML elements
@@ -18,9 +19,9 @@ export default function LoginPage() {
     const capitalRef = useRef(null);
     const numberRef = useRef(null);
     const lengthRef = useRef(null);
-    const passwordRef = useRef(null);
+
     const emailRef = useRef(null);
-    const loginButtonRef = useRef(null);
+    const passwordRef = useRef(null);
 
     // Profile state variables for logging in
     const [loginInfo, setLoginInfo] = useState({
@@ -55,24 +56,20 @@ export default function LoginPage() {
                     body: JSON.stringify(loginInfo)
                 }
             );
-            const data = await response.json();
-
             if (response.ok) {
+                const data = await response.json(); // should return the token for the account
                 localStorage.setItem("token", data.token);
                 setIsLoggedIn(true);
-                setAccount("User is logged in");
+                setAccount("User name");    //FIXME TO ACTUALLY BE THE USER'S NAME
                 return true;
             }
             else {
-                setIsInvalidCredentials(true);
-                loginButtonRef.current.disabled = false;
+                console.log("invalid credentials");
                 return false;
             }
         }
         catch (error) {
-            alert("An error occured while logging in");
             console.error("error detected: ", error);
-            loginButtonRef.current.disabled = false;
             return false;
         }
         
@@ -82,15 +79,34 @@ export default function LoginPage() {
     function LoginButton() {
         const navigate = useNavigate();
         function handleClick() {
-            loginButtonRef.current.disabled = true;
-            Login();
-            navigate("/map", {});
+            setIsLoginButtonActive(false);
+            Login().then((isSuccess) => {
+                if (isSuccess){
+                    navigate("/profile", {});
+                }
+                else {
+                    setIsInvalidCredentials(true);
+                    setIsLoginButtonActive(true);
+                }
+            })           
         }
-        return (
-            <button className="button1" ref={loginButtonRef} onClick={handleClick}>
-                LOGIN
-            </button>
-        );
+
+        // button is active if both fields are true
+        if (isLoginButtonActive){
+            return (
+                <button className="button1" onClick={handleClick}>
+                    LOGIN
+                </button>
+            );
+        }
+        // button is disabled if either field is invalid
+        else {
+            return (
+                <button className="button1" disabled="true">
+                    LOGIN
+                </button>
+            );
+        }
     }
     
     // button that switches to the createaccount page
@@ -104,6 +120,20 @@ export default function LoginPage() {
                 CREATE ACCOUNT
             </button>
         );
+    }
+
+    function ValidateAllFields() {
+        if (loginInfo.email.length <= 0 || loginInfo.password.length <=0){
+            setIsLoginButtonActive(false);
+        }
+        else if (emailRef.current.validity.valid &&
+            passwordRef.current.validity.valid)
+        {
+            setIsLoginButtonActive(true);
+        }
+        else {
+            setIsLoginButtonActive(false);
+        }
     }
 
     function ValidatePassword() {
@@ -179,7 +209,7 @@ export default function LoginPage() {
                 <div className="passwordMessage">
                     <h3>Password must contain the following:</h3>
                     <p ref={lowercaseRef} className="invalid">A <b>lowercase</b> letter</p>
-                    <p ref={capitalRef} className="invalid">A <b>capital (uppercase)</b> letter</p>
+                    <p ref={capitalRef} className="invalid">An <b>uppercase</b> letter</p>
                     <p ref={numberRef} className="invalid">A <b>number</b></p>
                     <p ref={lengthRef} className="invalid">Minimum <b>8 characters</b></p>
                 </div>
@@ -206,6 +236,7 @@ export default function LoginPage() {
                         ref={emailRef}
                         value={loginInfo.email}
                         onChange={handleEmailChange}
+                        onInput={ValidateAllFields}
                     />
                     <p>Password:</p>
                     <input className="input1" required
@@ -220,6 +251,7 @@ export default function LoginPage() {
                             if(loginInfo.password.length <= 0 || passwordValidity) {setShowPasswordMessage(false)}
                         }}
                         onKeyUp={ValidatePassword}
+                        onInput={ValidateAllFields}
                     /> <br/>
                     <input type="checkbox" onClick={ToggleShowPassword}/> Show Password
                     <PasswordMessage />
