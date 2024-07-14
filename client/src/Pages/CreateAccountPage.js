@@ -49,27 +49,25 @@ export default function CreateAccountPage() {
 
     // function that submits the info for the create new account
     async function CreateAccount() {
-        const accountData = {
-            firstName: accountInfo.firstName,
-            lastName: accountInfo.lastName,
-            email: accountInfo.email,
-            password: accountInfo.password
-        };
-
-        console.log(JSON.stringify(accountData));
+        console.log(JSON.stringify(accountInfo));
 
         try {
-            const res = await fetch('http://localhost:5000/api/users/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(accountData)
-            });
+            const response = await fetch(
+                'http://localhost:5000/api/users/create',
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(accountInfo)
+                }
+            );
     
-            if (!res.ok) {
-                throw new Error('Problem with backend response: ' + res.statusText);
+            if (!response.ok) {
+                throw new Error('Problem with backend response: ' + response.statusText);
             }
+            const data = await response.json();
+
         } catch (error) {
             console.error('Error with creating new account ==>', error);
         }
