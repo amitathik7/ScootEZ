@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
-const authenticateToken = require('../middleware/auth');
+const authenticateToken = require("../middleware/auth");
 
 const port = 5000;
 
@@ -139,7 +139,7 @@ app.post("/api/users/login", async (req, res) => {
 	}
 });
 
-app.get('/api/scooters', async (req, res) => {
+app.get("/api/scooters", async (req, res) => {
 	try {
 		const scooters = await Scooter.find({ availability: true });
 
@@ -150,14 +150,13 @@ app.get('/api/scooters', async (req, res) => {
 	}
 });
 
-
 // This is a test function for the token
-app.get('/api/users/accountName', authenticateToken, async (req, res) => {
+app.get("/api/users/accountName", authenticateToken, async (req, res) => {
 	try {
 		const account = await Account.findById(req.user.id);
 
 		if (!account) {
-			return res.status(404).send('User not found');
+			return res.status(404).send("User not found");
 		}
 
 		res.json({ firstName: account.firstName, lastName: account.lastName });
