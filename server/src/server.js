@@ -20,8 +20,8 @@ app.use(cors(corsOptions));
 dotenv.config();
 
 app.use(express.json());
-if (process.env.NODE_ENV !== 'test') {
-    mongoose.connect(process.env.DB_URI);
+if (process.env.NODE_ENV !== "test") {
+	mongoose.connect(process.env.DB_URI);
 }
 
 const db = mongoose.connection;
@@ -94,7 +94,7 @@ app.listen(port, () => {
 	console.log(`Server Started Port ${port}`);
 });
 
-async function createAccount(req, res) {
+app.post("/api/users/create", async (req, res) => {
 	const { firstName, lastName, email, password, address, creditCard } =
 		req.body;
 
@@ -111,14 +111,14 @@ async function createAccount(req, res) {
 		});
 
 		await accountDocument.save();
-		res.status(201).send('Account created successfully');
+		res.status(201).send("Account created successfully");
 	} catch (error) {
-        console.log(error);
+		console.log(error);
 		res.status(500).send(error);
 	}
-}
+});
 
-async function loginAccount(req, res) {
+app.post("/api/users/login", async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
@@ -128,17 +128,13 @@ async function loginAccount(req, res) {
 			console.log("Successful login");
 			const token = jwt.sign({ id: account._id }, "secret");
 			res.json({ token });
-            res.status(201).send('Successful login');
+			res.status(201).send("Successful login");
 		} else {
 			console.log("Unsuccessful login");
 		}
 	} catch (error) {
 		res.status(500).send(error);
 	}
-}
+});
 
-app.post("/api/users/create", createAccount);
-
-app.post("/api/users/login", loginAccount);
-
-module.exports = { app, createAccount, loginAccount };
+module.exports = { app };
