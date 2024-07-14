@@ -1,3 +1,4 @@
+//#region imports ================================================================
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -8,15 +9,14 @@ const jwt = require("jsonwebtoken");
 const authenticateToken = require("../middleware/auth");
 
 const port = 5000;
-
 const app = express();
 
+// set up Cors
 const corsOptions = {
 	origin: "*",
 	credentials: true,
 	optionSuccessStatus: 200,
 };
-
 app.use(cors(corsOptions));
 
 dotenv.config();
@@ -26,14 +26,18 @@ if (process.env.NODE_ENV !== "test") {
 	mongoose.connect(process.env.DB_URI);
 }
 
+//#endregion ======================================================================
+
+// connect to MongoDB
 const db = mongoose.connection;
 
+// check connection to mongoDB
 db.on("error", console.error.bind(console, "MongoDB Connection Error"));
+db.once("open", () => {	console.log("MongoDB Connected");});
 
-db.once("open", () => {
-	console.log("MongoDB Connected");
-});
+//#region initialize database content ==============================================
 
+// initialize MongoDB Schemas (JSON object that defines the structure and contents of the data)
 const accountSchema = new mongoose.Schema({
 	firstName: String,
 	lastName: String,
@@ -86,17 +90,28 @@ const rentalHistorySchema = new mongoose.Schema({
 	endLongitude: Number,
 });
 
-const Account = mongoose.model("account", accountSchema);
-const Scooter = mongoose.model("scooter", scooterSchema);
-const Employee = mongoose.model("employee", employeeSchema);
-const Admin = mongoose.model("admin", adminSchema);
-const RentalHistory = mongoose.model("history", rentalHistorySchema);
+// Initialize MongoDB collections (using mongoose.model)
+const Account = mongoose.model('account', accountSchema);
+const Scooter = mongoose.model('scooter', scooterSchema);
+const Employee = mongoose.model('employee', employeeSchema);
+const Admin = mongoose.model('admin', adminSchema);
+const RentalHistory = mongoose.model('history', rentalHistorySchema);
 
+//#endregion ======================================================================
+
+// log if server started on port 5000
 app.listen(port, () => {
 	console.log(`Server Started Port ${port}`);
 });
 
-app.post("/api/users/create", async (req, res) => {
+//#region CRUD operations ==========================================================
+
+// Create:
+// Read
+// update
+// delete
+
+const createAccount = async (req, res) => {
 	const { firstName, lastName, email, password, address, creditCard } =
 		req.body;
 
@@ -118,9 +133,9 @@ app.post("/api/users/create", async (req, res) => {
 		console.log(error);
 		res.status(500).send(error);
 	}
-});
+}
 
-app.post("/api/users/login", async (req, res) => {
+const login = async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
@@ -137,7 +152,16 @@ app.post("/api/users/login", async (req, res) => {
 	} catch (error) {
 		res.status(500).send(error);
 	}
-});
+}
+
+//#endregion =======================================================================
+
+//#region API calls ================================================================
+
+app.post("/api/users/create", createAccount);
+app.post("/api/users/login", login);
+
+//#endregion =======================================================================
 
 app.get("/api/scooters", async (req, res) => {
 	try {
