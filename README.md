@@ -34,8 +34,7 @@ Set up client side:
 
 ### Dev Commands
 __Backend (runs on localhost:5000):__ Inside the __server__ directory, you can run several commands:
-* ```npm start dev``` Starts the development server with nodemon (use this for development)
-* ```node src/server.js``` Starts the backend server and connects to MongoDB
+* ```npm run dev``` Starts the development server with nodemon (use this for development)
 
 __Frontend (runs on localhost:3000):__ Inside the __client__ directory, you can run several commands:
 * ```npm start``` Starts the frontend React app server; you must start the backend before starting the frontend so the frontend can fetch the backend

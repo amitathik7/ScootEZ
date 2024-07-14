@@ -93,6 +93,8 @@ body {
     line-height: 50px;
 }
 
+
+
 /*========================LINKS========================*/
 
 .navbarLink {
@@ -109,6 +111,14 @@ body {
     color: var(--neon-green);
 }
 
+.footerLink {
+    color: white;
+    text-decoration: none;
+}
+.footerLink:hover {
+    color: var(--neon-green);
+}
+
 /*========================INPUT FIELDS========================*/
 
 /* input for login */
@@ -122,11 +132,19 @@ body {
 
     padding: 5px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
 }
 .input1:focus {
     outline: none;
     border-bottom: 3px solid var(--dark);
+}
+.input1:invalid:focus {
+    outline: none;
+    border-bottom: 3px solid red;
+}
+.input1:valid:focus {
+    outline: none;
+    border-bottom: 3px solid green;
 }
 
 /*========================TEXT========================*/
@@ -154,6 +172,49 @@ label {
     margin-bottom: 30px
 }
 
+.warningText {
+    font-size: 10px;
+    color: red;
+    margin: 0px;
+}
+
+/* The message box is shown when the user clicks on the password field */
+.passwordMessage {
+    position: relative;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 10px;
+    line-height: 15px;
+}
+
+.passwordMessage p {
+    padding-left: 20px;
+    font-size: 10px;
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+    color: green;
+}
+
+.valid:before {
+    position: relative;
+    left: -10px;
+    content: "\2713";
+}
+
+/* Add a red text color and an "x" icon when the requirements are wrong */
+.invalid {
+    color: red;
+}
+
+.invalid:before {
+    position: relative;
+    left: -10px;
+    content: "\2717";
+}
+
 /*========================BUTTONS========================*/
 
 /* Big green button */
@@ -176,6 +237,10 @@ label {
 .button1:active {
     color: white;
     background-color: var(--dark-green);
+}
+.button1:disabled {
+    color: var(--gray3);
+    background-color: var(--gray1);
 }
 
 /* Text button */
@@ -236,6 +301,28 @@ label {
 .button4:active {
     color: white;
     background-color: var(--dark-green);
+}
+
+.accountCircle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border-width: 0px;
+    background-color: var(--mid-green);
+    color: white;
+    font-size: 18px;
+}
+.accountCircle:hover {
+    border-width: 2px;
+    border-style: none;
+    border-color: var(--light-green);
+}
+.accountCircle:active {
+    color: white;
+    background-color: var(--neon-green);
+    border-width: 2px;
+    border-color: var(--light-green);
+    border-style: none;
 }
 
 
