@@ -5,6 +5,8 @@ const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
+const authenticateToken = require('../middleware/auth');
+
 const port = 5000;
 
 const app = express();
@@ -132,6 +134,33 @@ app.post("/api/users/login", async (req, res) => {
 		} else {
 			console.log("Unsuccessful login");
 		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get('/api/scooters', async (req, res) => {
+	try {
+		const scooters = await Scooter.find({ availability: true });
+
+		res.json({ scooters });
+		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+
+// This is a test function for the token
+app.get('/api/users/accountName', authenticateToken, async (req, res) => {
+	try {
+		const account = await Account.findById(req.user.id);
+
+		if (!account) {
+			return res.status(404).send('User not found');
+		}
+
+		res.json({ firstName: account.firstName, lastName: account.lastName });
 	} catch (error) {
 		res.status(500).send(error);
 	}

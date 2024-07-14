@@ -49,4 +49,10 @@ describe("Create Account API", () => {
     expect(response.status).toBe(201);
     expect(response.text).toBe("Account created successfully");
   });
+
+  it("should get all scooter info", async() => {
+    const res = await request(server).get('/api/scooters');
+
+    expect(res.status).toBe(200);
+  })
 });
