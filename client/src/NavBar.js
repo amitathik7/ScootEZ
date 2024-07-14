@@ -34,6 +34,7 @@ export default function NavBar() {
                     <Logo height={50} fill="#96ea59" />
                 </NavLink></div>
                 <div style={{width: "30%", display: "flex", justifyContent:"space-between"}}>
+                    <div><NavLink className="navbarLink" to="/" element={<HomePage />}>HOME</NavLink></div>
                     <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT</NavLink></div>
                     <div><NavLink className="navbarLink" to="/scooters" element={<HomePage />}>SCOOTERS</NavLink></div>
                     <div><NavLink className="navbarLink" to="/map" element={<HomePage />}>MAP</NavLink></div>
