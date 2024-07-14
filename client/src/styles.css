@@ -162,6 +162,12 @@ label {
     margin-bottom: 30px
 }
 
+.warningText {
+    font-size: 10px;
+    color: red;
+    margin: 0px;
+}
+
 /* The message box is shown when the user clicks on the password field */
 .passwordMessage {
     position: relative;

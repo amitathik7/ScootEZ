@@ -1,11 +1,26 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AccountContext, IsLoggedInContext } from '../App.js';
 import styles from "../styles.css";
 
 export default function LoginPage() {
-    // set login states
+    // global context
+    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+    const { account, setAccount } = useContext(AccountContext);
+
+    // states
+    const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [showPasswordMessage, setShowPasswordMessage] = useState(false);
     const [passwordValidity, setPasswordValidity] = useState(false);
+
+    // get references to the HTML elements
+    const lowercaseRef = useRef(null);
+    const capitalRef = useRef(null);
+    const numberRef = useRef(null);
+    const lengthRef = useRef(null);
+    const passwordRef = useRef(null);
+    const emailRef = useRef(null);
+    const loginButtonRef = useRef(null);
 
     // Profile state variables for logging in
     const [loginInfo, setLoginInfo] = useState({
@@ -41,29 +56,38 @@ export default function LoginPage() {
                 }
             );
             const data = await response.json();
-            
+
             if (response.ok) {
-                alert("success");
                 localStorage.setItem("token", data.token);
+                setIsLoggedIn(true);
+                setAccount("User is logged in");
+                return true;
             }
             else {
-                alert(data.message);
+                setIsInvalidCredentials(true);
+                loginButtonRef.current.disabled = false;
+                return false;
             }
         }
         catch (error) {
             alert("An error occured while logging in");
             console.error("error detected: ", error);
+            loginButtonRef.current.disabled = false;
+            return false;
         }
         
     }
 
     // button that logs into account
     function LoginButton() {
+        const navigate = useNavigate();
         function handleClick() {
+            loginButtonRef.current.disabled = true;
             Login();
+            navigate("/map", {});
         }
         return (
-            <button className="button1" onClick={handleClick}>
+            <button className="button1" ref={loginButtonRef} onClick={handleClick}>
                 LOGIN
             </button>
         );
@@ -73,7 +97,7 @@ export default function LoginPage() {
     function SwitchButton() {
         const navigate = useNavigate();
         function handleClick() {
-            navigate("/create-account", {})
+            navigate("/create-account", {});
         }
         return (
             <button className="button1" onClick={handleClick}>
@@ -81,14 +105,6 @@ export default function LoginPage() {
             </button>
         );
     }
-
-    // get references to the HTML elements
-    const lowercaseRef = useRef(null);
-    const capitalRef = useRef(null);
-    const numberRef = useRef(null);
-    const lengthRef = useRef(null);
-    const passwordRef = useRef(null);
-    const emailRef = useRef(null);
 
     function ValidatePassword() {
         // validate letters
@@ -140,6 +156,22 @@ export default function LoginPage() {
         }
     }
 
+    // shows the invalid message only if the showPasswordMessage state is true
+    function InvalidCredentialsMessage() {
+        if (isInvalidCredentials) {
+            return (
+                <p className="warningText">
+                    &#9888; The email or password entered is invalid.
+                </p>
+            );
+        }
+        else {
+            return (
+                <div />
+            );
+        }
+    }
+
     // shows the password message only if the showPasswordMessage state is true
     function PasswordMessage() {
         if (showPasswordMessage) {
@@ -166,6 +198,7 @@ export default function LoginPage() {
             <div className="leftBox">
                 <div style={{width: "60%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
                     <h1>Welcome Back!</h1>
+                    <InvalidCredentialsMessage />
                     <p>Email:</p>
                     <input className="input1" required
                         type="email"

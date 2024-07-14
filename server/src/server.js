@@ -23,9 +23,6 @@ const PORT = process.env.PORT;
 
 // use express JSON
 app.use(express.json());
-if (process.env.NODE_ENV !== 'test') {
-    mongoose.connect(process.env.DB_URI);
-}
 
 //#endregion ======================================================================
 
@@ -36,14 +33,28 @@ app.listen(PORT, () => { console.log(`Server Started Port ${PORT}`); });
 
 app.post('/api/users/create', async (req, res) => {
     try {
-        const {firstName, lastName, email, password, address, creditCard} = req.body;
+        const {firstName, lastName, email, password} = req.body;
 
         // hash password
+        console.log("Hashing password...");
         const hashedPassword = await bcrypt.hash(password, 10);
+        const address = "na";
+        const creditCard = "na";
+
+        const newAccount = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: hashedPassword,
+            address: address,
+            creditCard: creditCard
+        };
+        console.log(newAccount);
 
         // save it to DB, if successful, returns true
-        if(await database.CreateAccount({firstName, lastName, email, hashedPassword, address, creditCard})) {
-            res.status(201).json({ message: "Account created" });
+        const isSuccess = await database.CreateAccount(newAccount);
+        if (isSuccess){
+            res.json({ message: "Account created" });
         }
 
     } catch (error) {

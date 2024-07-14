@@ -9,8 +9,12 @@ const DB_URI = process.env.DB_URI;
 //#endregion ======================================================================
 
 // connect MongoDB with mongoose
-mongoose.connect(DB_URI);
+if (process.env.NODE_ENV !== 'test') {
+    mongoose.connect(DB_URI);
+}
+//mongoose.connect(DB_URI);
 const db = mongoose.connection;
+
 
 // MongoDB connection error messages
 db.on('error', console.error.bind(console, 'MongoDB Connection Error'));
@@ -88,23 +92,25 @@ const RentalHistory = mongoose.model('history', rentalHistorySchema);
 // delete
 
 
-async function CreateAccount({firstName, lastName, email, password, address, creditCard}) {
-    console.log(`Creating an account for the ${firstname} ${lastname} in the DB...`)
-
+async function CreateAccount(account) {
+    console.log("Creating the new account from model...");
     // create new Account from model
     const accountDocument = new Account({
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password,
-        address: address,
-        creditCard: creditCard
+        firstName: account.firstName,
+        lastName: account.lastName,
+        email: account.email,
+        password: account.password,
+        address: account.address,
+        creditCard: account.creditCard
     });
 
     try {
         // saving to DB
+        console.log("Saving to the DB...")
         await accountDocument.save();
+        
         console.log("Finished! Successful.");
+        return true;
     }
     catch {
         console.log("Finished! Unsuccessful.");
