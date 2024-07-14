@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styles from "./styles.css";
 import { Routes, Route} from 'react-router-dom';
 
-
-import { ReactComponent as Logo} from './ScootezLogo.svg';
-
-
 import HomePage from "./Pages/HomePage.js";
 import ErrorPage from "./Pages/RouterErrorPage.js";
 import LoginPage from "./Pages/LoginPage.js";
@@ -20,6 +16,8 @@ import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
 
 function App() {
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // create state variables
   //const [backendData, setBackendData] = useState([{}])
