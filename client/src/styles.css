@@ -325,4 +325,22 @@ label {
     border-style: none;
 }
 
+/* Small white text */
+.button5 {
+    color: white;
+    font-family: var(--bodyFontFamily);
+    font-weight: var(--bodyFontWeight);
+    font-size: 14px;
+
+    background-color: transparent;
+    border-color: transparent;
+    text-decoration: underline;
+}
+.button5:hover {
+    color: var(--mid-green);
+}
+.button5:active {
+    color: var(--neon-green);
+}
+
 
