@@ -1,25 +1,18 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const bcrypt = require('bcryptjs');
-const cors = require('cors');
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const bcrypt = require("bcryptjs");
+const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
 const port = 5000;
-
-// import cors from 'cors';
-// const corsOptions ={
-//     origin: ['http://localhost:3000'], 
-//     credentials:true,            //access-control-allow-credentials:true
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-// };
-// app.use(cors(corsOptions));
 
 const app = express();
 
 const corsOptions = {
-    origin: '*',
-    credentials: true,
-    optionSuccessStatus: 200
+	origin: "*",
+	credentials: true,
+	optionSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -27,13 +20,17 @@ app.use(cors(corsOptions));
 dotenv.config();
 
 app.use(express.json());
-mongoose.connect(process.env.DB_URI);
+if (process.env.NODE_ENV !== 'test') {
+    mongoose.connect(process.env.DB_URI);
+}
 
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'MongoDB Connection Error'));
+db.on("error", console.error.bind(console, "MongoDB Connection Error"));
 
-db.once('open', () => { console.log('MongoDB Connected'); });
+db.once("open", () => {
+	console.log("MongoDB Connected");
+});
 
 const accountSchema = new mongoose.Schema({
 	firstName: String,
@@ -59,7 +56,7 @@ const employeeSchema = new mongoose.Schema({
 	lastName: String,
 	email: String,
 	password: String,
-	address: String
+	address: String,
 });
 
 const adminSchema = new mongoose.Schema({
@@ -67,112 +64,81 @@ const adminSchema = new mongoose.Schema({
 	lastName: String,
 	email: String,
 	password: String,
-	address: String
+	address: String,
 });
 
 const rentalHistorySchema = new mongoose.Schema({
-    scooter: {
-        type: scooterSchema
-    },
-    timeRented: {
-        type: Date
-    },
-    user: {
-        type: accountSchema
-    },
-    cost: Number,
-    startLatitude: Number,
-    startLongitude: Number,
-    endLatitude: Number,
-    endLongitude: Number
+	scooter: {
+		type: scooterSchema,
+	},
+	timeRented: {
+		type: Date,
+	},
+	user: {
+		type: accountSchema,
+	},
+	cost: Number,
+	startLatitude: Number,
+	startLongitude: Number,
+	endLatitude: Number,
+	endLongitude: Number,
 });
 
-const Account = mongoose.model('account', accountSchema);
-const Scooter = mongoose.model('scooter', scooterSchema);
-const Employee = mongoose.model('employee', employeeSchema);
-const Admin = mongoose.model('admin', adminSchema);
-const RentalHistory = mongoose.model('history', rentalHistorySchema);
+const Account = mongoose.model("account", accountSchema);
+const Scooter = mongoose.model("scooter", scooterSchema);
+const Employee = mongoose.model("employee", employeeSchema);
+const Admin = mongoose.model("admin", adminSchema);
+const RentalHistory = mongoose.model("history", rentalHistorySchema);
 
-app.listen(port, () => { console.log(`Server Started Port ${port}`); });
-
-app.post('/api/users/create', async (req, res) => {
-    const { firstName, lastName, email, password, address, creditCard } = req.body;
-
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const accountDocument = new Account({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            password: hashedPassword,
-            address: address,
-            creditCard: creditCard
-        });
-
-        await accountDocument.save();
-        res.status(201);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+app.listen(port, () => {
+	console.log(`Server Started Port ${port}`);
 });
 
-app.get('/api/users/login', async (req, res) => {
-    const { email, password } = req.body;
+async function createAccount(req, res) {
+	const { firstName, lastName, email, password, address, creditCard } =
+		req.body;
 
-    try {
-        const account = await Account.findOne({ email: email });
+	try {
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-        if (user && await bcrypt.compare(password, user.password)) {
-            console.log('Successful login');
-        } else {
-            console.log('Unsuccessful login');
-        }
-    } catch (error) {
-        res.status(500).send(error);
-    }
-});
+		const accountDocument = new Account({
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			password: hashedPassword,
+			address: address,
+			creditCard: creditCard,
+		});
 
-// //===============Setup backend API===============
-// import express from 'express';  // import express
-// import { config } from 'dotenv';
-// import { executeCrudOperations } from './databaseCRUD.js';
-// const app = express();   // create app
-// app.use(express.json());
-// app.use(express.urlencoded({extended:true}));
+		await accountDocument.save();
+		res.status(201).send('Account created successfully');
+	} catch (error) {
+        console.log(error);
+		res.status(500).send(error);
+	}
+}
 
+async function loginAccount(req, res) {
+	const { email, password } = req.body;
 
-// import cors from 'cors';
-// const corsOptions ={
-//     origin: ['http://localhost:3000'], 
-//     credentials:true,            //access-control-allow-credentials:true
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-// };
-// app.use(cors(corsOptions));
+	try {
+		const account = await Account.findOne({ email: email });
 
-// // get variables from .env into process.env
-// config();
-// console.log(process.env.DB_URI);
+		if (account && (await bcrypt.compare(password, account.password))) {
+			console.log("Successful login");
+			const token = jwt.sign({ id: account._id }, "secret");
+			res.json({ token });
+            res.status(201).send('Successful login');
+		} else {
+			console.log("Unsuccessful login");
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+}
 
-// // call functions for CRUD from database
-// //await executeCrudOperations();
+app.post("/api/users/create", createAccount);
 
-// app.post ("/api", async(request, response) => {
-//     const {data}=request.body;
-//     console.log(data);
-// })
+app.post("/api/users/login", loginAccount);
 
-// app.get('/api', async (reqest, response) => {
-//     try {
-//         const { email_input, password_input } = reqest.query;
-
-//         console.log('New login request');
-
-//         console.log(`New login request -> Email: ${email_input}, Password: ${password_input}`);
-//     } catch (err) {
-//         console.error('Unable to login', err);
-//     }
-// })
-
-// // startup backend
-// app.listen(5000, () => {console.log("Server started on port 5000")})  // server runs on port 5000, client (React) runs on port 3000
+module.exports = { app, createAccount, loginAccount };
