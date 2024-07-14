@@ -8,32 +8,32 @@ const jwt = require("jsonwebtoken");
 const authenticateToken = require("../middleware/auth");
 
 const port = 5000;
-
 const app = express();
 
+// set up Cors
 const corsOptions = {
 	origin: "*",
 	credentials: true,
 	optionSuccessStatus: 200,
 };
-
 app.use(cors(corsOptions));
 
 dotenv.config();
 
 app.use(express.json());
+
 if (process.env.NODE_ENV !== "test") {
 	mongoose.connect(process.env.DB_URI);
 }
 
+// connect to MongoDB
 const db = mongoose.connection;
 
+// check connection to mongoDB
 db.on("error", console.error.bind(console, "MongoDB Connection Error"));
+db.once("open", () => {	console.log("MongoDB Connected");});
 
-db.once("open", () => {
-	console.log("MongoDB Connected");
-});
-
+// initialize MongoDB Schemas (JSON object that defines the structure and contents of the data)
 const accountSchema = new mongoose.Schema({
 	firstName: String,
 	lastName: String,
@@ -86,12 +86,14 @@ const rentalHistorySchema = new mongoose.Schema({
 	endLongitude: Number,
 });
 
-const Account = mongoose.model("account", accountSchema);
-const Scooter = mongoose.model("scooter", scooterSchema);
-const Employee = mongoose.model("employee", employeeSchema);
-const Admin = mongoose.model("admin", adminSchema);
-const RentalHistory = mongoose.model("history", rentalHistorySchema);
+// Initialize MongoDB collections (using mongoose.model)
+const Account = mongoose.model('account', accountSchema);
+const Scooter = mongoose.model('scooter', scooterSchema);
+const Employee = mongoose.model('employee', employeeSchema);
+const Admin = mongoose.model('admin', adminSchema);
+const RentalHistory = mongoose.model('history', rentalHistorySchema);
 
+// log if server started on port 5000
 app.listen(port, () => {
 	console.log(`Server Started Port ${port}`);
 });
@@ -112,6 +114,7 @@ app.post("/api/users/create", async (req, res) => {
 			creditCard: creditCard,
 		});
 
+		// save the new account to DB
 		await accountDocument.save();
 		res.status(201);
 	} catch (error) {

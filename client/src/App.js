@@ -28,7 +28,6 @@ export const AccountContext = React.createContext(null);
 export const IsLoggedInContext = React.createContext(false);
 
 function App() {
-  const [account, setAccount] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // create state variables
@@ -50,7 +49,6 @@ function App() {
   // What is displayed on the webpage
   return (
     <div className="App">
-      <AccountContext.Provider value={{ account: account, setAccount: setAccount }}>
       <IsLoggedInContext.Provider value={{ isLoggedIn: isLoggedIn, setIsLoggedIn: setIsLoggedIn }}>
         <NavBar />
         <div className="navBarBuffer" />
@@ -80,7 +78,6 @@ function App() {
 
         </body>
       </IsLoggedInContext.Provider>
-      </AccountContext.Provider>
     </div>
   );
 }

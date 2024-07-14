@@ -4,7 +4,7 @@ import { NavLink, useNavigate} from 'react-router-dom';
 
 import { ReactComponent as Logo} from './ScootezLogo.svg';
 
-import { AccountContext, IsLoggedInContext } from './App.js';
+import { IsLoggedInContext } from './App.js';
 import HomePage from "./Pages/HomePage.js";
 import AboutPage from './Pages/AboutPage.js';
 import MapPage from './Pages/MapPage.js';
@@ -16,7 +16,8 @@ import ProfilePage from './Pages/ProfilePage.js';
 export default function NavBar() {
     // The display case for the screen
     const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
-    const { account, setAccount } = useContext(AccountContext);
+
+    const [accountInitials, setAccountInitials] = useState(null);
 
     function RideButton() {
         const navigate = useNavigate();
@@ -36,9 +37,26 @@ export default function NavBar() {
         }
         return (
         <button className="accountCircle" onClick={handleClick}>
-            {account}
+            
         </button>
         );
+    }
+
+    async function getAccountName() {
+        try {    
+            const response = await fetch('http://localhost:5000/api/accountName', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const fullName = await response.json();
+            return fullName;    // fullName is an object of { firstName, lastName }
+        }
+        catch (error) {
+            console.error("error encountered in getting name" + error);
+        }
     }
 
     if (!isLoggedIn) {
@@ -60,6 +78,11 @@ export default function NavBar() {
         );
     }
     else {
+        getAccountName().then((fullName) => {
+            // set the account name to be the initials
+            setAccountInitials(fullName.firstName.charAt(0) + " " + fullName.lastName.charAt(0));
+        })
+
         return(
             <nav>
                 <div style={{width: "96%", marginLeft: "2%", display: "flex", justifyContent:"space-between"}}>
