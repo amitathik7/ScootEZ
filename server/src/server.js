@@ -1,4 +1,3 @@
-//#region imports ================================================================
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -22,11 +21,10 @@ app.use(cors(corsOptions));
 dotenv.config();
 
 app.use(express.json());
+
 if (process.env.NODE_ENV !== "test") {
 	mongoose.connect(process.env.DB_URI);
 }
-
-//#endregion ======================================================================
 
 // connect to MongoDB
 const db = mongoose.connection;
@@ -34,8 +32,6 @@ const db = mongoose.connection;
 // check connection to mongoDB
 db.on("error", console.error.bind(console, "MongoDB Connection Error"));
 db.once("open", () => {	console.log("MongoDB Connected");});
-
-//#region initialize database content ==============================================
 
 // initialize MongoDB Schemas (JSON object that defines the structure and contents of the data)
 const accountSchema = new mongoose.Schema({
@@ -97,21 +93,12 @@ const Employee = mongoose.model('employee', employeeSchema);
 const Admin = mongoose.model('admin', adminSchema);
 const RentalHistory = mongoose.model('history', rentalHistorySchema);
 
-//#endregion ======================================================================
-
 // log if server started on port 5000
 app.listen(port, () => {
 	console.log(`Server Started Port ${port}`);
 });
 
-//#region CRUD operations ==========================================================
-
-// Create:
-// Read
-// update
-// delete
-
-const createAccount = async (req, res) => {
+app.post("/api/users/create", async (req, res) => {
 	const { firstName, lastName, email, password, address, creditCard } =
 		req.body;
 
@@ -127,15 +114,16 @@ const createAccount = async (req, res) => {
 			creditCard: creditCard,
 		});
 
+		// save the new account to DB
 		await accountDocument.save();
 		res.status(201);
 	} catch (error) {
 		console.log(error);
 		res.status(500).send(error);
 	}
-}
+});
 
-const login = async (req, res) => {
+app.post("/api/users/login", async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
@@ -152,16 +140,7 @@ const login = async (req, res) => {
 	} catch (error) {
 		res.status(500).send(error);
 	}
-}
-
-//#endregion =======================================================================
-
-//#region API calls ================================================================
-
-app.post("/api/users/create", createAccount);
-app.post("/api/users/login", login);
-
-//#endregion =======================================================================
+});
 
 app.get("/api/scooters", async (req, res) => {
 	try {
