@@ -113,7 +113,7 @@ app.post("/api/users/create", async (req, res) => {
 		});
 
 		await accountDocument.save();
-		res.status(201).send("Account created successfully");
+		res.status(201);
 	} catch (error) {
 		console.log(error);
 		res.status(500).send(error);
@@ -130,7 +130,7 @@ app.post("/api/users/login", async (req, res) => {
 			console.log("Successful login");
 			const token = jwt.sign({ id: account._id }, "secret");
 			res.json({ token });
-			res.status(201).send("Successful login");
+			res.status(201);
 		} else {
 			console.log("Unsuccessful login");
 		}
@@ -156,7 +156,7 @@ app.get("/api/users/accountName", authenticateToken, async (req, res) => {
 		const account = await Account.findById(req.user.id);
 
 		if (!account) {
-			return res.status(404).send("User not found");
+			return res.status(404);
 		}
 
 		res.json({ firstName: account.firstName, lastName: account.lastName });
