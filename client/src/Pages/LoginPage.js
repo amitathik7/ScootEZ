@@ -1,10 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AccountContext, IsLoggedInContext } from '../App.js';
 import styles from "../styles.css";
 
 export default function LoginPage() {
-    // set login states
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // global context
+    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+    const { account, setAccount } = useContext(AccountContext);
+
+    // states
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [showPasswordMessage, setShowPasswordMessage] = useState(false);
     const [passwordValidity, setPasswordValidity] = useState(false);
@@ -54,9 +58,9 @@ export default function LoginPage() {
             const data = await response.json();
 
             if (response.ok) {
-                alert("success");
                 localStorage.setItem("token", data.token);
                 setIsLoggedIn(true);
+                setAccount("User is logged in");
                 return true;
             }
             else {
