@@ -30,6 +30,17 @@ export default function NavBar() {
         );
     }
 
+    function AccountButton() {
+        function handleClick() {
+            alert("profile button clicked");
+        }
+        return (
+        <button className="accountCircle" onClick={handleClick}>
+            {account}
+        </button>
+        );
+    }
+
     if (!isLoggedIn) {
         return(
             <nav>
@@ -61,7 +72,7 @@ export default function NavBar() {
                         <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>RENT NOW</NavLink></div>
                         <div><NavLink className="navbarLink" to="/faq" element={<FaqPage />}>FAQ</NavLink></div>
                     </div>
-                    <div className="accountCircle">{account}</div>
+                    <div><AccountButton /></div>
                 </div>
             </nav>
         );

@@ -92,14 +92,6 @@ body {
     color: white;
     line-height: 50px;
 }
-.accountCircle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background-color: var(--mid-green);
-    color: white;
-    font-size: 18px;
-}
 
 
 
@@ -309,6 +301,28 @@ label {
 .button4:active {
     color: white;
     background-color: var(--dark-green);
+}
+
+.accountCircle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border-width: 0px;
+    background-color: var(--mid-green);
+    color: white;
+    font-size: 18px;
+}
+.accountCircle:hover {
+    border-width: 2px;
+    border-style: none;
+    border-color: var(--light-green);
+}
+.accountCircle:active {
+    color: white;
+    background-color: var(--neon-green);
+    border-width: 2px;
+    border-color: var(--light-green);
+    border-style: none;
 }
 
 

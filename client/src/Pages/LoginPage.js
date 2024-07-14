@@ -60,7 +60,7 @@ export default function LoginPage() {
             if (response.ok) {
                 localStorage.setItem("token", data.token);
                 setIsLoggedIn(true);
-                setAccount("User is logged in");
+                setAccount("User name");
                 return true;
             }
             else {
