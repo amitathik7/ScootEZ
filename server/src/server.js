@@ -168,7 +168,7 @@ app.get("/api/users/accountName", authenticateToken, async (req, res) => {
 	}
 });
 
-app.get('/api/users/accountInfo', authenticateToken, async (req, res) => {
+app.get("/api/users/accountInfo", authenticateToken, async (req, res) => {
 	try {
 		const account = await Account.findById(req.user.id);
 
@@ -182,11 +182,52 @@ app.get('/api/users/accountInfo', authenticateToken, async (req, res) => {
 			email: account.email,
 			password: account.password,
 			address: account.address,
-			creditCard: account.creditCard
+			creditCard: account.creditCard,
 		});
 	} catch (error) {
 		res.status(500).send(error);
 	}
-})
+});
+
+app.delete("/api/user/delete", authenticateToken, async (req, res) => {
+	try {
+		const account = await Account.findByIdAndDelete(req.user.id);
+
+		if (!account) {
+			return res.status(404);
+		}
+
+		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.put("/api/users/update", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const newData = req.body;
+
+		const account = await Account.findByIdAndUpdate(accountId, newData, {
+			new: true,
+		});
+
+		if (!account) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: account.firstName,
+			lastName: account.lastName,
+			email: account.email,
+			password: account.password,
+			address: account.address,
+			creditCard: account.creditCard,
+		});
+		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
 
 module.exports = { app };
