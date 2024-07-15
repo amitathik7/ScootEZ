@@ -133,6 +133,7 @@ app.post("/api/users/login", async (req, res) => {
 			res.status(201);
 		} else {
 			console.log("Unsuccessful login");
+			res.status(400);
 		}
 	} catch (error) {
 		res.status(500).send(error);
