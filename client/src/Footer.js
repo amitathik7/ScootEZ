@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './styles.css';
 import { NavLink, useNavigate} from 'react-router-dom';
 
-import { ReactComponent as Logo} from './ScootezLogo.svg';
+import { ReactComponent as Logo} from './assets/ScootezLogo.svg';
 
 import HomePage from "./Pages/HomePage.js";
 import AboutPage from './Pages/AboutPage.js';

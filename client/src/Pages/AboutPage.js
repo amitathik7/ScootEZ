@@ -3,7 +3,7 @@ import React from 'react';
 export default function AboutPage() {
     return(
         <div className="fullBox">
-            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+            <div style={{width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
                 <h1>About Us</h1>
                 <p>
                     ScootEZ is a fictional scooter rental service located in Gainesville, FL on and around the University of Florida campus.

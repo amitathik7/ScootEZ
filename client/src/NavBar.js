@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import styles from './styles.css';
 import { NavLink, useNavigate} from 'react-router-dom';
 
-import { ReactComponent as Logo} from './ScootezLogo.svg';
+import { ReactComponent as Logo} from './assets/ScootezLogo.svg';
 
 import { IsLoggedInContext } from './App.js';
 import HomePage from "./Pages/HomePage.js";
@@ -30,7 +30,7 @@ export default function NavBar() {
             url: '/about',
             submenu: [
                 {
-                    title: 'ABOUT',
+                    title: 'ABOUT US',
                     url: '/about',
                 },
                 {
@@ -66,20 +66,21 @@ export default function NavBar() {
 
         if (items.submenu) {
             return (
-                <>
-                    <button type="button" className="navbarLink"
+                <div>
+                    <button style={{float: "right", marginBottom: "15px"}}
+                    type="button" className="navbarLink"
                     aria-haspopup="menu" aria-expanded={isExpanded ? "true" : "false"}
-                    onMouseOver={() => setIsExpanded((props) => !props)}
+                    onMouseOver={() => setIsExpanded(true)}
                     onClick={() => setIsExpanded((props) => !props)}>
                         {items.title}
                     </button>
-                    <Dropdown submenu={items.submenu} isExpanded={isExpanded} />
-                </>
+                    <Dropdown style={{float: "right"}} submenu={items.submenu} isExpanded={isExpanded} />
+                </div>
             );
         }
         else {
             return (
-                <NavLink className="navbarLink" to={items.url}>{items.title}</NavLink>
+                <NavLink style={{float: "right"}} className="navbarLink" to={items.url}>{items.title}</NavLink>
             );
         }
     }
@@ -87,7 +88,7 @@ export default function NavBar() {
     function Dropdown({submenu, isExpanded, isAccountDropdown}) {
         if (!isAccountDropdown) {
             return (
-                <ul className={isExpanded ? "dropdownShow" : "dropdownHide"}>
+                <ul className={isExpanded ? "dropdown Show" : "dropdown Hide"}>
                     {/* map each submenu to its own link */}
                     {submenu.map((submenu, index) => (
                     <li key={index} className="dropdownItems">
@@ -99,39 +100,40 @@ export default function NavBar() {
         }
         else {
             return (
-                <ul className={isExpanded ? "dropdownShow" : "dropdownHide"}>
+                <ul className={isExpanded ? "dropdown Show" : "dropdown Hide"}>
                     {/* map each submenu to its own link */}
                     {submenu.map((submenu, index) => (
                     <li key={index} className="dropdownItems">
                         <NavLink className="navbarLink" to={submenu.url}>{submenu.title}</NavLink>
                     </li>
                     ))}
-                    <li><LogoutButton /></li>
+                    <li className="dropdownItems"><LogoutButton /></li>
                 </ul>
             );
         }
     }
 
     // login button
-    function RideButton() {
+    function LoginButton() {
         const navigate = useNavigate();
         function handleClick() {
             navigate("/login", {})
         }
         return (
         <button className="button1" onClick={handleClick}>
-            RENT YOUR RIDE
+            LOGIN
         </button>
         );
     }
 
-    // login button
+    // logout button
     function LogoutButton() {
         function handleClick() {
             alert("logout button clicked, but logout hasn't been implemented yet")
         }
         return (
-            <button className="navbarLink logout" onClick={handleClick}>
+            <button className="navbarLink logout"
+            onClick={handleClick}>
                 LOGOUT
             </button>
         );
@@ -141,15 +143,17 @@ export default function NavBar() {
     function AccountButton() {
         const [isExpanded, setIsExpanded] = useState(false);
         return (
-            <>
-                <button type="button" className="accountCircle"
+            <div>
+                <button style={{float: "right", marginBottom: "15px"}}
+                type="button" className="accountCircle"
                 aria-haspopup="menu" aria-expanded={isExpanded ? "true" : "false"}
-                onMouseOver={() => setIsExpanded((props) => !props)}
+                onMouseOver={() => setIsExpanded(true)}
                 onClick={() => setIsExpanded((props) => !props)}>
                     {accountInitials}
                 </button>
-                <Dropdown submenu={accountSubmenuItems} isExpanded={isExpanded} isAccountDropdown="true" />
-            </>
+                <Dropdown style={{float: "right"}} submenu={accountSubmenuItems}
+                isExpanded={isExpanded} isAccountDropdown="true" />
+            </div>
         );
     }
 
@@ -180,13 +184,13 @@ export default function NavBar() {
                     <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
                         {navBarItems.map((menu, index) => {
                             return (
-                                <div key={index}>
+                                <div style={{width: "200px"}} key={index}>
                                     <MenuItem items={menu} key={index} />
                                 </div>
                             );
                         })}
                     </div>
-                    <div><RideButton /></div>
+                    <div><LoginButton /></div>
                 </div>
             </nav>
         );
@@ -207,7 +211,7 @@ export default function NavBar() {
                     <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
                         {navBarItems.map((menu, index) => {
                             return (
-                                <div key={index}>
+                                <div style={{width: "200px"}} key={index}>
                                     <MenuItem items={menu} key={index} />
                                 </div>
                             );

@@ -70,13 +70,9 @@ function App() {
             <Route path="/employee-login" element={<EmployeeLoginPage/>} />
             <Route path="/admin-login" element={<AdminLoginPage/>} />
             <Route path="*" element={<ErrorPage />} />
-            
-            
           </Routes>
-
-          <Footer />
-
         </body>
+        <Footer />
       </IsLoggedInContext.Provider>
     </div>
   );
