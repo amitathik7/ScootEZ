@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import styles from './styles.css';
 import { NavLink, useNavigate} from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import HomePage from "./Pages/HomePage.js";
 import AboutPage from './Pages/AboutPage.js';
 import MapPage from './Pages/MapPage.js';
 import FaqPage from './Pages/FaqPage.js';
+import ScooterPage from './Pages/ScooterPage.js';
 
 import ProfilePage from './Pages/ProfilePage.js';
 
@@ -16,9 +17,77 @@ import ProfilePage from './Pages/ProfilePage.js';
 export default function NavBar() {
     // The display case for the screen
     const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
-
     const [accountInitials, setAccountInitials] = useState(null);
 
+    // The nav bar structure
+    const navBarItems = [
+        {
+            title: 'HOME',
+            url: '/',
+        },
+        {
+            title: 'ABOUT',
+            url: '/about',
+            submenu: [
+                {
+                    title: 'ABOUT',
+                    url: '/about',
+                },
+                {
+                title: 'SCOOTERS',
+                url: '/scooters',
+                }
+            ],
+        },
+        {
+            title: 'RENT',
+            url: '/map',
+        },
+        {
+            title: 'FAQ',
+            url: '/faq',
+        },
+    ];
+
+    // component for each menu item on the nav bar
+    function MenuItem({ items }) {
+        const [isExpanded, setIsExpanded] = useState(false);
+
+        if (items.submenu) {
+            return (
+                <>
+                    <button type="button" className="navbarLink"
+                    aria-haspopup="menu" aria-expanded={isExpanded ? "true" : "false"}
+                    onMouseOver={() => setIsExpanded((props) => !props)}
+                    onClick={() => setIsExpanded((props) => !props)}>
+                        {items.title}
+                    </button>
+                    <Dropdown submenu={items.submenu} isExpanded={isExpanded} />
+                </>
+            );
+        }
+        else {
+            return (
+                <NavLink className="navbarLink" to={items.url}>{items.title}</NavLink>
+            );
+        }
+    }
+
+    function Dropdown({submenu, isExpanded}) {
+
+        return (
+            <ul className={isExpanded ? "dropdownShow" : "dropdownHide"}>
+                {/* map each submenu to its own link */}
+                {submenu.map((submenu, index) => (
+                <li key={index} className="dropdownItems">
+                    <NavLink className="navbarLink" to={submenu.url}>{submenu.title}</NavLink>
+                </li>
+                ))}
+            </ul>
+        );
+    }
+
+    // login button
     function RideButton() {
         const navigate = useNavigate();
         function handleClick() {
@@ -31,6 +100,7 @@ export default function NavBar() {
         );
     }
 
+    // account profile button
     function AccountButton() {
         function handleClick() {
             alert("profile button clicked");
@@ -66,11 +136,14 @@ export default function NavBar() {
                     <div><NavLink className="navbarLink" to="/" element={<HomePage />}>
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
-                    <div style={{width: "30%", display: "flex", justifyContent:"space-between"}}>
-                        <div><NavLink className="navbarLink" to="/" element={<HomePage />}>HOME</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT US</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>RENT NOW</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/faq" element={<FaqPage />}>FAQ</NavLink></div>
+                    <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
+                        {navBarItems.map((menu, index) => {
+                            return (
+                                <div key={index}>
+                                    <MenuItem items={menu} key={index} />
+                                </div>
+                            );
+                        })}
                     </div>
                     <div><RideButton /></div>
                 </div>
@@ -89,7 +162,7 @@ export default function NavBar() {
                     <div><NavLink className="navbarLink" to="/" element={<HomePage />}>
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
-                    <div style={{width: "30%", display: "flex", justifyContent:"space-between"}}>
+                    <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
                         <div><NavLink className="navbarLink" to="/" element={<HomePage />}>HOME</NavLink></div>
                         <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT US</NavLink></div>
                         <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>RENT NOW</NavLink></div>
