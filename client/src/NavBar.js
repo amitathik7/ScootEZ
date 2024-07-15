@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import styles from './styles.css';
 import { NavLink, useNavigate} from 'react-router-dom';
 
-import { ReactComponent as Logo} from './ScootezLogo.svg';
+import { ReactComponent as Logo} from './assets/ScootezLogo.svg';
 
 import { IsLoggedInContext } from './App.js';
 import HomePage from "./Pages/HomePage.js";
@@ -113,14 +113,14 @@ export default function NavBar() {
     }
 
     // login button
-    function RideButton() {
+    function LoginButton() {
         const navigate = useNavigate();
         function handleClick() {
             navigate("/login", {})
         }
         return (
         <button className="button1" onClick={handleClick}>
-            RENT YOUR RIDE
+            LOGIN
         </button>
         );
     }
@@ -186,7 +186,7 @@ export default function NavBar() {
                             );
                         })}
                     </div>
-                    <div><RideButton /></div>
+                    <div><LoginButton /></div>
                 </div>
             </nav>
         );

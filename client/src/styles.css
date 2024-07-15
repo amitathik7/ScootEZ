@@ -55,7 +55,7 @@ nav {
 
 body {
     width: 100%;
-    min-height: 80vh;
+    min-height: 90vh;
     background-color: var(--light);
     font-family: var(--bodyFontFamily);
     font-weight: var(--bodyFontWeight);
