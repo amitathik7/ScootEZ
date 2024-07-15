@@ -49,6 +49,17 @@ export default function NavBar() {
         },
     ];
 
+    const accountSubmenuItems = [
+        {
+            title: 'ACCOUNT',
+            url: '/profile'
+        },
+        {
+            title: 'MY RENTALS',
+            url: '/current-rentals'
+        }
+    ]
+
     // component for each menu item on the nav bar
     function MenuItem({ items }) {
         const [isExpanded, setIsExpanded] = useState(false);
@@ -102,19 +113,26 @@ export default function NavBar() {
 
     // account profile button
     function AccountButton() {
+        const [isExpanded, setIsExpanded] = useState(false);
         function handleClick() {
             alert("profile button clicked");
         }
         return (
-        <button className="accountCircle" onClick={handleClick}>
-            
-        </button>
+            <>
+                <button type="button" className="accountCircle"
+                aria-haspopup="menu" aria-expanded={isExpanded ? "true" : "false"}
+                onMouseOver={() => setIsExpanded((props) => !props)}
+                onClick={() => setIsExpanded((props) => !props)}>
+                    {accountInitials}
+                </button>
+                <Dropdown submenu={accountSubmenuItems} isExpanded={isExpanded} />
+            </>
         );
     }
 
     async function getAccountName() {
         try {    
-            const response = await fetch('http://localhost:5000/api/accountName', {
+            const response = await fetch('http://localhost:5000/api/users/accountName', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -151,6 +169,7 @@ export default function NavBar() {
         );
     }
     else {
+        console.log("working to get name");
         getAccountName().then((fullName) => {
             // set the account name to be the initials
             setAccountInitials(fullName.firstName.charAt(0) + " " + fullName.lastName.charAt(0));
@@ -163,10 +182,13 @@ export default function NavBar() {
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
                     <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
-                        <div><NavLink className="navbarLink" to="/" element={<HomePage />}>HOME</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/about" element={<AboutPage />}>ABOUT US</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/map" element={<MapPage />}>RENT NOW</NavLink></div>
-                        <div><NavLink className="navbarLink" to="/faq" element={<FaqPage />}>FAQ</NavLink></div>
+                        {navBarItems.map((menu, index) => {
+                            return (
+                                <div key={index}>
+                                    <MenuItem items={menu} key={index} />
+                                </div>
+                            );
+                        })}
                     </div>
                     <div><AccountButton /></div>
                 </div>
