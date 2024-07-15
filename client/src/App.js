@@ -24,56 +24,32 @@ import Footer from "./Footer.js";
 import EmployeeLoginPage from './Pages/EmployeeLoginPage.js';
 import AdminLoginPage from './Pages/AdminLoginPage.js';
 
-export const AccountContext = React.createContext(null);
-export const IsLoggedInContext = React.createContext(false);
-
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // create state variables
-  //const [backendData, setBackendData] = useState([{}])
-
-  // use effect to fetch the api (since proxy is defined in package.json, can refer to it as "/api")
-  // after getting response, set the variable backendData to whatever the fetch recieves in response.json
-  // pass in empty array at the end of useEffect so the effect block only runs on the first render of the component
-  // useEffect(() => {
-  //   fetch("/api").then(
-  //     response => response.json()
-  //   ).then(
-  //     data => {
-  //       setBackendData(data)
-  //     }
-  //   )
-  // }, [])
-
-  // What is displayed on the webpage
   return (
     <div className="App">
-      <IsLoggedInContext.Provider value={{ isLoggedIn: isLoggedIn, setIsLoggedIn: setIsLoggedIn }}>
-        <NavBar />
-        <div className="navBarBuffer" />
+      <NavBar />
+      <div className="navBarBuffer" />
 
-        <body>
-          <Routes>
-            <Route path="/" element={<HomePage />}/>
-            <Route path="/about" element={<AboutPage/>} />
-            <Route path="/map" element={<MapPage/>} />
-            <Route path="/faq" element={<FaqPage/>} />
-            <Route path="/login" element={<LoginPage />}/>
-            <Route path="/create-account" element={<CreateAccountPage/>} />
-            <Route path="/scooters">
-              <Route index element={<ScooterPage/>} />
-              <Route path=":id" element={<ScooterProductPage/>} />
-            </Route>
-            <Route path="/profile" element={<ProfilePage/>} />
-            <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
-            <Route path="/employee-login" element={<EmployeeLoginPage/>} />
-            <Route path="/admin-login" element={<AdminLoginPage/>} />
-            <Route path="*" element={<ErrorPage />} />
-          </Routes>
-        </body>
-        <Footer />
-      </IsLoggedInContext.Provider>
+      <body>
+        <Routes>
+          <Route path="/" element={<HomePage />}/>
+          <Route path="/about" element={<AboutPage/>} />
+          <Route path="/map" element={<MapPage/>} />
+          <Route path="/faq" element={<FaqPage/>} />
+          <Route path="/login" element={<LoginPage />}/>
+          <Route path="/create-account" element={<CreateAccountPage/>} />
+          <Route path="/scooters">
+            <Route index element={<ScooterPage/>} />
+            <Route path=":id" element={<ScooterProductPage/>} />
+          </Route>
+          <Route path="/profile" element={<ProfilePage/>} />
+          <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
+          <Route path="/employee-login" element={<EmployeeLoginPage/>} />
+          <Route path="/admin-login" element={<AdminLoginPage/>} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </body>
+      <Footer />
     </div>
   );
 }

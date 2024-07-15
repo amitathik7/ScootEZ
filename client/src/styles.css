@@ -356,6 +356,7 @@ label {
     background-color: white;
 }
 
+/* for the edit pencil buttons */
 .button4 {
     background-color: var(--gray2);
     border: none;

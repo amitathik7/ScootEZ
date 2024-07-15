@@ -1,13 +1,10 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from '../styles.css';
-import { NavLink, useNavigate} from 'react-router-dom';
+import { Navigate, useNavigate} from 'react-router-dom';
 
-import { IsLoggedInContext } from '../App.js';
 import { ReactComponent as PencilIcon} from '../assets/pencilIcon.svg';
 
 export default function ProfilePage() {
-    // FIXME: NEED AUTHENTIFICATION TO ACCESS THIS PAGE
-    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
 
     // states
     const [isFirstNameActive, setIsFirstNameActive] = useState(false);
@@ -73,7 +70,7 @@ export default function ProfilePage() {
             const response = await fetch('http://localhost:5000/api/users/accountInfo', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`
                 },
             });
             const accountInfo = await response.json();
@@ -85,42 +82,99 @@ export default function ProfilePage() {
         }
     }
 
-    // // button that logs into account
-    // function CreateAccountButton() {
-    //     const navigate = useNavigate();
-    //     function handleClick() {
-    //         setIsCreateButtonActive(false);
-    //         CreateAccount().then((isSuccess) => {
-    //             if (isSuccess){
-    //                 navigate("/profile", {});
-    //             }
-    //             else {
-    //                 setIsCreateButtonActive(true);
-    //             }
-    //         })   
-    //     }
+    async function SaveAccountData() {
+        try {
+            console.log(accountInfo);
 
-    //     // button is active if both fields are true
-    //     if (isCreateButtonActive){
-    //         return (
-    //             <button className="button1" onClick={handleClick}>
-    //                 CREATE ACCOUNT
-    //             </button>
-    //         );
-    //     }
-    //     // button is disabled if either field is invalid
-    //     else {
-    //         return (
-    //             <button className="button1" disabled="true">
-    //                 CREATE ACCOUNT
-    //             </button>
-    //         );
-    //     }
-    // }
+            const response = await fetch(
+                'http://localhost:5000/api/users/update',
+                {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(accountInfo)
+                }
+            );
+            if (response.ok) {
+                return true;
+            }
+            else {
+                throw new Error(response.statusText);
+            }
+        } catch (error) {
+            alert("An error occured while saving changes; see console for details");
+            console.error("error detected: ", error);
+            return false;
+        }
+    }
 
+    async function DeleteAccount() {
+        try {
+            const response = await fetch(
+                'http://localhost:5000/api/users/delete',
+                {
+                    method: "DELETE",
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+            if (response.ok) {
+                return true;
+            }
+            else {
+                throw new Error(response.statusText);
+            }
+        } catch (error) {
+            alert("An error occured while deleting account; see console for details");
+            console.error("error detected: ", error);
+            return false;
+        }
+    }
 
+    // button that saves the changed account info
+    function SaveChangesButton() {
+        function handleClick() {
+            SaveAccountData().then((isSuccess) => {
+                if (isSuccess){
+                    alert("Successfuly saved changes to your account");
+                }
+                else {
+                    alert("Failed to save changes to your account");
+                }
+            })   
+        }
+        return (
+            <button className="button1" onClick={handleClick}>
+                SAVE
+            </button>
+        );
+    }
 
-    
+    // button that saves the changed account info
+    function DeleteAccountButton() {
+        const navigate = useNavigate();
+        function handleClick() {
+            DeleteAccount().then((isSuccess) => {
+                if (isSuccess){
+                    alert("Successfuly deleted your account");
+                    localStorage.removeItem("token");   //delete token
+                    navigate("/", {});  // navigate home
+                }
+                else {
+                    alert("Failed to save changes to your account");
+                }
+            })   
+        }
+        return (
+            <button className="button3" onClick={handleClick}>
+                DELETE ACCOUNT
+            </button>
+        );
+    }
 
     // shows the invalid message only if the showPasswordMessage state is true
     function IssueMessage() {
@@ -217,92 +271,102 @@ export default function ProfilePage() {
             passwordRef.current.type = "password";
         }
     }
-
-
-    // call get account info immediately and set it in the state
-    //getAccountData().then((data) => { setAccountInfo(data) });
     
+    
+    if (localStorage.getItem("token") != null) {
 
-    return (
-        <div className="fullBox gray">
-            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                <h1>My Profile</h1>
-                <p>First Name:</p>
-                <input className="input2" disabled={ isFirstNameActive ? false : true } required
-                    type="text"
-                    placeholder="First Name"
-                    value={accountInfo.firstName}
-                    onChange={handleFirstNameChange}
-                />
-                <button className="button4" onClick={() => setIsFirstNameActive((props) => !props)}>
-                    <PencilIcon style={{ height: "30px", fill: "black" }} />
-                </button>
+        // call get account info immediately and set it in the state
+        getAccountData().then((data) => { setAccountInfo(data) });
 
-                <p>Last Name:</p>
-                <input className="input2" disabled={ isLastNameActive ? false : true } required
-                    type="text"
-                    placeholder="Last Name"
-                    value={accountInfo.lastName}
-                    onChange={handleLastNameChange}
-                />
-                <button className="button4" onClick={() => setIsLastNameActive((props) => !props)}>
-                    <PencilIcon style={{ height: "30px", fill: "black" }} />
-                </button>
+        return (
+            <div className="fullBox gray">
+                <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>My Profile</h1>
+                    <p>First Name:</p>
+                    <input className="input2" disabled={ isFirstNameActive ? false : true } required
+                        type="text"
+                        placeholder="First Name"
+                        value={accountInfo.firstName}
+                        onChange={handleFirstNameChange}
+                    />
+                    <button className="button4" onClick={() => setIsFirstNameActive((props) => !props)}>
+                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    </button>
 
-                <p>Email:</p>
-                <input className="input2" disabled={ isEmailActive ? false : true } required
-                    type="email"
-                    placeholder="Email"
-                    value={accountInfo.email}
-                    onChange={handleEmailChange}
-                />
-                <button className="button4" onClick={() => setIsEmailActive((props) => !props)}>
-                    <PencilIcon style={{ height: "30px", fill: "black" }} />
-                </button>
+                    <p>Last Name:</p>
+                    <input className="input2" disabled={ isLastNameActive ? false : true } required
+                        type="text"
+                        placeholder="Last Name"
+                        value={accountInfo.lastName}
+                        onChange={handleLastNameChange}
+                    />
+                    <button className="button4" onClick={() => setIsLastNameActive((props) => !props)}>
+                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    </button>
 
-                <p>Password:</p>
-                <input className="input2" disabled={ isPasswordActive ? false : true } required
-                    type="password"
-                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                    placeholder="Password"
-                    ref={passwordRef}
-                    value={accountInfo.password}
-                    onChange={handlePasswordChange}
-                    onFocus={() => {setShowPasswordMessage(true)}}
-                    onBlur={() => {
-                        if(passwordValidity) {setShowPasswordMessage(false)}
-                    }}
-                    onKeyUp={ValidatePassword}
-                />
-                <button className="button4" onClick={() => setIsPasswordActive((props) => !props)}>
-                    <PencilIcon style={{ height: "30px", fill: "black" }} />
-                </button>
-                <br/>
-                <input type="checkbox" onClick={ToggleShowPassword}/> Show Password
-                <PasswordMessage />
+                    <p>Email:</p>
+                    <input className="input2" disabled={ isEmailActive ? false : true } required
+                        type="email"
+                        placeholder="Email"
+                        value={accountInfo.email}
+                        onChange={handleEmailChange}
+                    />
+                    <button className="button4" onClick={() => setIsEmailActive((props) => !props)}>
+                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    </button>
 
-                <p>Address:</p>
-                <input className="input2" disabled={ isAddressActive ? false : true }
-                    type="text"
-                    placeholder="Address"
-                    value={accountInfo.address}
-                    onChange={handleAddressChange}
-                />
-                <button className="button4" onClick={() => setIsAddressActive((props) => !props)}>
-                    <PencilIcon style={{ height: "30px", fill: "black" }} />
-                </button>
+                    <p>Password:</p>
+                    <input className="input2" disabled={ isPasswordActive ? false : true } required
+                        type="password"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                        placeholder="Password"
+                        ref={passwordRef}
+                        value={accountInfo.password}
+                        onChange={handlePasswordChange}
+                        onFocus={() => {setShowPasswordMessage(true)}}
+                        onBlur={() => {
+                            if(passwordValidity) {setShowPasswordMessage(false)}
+                        }}
+                        onKeyUp={ValidatePassword}
+                    />
+                    <button className="button4" onClick={() => setIsPasswordActive((props) => !props)}>
+                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    </button>
+                    <br/>
+                    <input type="checkbox" onClick={ToggleShowPassword}/> Show Password
+                    <PasswordMessage />
 
-                <p>Payment:</p>
-                <input className="input2" disabled={ isCardActive ? false : true}
-                    type="text"
-                    placeholder="FIXME - multiple fields"
-                    value={accountInfo.creditCard}
-                    onChange={handleCardChange}
-                />
-                <button className="button4" onClick={() => setIsCardActive((props) => !props)}>
-                    <PencilIcon style={{ height: "30px", fill: "black" }} />
-                </button>
+                    <p>Address:</p>
+                    <input className="input2" disabled={ isAddressActive ? false : true }
+                        type="text"
+                        placeholder="Address"
+                        value={accountInfo.address}
+                        onChange={handleAddressChange}
+                    />
+                    <button className="button4" onClick={() => setIsAddressActive((props) => !props)}>
+                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    </button>
+
+                    <p>Payment:</p>
+                    <input className="input2" disabled={ isCardActive ? false : true}
+                        type="text"
+                        placeholder="FIXME - multiple fields"
+                        value={accountInfo.creditCard}
+                        onChange={handleCardChange}
+                    />
+                    <button className="button4" onClick={() => setIsCardActive((props) => !props)}>
+                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    </button> <br/>
+
+                    <SaveChangesButton /> <br/>
+                    <DeleteAccountButton />
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
+    else {
+        return (
+            <Navigate to='/login' />
+        );
+    }
 }
