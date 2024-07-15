@@ -168,4 +168,25 @@ app.get("/api/users/accountName", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get('/api/users/accountInfo', authenticateToken, async (req, res) => {
+	try {
+		const account = await Account.findById(req.user.id);
+
+		if (!account) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: account.firstName,
+			lastName: account.lastName,
+			email: account.email,
+			password: account.password,
+			address: account.address,
+			creditCard: account.creditCard
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+})
+
 module.exports = { app };
