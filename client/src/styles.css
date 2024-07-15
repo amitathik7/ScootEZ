@@ -124,6 +124,12 @@ body {
 .active {
     color: var(--neon-green);
 }
+.navbarLink.logout {
+    color: rgb(255, 105, 105);
+}
+.navbarLink.logout:hover {
+    color: red;
+}
 
 .footerLink {
     color: white;

@@ -84,18 +84,32 @@ export default function NavBar() {
         }
     }
 
-    function Dropdown({submenu, isExpanded}) {
-
-        return (
-            <ul className={isExpanded ? "dropdownShow" : "dropdownHide"}>
-                {/* map each submenu to its own link */}
-                {submenu.map((submenu, index) => (
-                <li key={index} className="dropdownItems">
-                    <NavLink className="navbarLink" to={submenu.url}>{submenu.title}</NavLink>
-                </li>
-                ))}
-            </ul>
-        );
+    function Dropdown({submenu, isExpanded, isAccountDropdown}) {
+        if (!isAccountDropdown) {
+            return (
+                <ul className={isExpanded ? "dropdownShow" : "dropdownHide"}>
+                    {/* map each submenu to its own link */}
+                    {submenu.map((submenu, index) => (
+                    <li key={index} className="dropdownItems">
+                        <NavLink className="navbarLink" to={submenu.url}>{submenu.title}</NavLink>
+                    </li>
+                    ))}
+                </ul>
+            );
+        }
+        else {
+            return (
+                <ul className={isExpanded ? "dropdownShow" : "dropdownHide"}>
+                    {/* map each submenu to its own link */}
+                    {submenu.map((submenu, index) => (
+                    <li key={index} className="dropdownItems">
+                        <NavLink className="navbarLink" to={submenu.url}>{submenu.title}</NavLink>
+                    </li>
+                    ))}
+                    <li><LogoutButton /></li>
+                </ul>
+            );
+        }
     }
 
     // login button
@@ -111,12 +125,21 @@ export default function NavBar() {
         );
     }
 
+    // login button
+    function LogoutButton() {
+        function handleClick() {
+            alert("logout button clicked, but logout hasn't been implemented yet")
+        }
+        return (
+            <button className="navbarLink logout" onClick={handleClick}>
+                LOGOUT
+            </button>
+        );
+    }
+
     // account profile button
     function AccountButton() {
         const [isExpanded, setIsExpanded] = useState(false);
-        function handleClick() {
-            alert("profile button clicked");
-        }
         return (
             <>
                 <button type="button" className="accountCircle"
@@ -125,7 +148,7 @@ export default function NavBar() {
                 onClick={() => setIsExpanded((props) => !props)}>
                     {accountInitials}
                 </button>
-                <Dropdown submenu={accountSubmenuItems} isExpanded={isExpanded} />
+                <Dropdown submenu={accountSubmenuItems} isExpanded={isExpanded} isAccountDropdown="true" />
             </>
         );
     }
