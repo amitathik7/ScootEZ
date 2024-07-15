@@ -102,6 +102,12 @@ body {
     line-height: 50px;
 }
 
+.greenStripe {
+    background-color: var(--neon-green);
+    width: 100%;
+    height: 20px;
+}
+
 
 
 /*========================LINKS========================*/
@@ -109,7 +115,6 @@ body {
 .navbarLink {
     display: block;
     color: white;
-    text-align: center;
     padding: 14px 16px;
 
     font-size: 20px;
@@ -125,6 +130,8 @@ body {
     color: var(--neon-green);
 }
 .navbarLink.logout {
+    width: 100%;
+    text-align: right;
     color: rgb(255, 105, 105);
 }
 .navbarLink.logout:hover {
@@ -234,19 +241,19 @@ label {
     left: -10px;
     content: "\2717";
 }
-
-.dropdownShow {
-    list-style: none;
-    /* display: none; */
-    background: var(--dark);
-    text-align: left;
+.dropdown {
+    line-height: 20px;
 }
-.dropdownHide {
+.dropdown.Show {
+    background: var(--dark);
+}
+.dropdown.Hide {
     display: none;
 }
 .dropdownItems {
     text-decoration: none;
-    display: inline;
+    display: block;
+    text-align: right;
 }
 
 /*========================BUTTONS========================*/
