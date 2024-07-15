@@ -44,9 +44,18 @@ nav {
     font-weight: var(--headerFontWeight);
 }
 
+.navBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.navBarItem {
+    display: inline;
+}
+
 body {
     width: 100%;
-    min-height: 80vh;
+    min-height: 90vh;
     background-color: var(--light);
     font-family: var(--bodyFontFamily);
     font-weight: var(--bodyFontWeight);
@@ -78,9 +87,12 @@ body {
 .fullBox {
     width: 100%;
     display: grid;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
     background-color: var(--light);
+}
+.fullBox.gray {
+    background-color: var(--gray1);
 }
 .footer {
     background-color: var(--dark);
@@ -93,6 +105,12 @@ body {
     line-height: 50px;
 }
 
+.greenStripe {
+    background-color: var(--neon-green);
+    width: 100%;
+    height: 20px;
+}
+
 
 
 /*========================LINKS========================*/
@@ -100,15 +118,27 @@ body {
 .navbarLink {
     display: block;
     color: white;
-    text-align: center;
     padding: 14px 16px;
+
+    font-size: 20px;
     text-decoration: none;
+
+    border: none;
+    background: transparent;
 }
 .navbarLink:hover {
     color: var(--neon-green);
 }
 .active {
     color: var(--neon-green);
+}
+.navbarLink.logout {
+    width: 100%;
+    text-align: right;
+    color: rgb(255, 105, 105);
+}
+.navbarLink.logout:hover {
+    color: red;
 }
 
 .footerLink {
@@ -145,6 +175,37 @@ body {
 .input1:valid:focus {
     outline: none;
     border-bottom: 3px solid green;
+}
+
+/* input for profile page */
+.input2 {
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    border-color: var(--gray2);
+
+    width: 90%;
+    height: 30px;
+
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+.input2:disabled {
+    background-color: var(--gray1);
+}
+.input2:active:focus {
+    outline: none;
+    border-color: var(--gray3);
+}
+.input2:invalid:focus {
+    outline: none;
+    border-color: red;
+}
+.input2:valid:focus {
+    outline: none;
+    border-color: green;
 }
 
 /*========================TEXT========================*/
@@ -214,6 +275,20 @@ label {
     left: -10px;
     content: "\2717";
 }
+.dropdown {
+    line-height: 20px;
+}
+.dropdown.Show {
+    background: var(--dark);
+}
+.dropdown.Hide {
+    display: none;
+}
+.dropdownItems {
+    text-decoration: none;
+    display: block;
+    text-align: right;
+}
 
 /*========================BUTTONS========================*/
 
@@ -281,17 +356,10 @@ label {
     background-color: white;
 }
 
-/* Smaller nav login button */
+/* for the edit pencil buttons */
 .button4 {
-    color: var(--dark);
-    font-family: var(--bodyFontFamily);
-    font-weight: var(--bodyFontWeight);
-    font-size: 18px;
-
     background-color: var(--gray2);
-    border-color: transparent;
-    width: 100px;
-    height: 50px;
+    border: none;
     padding: 5px;
     border-radius: 10px;
 }
@@ -299,8 +367,7 @@ label {
     background-color: var(--neon-green);
 }
 .button4:active {
-    color: white;
-    background-color: var(--dark-green);
+    background-color: var(--mid-green);
 }
 
 .accountCircle {
@@ -323,6 +390,24 @@ label {
     border-width: 2px;
     border-color: var(--light-green);
     border-style: none;
+}
+
+/* Small white text */
+.button5 {
+    color: white;
+    font-family: var(--bodyFontFamily);
+    font-weight: var(--bodyFontWeight);
+    font-size: 14px;
+
+    background-color: transparent;
+    border-color: transparent;
+    text-decoration: underline;
+}
+.button5:hover {
+    color: var(--mid-green);
+}
+.button5:active {
+    color: var(--neon-green);
 }
 
 

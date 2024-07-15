@@ -1,13 +1,7 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AccountContext, IsLoggedInContext } from '../App.js';
-import styles from "../styles.css";
 
 export default function CreateAccountPage() {
-    // global context
-    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
-    const { account, setAccount } = useContext(AccountContext);
-
     // states
     const [isIssueCreating, setIsIssueCreating] = useState(false);
     const [showPasswordMessage, setShowPasswordMessage] = useState(false);
@@ -74,9 +68,7 @@ export default function CreateAccountPage() {
             );
             if (response.ok) {
                 const data = await response.json(); // should return the token for the account
-                localStorage.setItem("token", data.token);
-                setIsLoggedIn(true);
-                setAccount("User name");    //FIXME TO ACTUALLY BE THE USER'S NAME
+                //localStorage.setItem("token", data.token);
                 return true;
             }
             else {
