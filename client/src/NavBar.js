@@ -1,22 +1,15 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styles from './styles.css';
-import { NavLink, useNavigate} from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { ReactComponent as Logo} from './assets/ScootezLogo.svg';
-
 import { IsLoggedInContext } from './App.js';
-import HomePage from "./Pages/HomePage.js";
-import AboutPage from './Pages/AboutPage.js';
-import MapPage from './Pages/MapPage.js';
-import FaqPage from './Pages/FaqPage.js';
-import ScooterPage from './Pages/ScooterPage.js';
-
-import ProfilePage from './Pages/ProfilePage.js';
-
 
 export default function NavBar() {
-    // The display case for the screen
+    // global context
     const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+
+    // states
     const [accountInitials, setAccountInitials] = useState(null);
 
     // The nav bar structure
@@ -85,6 +78,7 @@ export default function NavBar() {
         }
     }
 
+    // component for the dropdown submenu lists
     function Dropdown({submenu, isExpanded, isAccountDropdown}) {
         if (!isAccountDropdown) {
             return (
@@ -178,7 +172,7 @@ export default function NavBar() {
         return(
             <nav>
                 <div style={{width: "96%", marginLeft: "2%", display: "flex", justifyContent:"space-between"}}>
-                    <div><NavLink className="navbarLink" to="/" element={<HomePage />}>
+                    <div><NavLink className="navbarLink" to="/">
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
                     <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
@@ -205,7 +199,7 @@ export default function NavBar() {
         return(
             <nav>
                 <div style={{width: "96%", marginLeft: "2%", display: "flex", justifyContent:"space-between"}}>
-                    <div><NavLink className="navbarLink" to="/" element={<HomePage />}>
+                    <div><NavLink className="navbarLink" to="/">
                         <Logo height={50} fill="#96ea59" />
                     </NavLink></div>
                     <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>

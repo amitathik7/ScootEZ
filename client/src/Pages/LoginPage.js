@@ -1,22 +1,15 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { IsLoggedInContext } from '../App.js';
 import styles from "../styles.css";
+import { IsLoggedInContext } from '../App.js';
 
 export default function LoginPage() {
     // global context
     const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+
     // states
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
-    const [showPasswordMessage, setShowPasswordMessage] = useState(false);
     const [isLoginButtonActive, setIsLoginButtonActive] = useState(false);
-    const [passwordValidity, setPasswordValidity] = useState(false);
-
-    // get references to the HTML elements
-    const lowercaseRef = useRef(null);
-    const capitalRef = useRef(null);
-    const numberRef = useRef(null);
-    const lengthRef = useRef(null);
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
@@ -79,7 +72,7 @@ export default function LoginPage() {
             setIsLoginButtonActive(false);
             Login().then((isSuccess) => {
                 if (isSuccess){
-                    navigate("/profile", {});
+                    navigate("/map", {});
                 }
                 else {
                     setIsInvalidCredentials(true);
@@ -99,7 +92,7 @@ export default function LoginPage() {
         // button is disabled if either field is invalid
         else {
             return (
-                <button className="button1" disabled="true">
+                <button className="button1" disabled={true}>
                     LOGIN
                 </button>
             );
@@ -133,47 +126,6 @@ export default function LoginPage() {
         }
     }
 
-    function ValidatePassword() {
-        // validate letters
-        var lowerCaseLetters = /[a-z]/g;
-        if(loginInfo.password.match(lowerCaseLetters)) {
-            lowercaseRef.current.className = "valid";
-        } else {
-            lowercaseRef.current.className = "invalid";
-        }
-
-        // Validate capital letters
-        var upperCaseLetters = /[A-Z]/g;
-        if(loginInfo.password.match(upperCaseLetters)) {
-            capitalRef.current.className = "valid";
-        } else {
-            capitalRef.current.className = "invalid";
-        }
-
-        // validate numbers
-        var numbers = /[0-9]/g;
-        if(loginInfo.password.match(numbers)) {
-            numberRef.current.className = "valid";
-        } else {
-            numberRef.current.className = "invalid";
-        }
-
-        // Validate length
-        if(loginInfo.password.length >= 8) {
-            lengthRef.current.className = "valid";
-        } else {
-            lengthRef.current.className = "invalid";
-        }
-
-        // set passwordValidity
-        if (passwordRef.current.className === "valid") {
-            setPasswordValidity(true);
-        }
-        else {
-            setPasswordValidity(false);
-        }
-    }
-
     function ToggleShowPassword() {
         console.log("toggle clicked");
         if (passwordRef.current.type === "password") {
@@ -190,26 +142,6 @@ export default function LoginPage() {
                 <p className="warningText">
                     &#9888; The email or password entered is invalid.
                 </p>
-            );
-        }
-        else {
-            return (
-                <div />
-            );
-        }
-    }
-
-    // shows the password message only if the showPasswordMessage state is true
-    function PasswordMessage() {
-        if (showPasswordMessage) {
-            return (
-                <div className="passwordMessage">
-                    <h3>Password must contain the following:</h3>
-                    <p ref={lowercaseRef} className="invalid">A <b>lowercase</b> letter</p>
-                    <p ref={capitalRef} className="invalid">An <b>uppercase</b> letter</p>
-                    <p ref={numberRef} className="invalid">A <b>number</b></p>
-                    <p ref={lengthRef} className="invalid">Minimum <b>8 characters</b></p>
-                </div>
             );
         }
         else {
@@ -243,15 +175,10 @@ export default function LoginPage() {
                         ref={passwordRef}
                         value={loginInfo.password}
                         onChange={handlePasswordChange}
-                        onFocus={() => {setShowPasswordMessage(true)}}
-                        onBlur={() => {
-                            if(loginInfo.password.length <= 0 || passwordValidity) {setShowPasswordMessage(false)}
-                        }}
-                        onKeyUp={ValidatePassword}
                         onInput={ValidateAllFields}
                     /> <br/>
                     <input type="checkbox" onClick={ToggleShowPassword}/> Show Password
-                    <PasswordMessage />
+                    <br/>
                     <LoginButton />
                 </div>
             </div>

@@ -127,8 +127,11 @@ app.post("/api/users/login", async (req, res) => {
 	const { email, password } = req.body;
 
 	try {
+		console.log("email recieved: " + email);
+		console.log("finding...");
 		const account = await Account.findOne({ email: email });
-
+		console.log(account);
+		console.log("comparing...");
 		if (account && (await bcrypt.compare(password, account.password))) {
 			console.log("Successful login");
 			const token = jwt.sign({ id: account._id }, "secret");
@@ -136,6 +139,7 @@ app.post("/api/users/login", async (req, res) => {
 			res.status(201);
 		} else {
 			console.log("Unsuccessful login");
+			res.status(401);
 		}
 	} catch (error) {
 		res.status(500).send(error);
