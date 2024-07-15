@@ -44,6 +44,15 @@ nav {
     font-weight: var(--headerFontWeight);
 }
 
+.navBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.navBarItem {
+    display: inline;
+}
+
 body {
     width: 100%;
     min-height: 80vh;
@@ -102,13 +111,24 @@ body {
     color: white;
     text-align: center;
     padding: 14px 16px;
+
+    font-size: 20px;
     text-decoration: none;
+
+    border: none;
+    background: transparent;
 }
 .navbarLink:hover {
     color: var(--neon-green);
 }
 .active {
     color: var(--neon-green);
+}
+.navbarLink.logout {
+    color: rgb(255, 105, 105);
+}
+.navbarLink.logout:hover {
+    color: red;
 }
 
 .footerLink {
@@ -213,6 +233,20 @@ label {
     position: relative;
     left: -10px;
     content: "\2717";
+}
+
+.dropdownShow {
+    list-style: none;
+    /* display: none; */
+    background: var(--dark);
+    text-align: left;
+}
+.dropdownHide {
+    display: none;
+}
+.dropdownItems {
+    text-decoration: none;
+    display: inline;
 }
 
 /*========================BUTTONS========================*/
