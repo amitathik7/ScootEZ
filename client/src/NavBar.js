@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import styles from './styles.css';
-import { NavLink, useNavigate} from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { ReactComponent as Logo} from './assets/ScootezLogo.svg';
+import { IsLoggedInContext } from './App.js';
 
 export default function NavBar() {
+    // global context
+    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+
+    // states
     const [accountInitials, setAccountInitials] = useState(null);
 
     // The nav bar structure
@@ -163,7 +168,7 @@ export default function NavBar() {
         }
     }
 
-    if (localStorage.getItem("token") == null) {
+    if (!isLoggedIn) {
         return(
             <nav>
                 <div style={{width: "96%", marginLeft: "2%", display: "flex", justifyContent:"space-between"}}>

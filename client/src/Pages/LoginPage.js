@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from "../styles.css";
+import { IsLoggedInContext } from '../App.js';
 
 export default function LoginPage() {
     // global context
+    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+
     // states
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
     const [isLoginButtonActive, setIsLoginButtonActive] = useState(false);
@@ -47,6 +50,7 @@ export default function LoginPage() {
             if (response.ok) {
                 const data = await response.json(); // should return the token for the account
                 localStorage.setItem("token", data.token);
+                setIsLoggedIn(true);
                 return true;
             }
             else {
@@ -88,7 +92,7 @@ export default function LoginPage() {
         // button is disabled if either field is invalid
         else {
             return (
-                <button className="button1" disabled="true">
+                <button className="button1" disabled={true}>
                     LOGIN
                 </button>
             );
