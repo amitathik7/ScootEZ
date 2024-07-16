@@ -1,7 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IsLoggedInContext } from '../App.js';
 
 export default function CreateAccountPage() {
+    // global context
+    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+
     // states
     const [isIssueCreating, setIsIssueCreating] = useState(false);
     const [showPasswordMessage, setShowPasswordMessage] = useState(false);
@@ -68,14 +72,15 @@ export default function CreateAccountPage() {
             );
             if (response.ok) {
                 const data = await response.json(); // should return the token for the account
-                //localStorage.setItem("token", data.token);
+                localStorage.setItem("token", data.token);
+                setIsLoggedIn(true);
                 return true;
             }
             else {
                 throw new Error(response.statusText);
             }
         } catch (error) {
-            alert("An error occured while logging in; see console for details");
+            alert("An error occured while creating the account; see console for details");
             console.error("error detected: ", error);
             return false;
         }
@@ -88,7 +93,7 @@ export default function CreateAccountPage() {
             setIsCreateButtonActive(false);
             CreateAccount().then((isSuccess) => {
                 if (isSuccess){
-                    navigate("/profile", {});
+                    navigate("/map", {});
                 }
                 else {
                     setIsCreateButtonActive(true);
