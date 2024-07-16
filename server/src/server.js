@@ -31,7 +31,9 @@ const db = mongoose.connection;
 
 // check connection to mongoDB
 db.on("error", console.error.bind(console, "MongoDB Connection Error"));
-db.once("open", () => {	console.log("MongoDB Connected");});
+db.once("open", () => {
+	console.log("MongoDB Connected");
+});
 
 // initialize MongoDB Schemas (JSON object that defines the structure and contents of the data)
 const accountSchema = new mongoose.Schema({
@@ -87,11 +89,11 @@ const rentalHistorySchema = new mongoose.Schema({
 });
 
 // Initialize MongoDB collections (using mongoose.model)
-const Account = mongoose.model('account', accountSchema);
-const Scooter = mongoose.model('scooter', scooterSchema);
-const Employee = mongoose.model('employee', employeeSchema);
-const Admin = mongoose.model('admin', adminSchema);
-const RentalHistory = mongoose.model('history', rentalHistorySchema);
+const Account = mongoose.model("account", accountSchema);
+const Scooter = mongoose.model("scooter", scooterSchema);
+const Employee = mongoose.model("employee", employeeSchema);
+const Admin = mongoose.model("admin", adminSchema);
+const RentalHistory = mongoose.model("history", rentalHistorySchema);
 
 // log if server started on port 5000
 app.listen(port, () => {
@@ -123,7 +125,6 @@ app.post("/api/users/create", async (req, res) => {
 		// make new token and send it back to frontend
 		const token = jwt.sign({ id: account._id }, "secret");
 		res.status(201).json({ token });
-
 	} catch (error) {
 		console.log(error);
 		res.status(500).send(error);
@@ -146,7 +147,7 @@ app.post("/api/users/login", async (req, res) => {
 			res.status(201);
 		} else {
 			console.log("Unsuccessful login");
-			res.status(400).json({ message: "invalid credentials"});
+			res.status(400).json({ message: "invalid credentials" });
 		}
 	} catch (error) {
 		res.status(500).send(error);
@@ -250,13 +251,11 @@ app.get("/api/token/verify", authenticateToken, async (req, res) => {
 
 		if (!account) {
 			console.log("Account not found.");
-			return res.status(404).json({ message: false});
-		}
-		else {
+			return res.status(404).json({ message: false });
+		} else {
 			console.log("Account found.");
-			return res.status(200).json({ message: true});
+			return res.status(200).json({ message: true });
 		}
-
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -275,6 +274,77 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 
 		res.json({ histories });
 		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/employee/scooters", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(404).send("Invalid Token");
+		}
+
+		const scooters = await Scooter.find();
+
+		res.json(scooters);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
+	const { firstName, lastName, email, password, address } = req.body;
+
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(404).json({ message: "Invalid Admin Credentials" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const employeeDocument = new Employee({
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			password: hashedPassword,
+			address: address,
+		});
+
+		await employeeDocument.save();
+
+		const employee = await Employee.findOne({
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			address: address,
+		});
+
+		const token = jwt.sign({ id: employee._id }, "secret");
+		res.status(201).json({ token });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post("/api/employee/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	try {
+		const employee = await Employee.findOne({ email: email });
+
+		if (employee && (await bcrypt.compare(password, employee.password))) {
+			const token = jwt.sign({ id: employee._id }, "secret");
+			res.json({ token });
+			res.status(201);
+		} else {
+			res.status(400).json({ message: "Invalid Employee Credentials" });
+		}
 	} catch (error) {
 		res.status(500).send(error);
 	}
