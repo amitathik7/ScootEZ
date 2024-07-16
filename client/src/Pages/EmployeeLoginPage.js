@@ -65,10 +65,12 @@ export default function EmployeeLoginPage() {
                     value={loginInfo.password}
                     onChange={handlePasswordChange}
                 />
-                <button className="button1" onClick={handleLogin}>
-                        LOGIN
-                </button>
-            </div>
+               <div style={{ marginTop: '20px' }}> 
+          <button className="button1" onClick={handleLogin}>
+            LOGIN
+          </button>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
