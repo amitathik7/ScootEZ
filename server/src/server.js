@@ -116,7 +116,14 @@ app.post("/api/users/create", async (req, res) => {
 
 		// save the new account to DB
 		await accountDocument.save();
-		res.status(201);
+
+		// get that new account's id
+		const account = await Account.findOne({ email: email });
+
+		// make new token and send it back to frontend
+		const token = jwt.sign({ id: account._id }, "secret");
+		res.status(201).json({ token });
+
 	} catch (error) {
 		console.log(error);
 		res.status(500).send(error);
@@ -139,7 +146,7 @@ app.post("/api/users/login", async (req, res) => {
 			res.status(201);
 		} else {
 			console.log("Unsuccessful login");
-			res.status(400);
+			res.status(400).json({ message: "invalid credentials"});
 		}
 	} catch (error) {
 		res.status(500).send(error);
@@ -229,6 +236,26 @@ app.put("/api/users/update", authenticateToken, async (req, res) => {
 			creditCard: account.creditCard,
 		});
 		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// This is a test function for the token
+app.get("/api/token/verify", authenticateToken, async (req, res) => {
+	try {
+		console.log("Searching for account...");
+		const account = await Account.findById(req.user.id);
+
+		if (!account) {
+			console.log("Account not found.");
+			return res.status(404).json({ message: false});
+		}
+		else {
+			console.log("Account found.");
+			return res.status(200).json({ message: true});
+		}
+
 	} catch (error) {
 		res.status(500).send(error);
 	}
