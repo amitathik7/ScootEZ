@@ -153,6 +153,7 @@ app.post("/api/users/login", async (req, res) => {
 	}
 });
 
+// Gets the location of all scooters marked as available for the user's map.
 app.get("/api/scooters", async (req, res) => {
 	try {
 		const scooters = await Scooter.find({ availability: true });
@@ -164,7 +165,7 @@ app.get("/api/scooters", async (req, res) => {
 	}
 });
 
-// This is a test function for the token
+// Returns the user's full name for the navbar.
 app.get("/api/users/accountName", authenticateToken, async (req, res) => {
 	try {
 		const account = await Account.findById(req.user.id);
@@ -256,6 +257,24 @@ app.get("/api/token/verify", authenticateToken, async (req, res) => {
 			return res.status(200).json({ message: true});
 		}
 
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// Returns all the rental history for a user based on the token.
+app.get("/api/history", authenticateToken, async (req, res) => {
+	try {
+		const account = await Account.findById(req.user.id);
+
+		if (!account) {
+			return res.status(404).send("Invalid token");
+		}
+
+		const histories = await RentalHistory.find({ user: account });
+
+		res.json({ histories });
+		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
 	}
