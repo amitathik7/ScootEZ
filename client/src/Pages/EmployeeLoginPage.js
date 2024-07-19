@@ -134,6 +134,11 @@ export default function EmployeeLoginPage() {
                         LOGIN
                     </button>
                 </div>
+                <div style={{ marginTop: '20px' }}>
+                    <button className="button1" onClick={() => navigate('/user-dashboard')}>
+                        GO TO DASHBOARD
+                    </button>
+                </div>
             </div>
         </div>
     );

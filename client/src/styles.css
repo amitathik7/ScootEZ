@@ -430,4 +430,31 @@ label {
     color: var(--neon-green);
 }
 
+/* dashboard styles */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    padding: 20px;
+}
+
+.profile-circle {
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.loading,
+.error {
+    font-size: 1.5em;
+    text-align: center;
+    margin-top: 20px;
+}
 

@@ -15,6 +15,7 @@ import ProfilePage from './Pages/ProfilePage.js';
 import CurrentRentalsPage from './Pages/CurrentRentalsPage.js';
 import EmployeeLoginPage from './Pages/EmployeeLoginPage.js';
 import AdminLoginPage from './Pages/AdminLoginPage.js';
+import EmployeeUserDashboardPage from './Pages/EmployeeUserDashboardPage.js';
 
 import NavBar from "./NavBar.js";
 import Footer from "./Footer.js";
@@ -46,6 +47,7 @@ function App() {
             <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
             <Route path="/employee-login" element={<EmployeeLoginPage/>} />
             <Route path="/admin-login" element={<AdminLoginPage/>} />
+            <Route path="/user-dashboard" element={<EmployeeUserDashboardPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </body>
