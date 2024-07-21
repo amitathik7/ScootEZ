@@ -367,4 +367,53 @@ app.post("/api/employee/login", async (req, res) => {
 	}
 });
 
+app.post("/api/admin/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	try {
+		const admin = await Admin.findOne({ email: email });
+
+		if (admin && (await bcrypt.compare(password, admin.password))) {
+			const token = jwt.sign({ id: admin._id }, "secret");
+			res.json({ token });
+			res.status(201);
+		} else {
+			res.status(400).json({ message: "Invalid Admin Credentials" });
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/employee/user_accounts", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(404).send("Invalid Token");
+		}
+
+		const accounts = await Account.find();
+		res.json(accounts);
+	} catch (error) {
+		return res.status(500).send(error);
+	}
+});
+
+app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(404).send("Invalid Token:");
+		}
+
+		const employee_accounts = await Employee.find();
+		res.json(employee_accounts);
+	} catch (error) {
+		return res.status(500).send(error);
+	}
+});
+
 module.exports = { app };
