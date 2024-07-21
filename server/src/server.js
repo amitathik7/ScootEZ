@@ -384,4 +384,19 @@ app.get("/api/employee/user_accounts", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(404).send("Invalid Token:");
+		}
+
+		const employee_accounts = await Employee.find();
+		res.json(employee_accounts);
+	} catch (error) {
+		return res.status(500).send(error);
+	}
+});
+
 module.exports = { app };
