@@ -368,4 +368,20 @@ app.post("/api/admin/login", async (req, res) => {
 	}
 });
 
+app.get("/api/employee/user_accounts", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(404).send("Invalid Token");
+		}
+
+		const accounts = await Account.find();
+		res.json(accounts);
+	} catch (error) {
+		return res.status(500).send(error);
+	}
+});
+
 module.exports = { app };
