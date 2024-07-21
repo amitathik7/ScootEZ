@@ -350,4 +350,22 @@ app.post("/api/employee/login", async (req, res) => {
 	}
 });
 
+app.post("/api/admin/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	try {
+		const admin = await Admin.findOne({ email: email });
+
+		if (admin && (await bcrypt.compare(password, admin.password))) {
+			const token = jwt.sign({ id: admin._id }, "secret");
+			res.json({ token });
+			res.status(201);
+		} else {
+			res.status(400).json({ message: "Invalid Admin Credentials" });
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 module.exports = { app };
