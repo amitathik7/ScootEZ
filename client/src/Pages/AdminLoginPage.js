@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
                 const data = await response.json(); 
                 localStorage.setItem("token", data.token);
                 setIsLoggedIn(true);
-                navigate('/admin-dashboard'); // Redirect to admin dashboard
+                navigate('/admin-dashboard');
             } else {
                 setIsInvalidCredentials(true); 
                 console.error('Admin Login failed');
@@ -65,7 +65,7 @@ export default function AdminLoginPage() {
         }
     };
 
-    function ValidateAllFields() {
+    const ValidateAllFields = () => {
         if (loginInfo.email.length <= 0 || loginInfo.password.length <= 0) {
             setIsLoginButtonActive(false);
         } else if (emailRef.current.validity.valid &&
@@ -74,19 +74,22 @@ export default function AdminLoginPage() {
         } else {
             setIsLoginButtonActive(false);
         }
-    }
+    };
 
-    function ToggleShowPassword() {
-        console.log("toggle clicked");
+    const ToggleShowPassword = () => {
         if (passwordRef.current.type === "password") {
             passwordRef.current.type = "text";
         } else {
             passwordRef.current.type = "password";
         }
-    }
+    };
+
+    useEffect(() => {
+        ValidateAllFields();
+    }, [loginInfo]);
 
     // shows the invalid message only if the showPasswordMessage state is true
-    function InvalidCredentialsMessage() {
+    const InvalidCredentialsMessage = () => {
         if (isInvalidCredentials) {
             return (
                 <p className="warningText">
@@ -98,7 +101,7 @@ export default function AdminLoginPage() {
                 <div />
             );
         }
-    }
+    };
 
     return (
         <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px", paddingTop: "150px", paddingBottom: "150px" }}>
@@ -111,7 +114,6 @@ export default function AdminLoginPage() {
                     ref={emailRef}
                     value={loginInfo.email}
                     onChange={handleEmailChange}
-                    onInput={ValidateAllFields}
                 />
                 <p>Password:</p>
                 <input className="input1" required
@@ -121,7 +123,6 @@ export default function AdminLoginPage() {
                     ref={passwordRef}
                     value={loginInfo.password}
                     onChange={handlePasswordChange}
-                    onInput={ValidateAllFields}
                 /> <br />
                 <input type="checkbox" onClick={ToggleShowPassword} /> Show Password
                 <br />
@@ -130,6 +131,7 @@ export default function AdminLoginPage() {
                         LOGIN
                     </button>
                 </div>
+                <InvalidCredentialsMessage />
             </div>
         </div>
     );
