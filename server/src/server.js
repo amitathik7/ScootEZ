@@ -154,10 +154,10 @@ app.post("/api/users/login", async (req, res) => {
 	}
 });
 
-// Gets the location of all scooters marked as available for the user's map.
+// Gets the location of all scooters for the user's map.
 app.get("/api/scooters", async (req, res) => {
 	try {
-		const scooters = await Scooter.find({ availability: true });
+		const scooters = await Scooter.find();
 
 		res.json({ scooters });
 		res.status(200);
