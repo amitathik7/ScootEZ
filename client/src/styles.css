@@ -430,4 +430,7 @@ label {
     color: var(--neon-green);
 }
 
-
+/* set sizing of map container */
+.leaflet-container {
+    height: 100vh;
+}
