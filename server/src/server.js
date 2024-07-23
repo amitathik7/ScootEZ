@@ -332,6 +332,42 @@ app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
 	}
 });
 
+app.post("/api/admin/create_admin", authenticateToken, async (req, res) => {
+	const { firstName, lastName, email, password, address } = req.body;
+
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(404).json({ message: "Invalid Admin Credentials" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const adminDocument = new Admin({
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			password: hashedPassword,
+			address: address,
+		});
+
+		await adminDocument.save();
+
+		const admin_account = await Admin.findOne({
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			address: address,
+		});
+
+		const token = jwt.sign({ id: admin_account._id }, "secret");
+		res.status(201).json({ token });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 app.post("/api/employee/login", async (req, res) => {
 	const { email, password } = req.body;
 
