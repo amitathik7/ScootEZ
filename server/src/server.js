@@ -202,6 +202,23 @@ app.get("/api/users/accountInfo", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/users", authenticateToken, async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.user.id);
+        const employee = await Employee.findById(req.user.id);
+
+        if (!admin && !employee) {
+            return res.status(403).send("Access denied.");
+        }
+
+        const accounts = await Account.find();
+        res.status(200).json(accounts);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+
 app.delete("/api/user/delete", authenticateToken, async (req, res) => {
 	try {
 		const account = await Account.findByIdAndDelete(req.user.id);
@@ -388,6 +405,7 @@ app.post("/api/employee/login", async (req, res) => {
 
 app.post("/api/admin/login", async (req, res) => {
 	const { email, password } = req.body;
+	console.log(await bcrypt.hash(password, 10));
 
 	try {
 		const admin = await Admin.findOne({ email: email });

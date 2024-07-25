@@ -15,22 +15,25 @@ import ProfilePage from './Pages/ProfilePage.js';
 import CurrentRentalsPage from './Pages/CurrentRentalsPage.js';
 import EmployeeLoginPage from './Pages/EmployeeLoginPage.js';
 import AdminLoginPage from './Pages/AdminLoginPage.js';
+import AdminDashboard from './Pages/AdminDashboard.js';
 
 import NavBar from "./NavBar.js";
+import AdminNavBar from "./AdminNavBar.js";
 import Footer from "./Footer.js";
 
 export const IsLoggedInContext = React.createContext(false);
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <div className="App">
-      <IsLoggedInContext.Provider value={{ isLoggedIn: isLoggedIn, setIsLoggedIn: setIsLoggedIn }}>
-        <NavBar />
+      <IsLoggedInContext.Provider value={{ isLoggedIn: isLoggedIn, setIsLoggedIn: setIsLoggedIn, isAdmin: isAdmin, setIsAdmin: setIsAdmin }}>
+        {isAdmin ? <AdminNavBar /> : <NavBar />}
         <div className="navBarBuffer" />
 
-        <body>
+        <main>
           <Routes>
             <Route path="/" element={<HomePage />}/>
             <Route path="/about" element={<AboutPage/>} />
@@ -46,10 +49,11 @@ function App() {
             <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
             <Route path="/employee-login" element={<EmployeeLoginPage/>} />
             <Route path="/admin-login" element={<AdminLoginPage/>} />
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
-        </body>
-        <Footer />
+        </main>
+        {!isAdmin && <Footer />}
       </IsLoggedInContext.Provider>
     </div>
   );
