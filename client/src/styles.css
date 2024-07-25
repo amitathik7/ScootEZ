@@ -62,6 +62,86 @@ body {
     font-weight: var(--bodyFontWeight);
 }
 
+/* admin navbar */
+.darkGreenNav {
+    background-color: var(--dark-green);
+    width: 100%;
+    margin-left: 0%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbarLink {
+    display: block;
+    color: white;
+    padding: 16px 14px;
+    font-size: 20px;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+}
+
+.navbarLink:hover {
+    color: var(--neon-green);
+}
+
+.active {
+    color: var(--neon-green);
+}
+
+.navbarLink.logout {
+    width: 100%;
+    text-align: right;
+    color: rgb(255, 105, 105);
+}
+
+.navbarLink.logout:hover {
+    color: red;
+}
+
+.accountCircle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border-width: 0px;
+    background-color: var(--mid-green);
+    color: white;
+    font-size: 18px;
+}
+
+.accountCircle:hover {
+    border-width: 2px;
+    border-style: none;
+    border-color: var(--light-green);
+}
+
+.accountCircle:active {
+    color: white;
+    background-color: var(--neon-green);
+    border-width: 2px;
+    border-color: var(--light-green);
+    border-style: none;
+}
+
+/* Dropdown styling */
+.dropdown {
+    line-height: 20px;
+}
+
+.dropdown.Show {
+    background: var(--dark-green); /* Ensure dropdown matches the navbar */
+}
+
+.dropdown.Hide {
+    display: none;
+}
+
+.dropdownItems {
+    text-decoration: none;
+    display: block;
+    text-align: right;
+}
+
 
 
 /*========================BOXES========================*/

@@ -369,6 +369,7 @@ app.post("/api/employee/login", async (req, res) => {
 
 app.post("/api/admin/login", async (req, res) => {
 	const { email, password } = req.body;
+	console.log(await bcrypt.hash(password, 10));
 
 	try {
 		const admin = await Admin.findOne({ email: email });
