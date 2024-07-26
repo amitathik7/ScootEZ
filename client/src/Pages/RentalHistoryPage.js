@@ -5,7 +5,7 @@ import { Navigate, useNavigate} from 'react-router-dom';
 import { IsLoggedInContext } from '../App.js';
 
 
-export default function CurrentRentalsPage() {
+export default function RentalHistoryPage() {
     // global context
     const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
 
@@ -59,19 +59,18 @@ export default function CurrentRentalsPage() {
         return (
             <div className="fullBox">
             <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                <h1>Current Rentals</h1>
+                <h1>Rental History</h1>
                 <h2>TODO:</h2>
                 <p>
-                    list current rentals here with information:
+                    list all past rentals for this account including info on:
                 </p>
                 <ul>
+                    <li>Date of rental</li>
                     <li>scooter model name</li>
                     <li>scooter starting location</li>
-                    <li>scooter price rate</li>
-                    <li>scooter battery charge</li>
-                    <li>time specified</li>
-                    <li>ACTIVE countdown</li>
-                    <li>time the rental is due</li>
+                    <li>scooter ending location</li>
+                    <li>total rental price</li>
+                    <li>total rental time</li>
                 </ul>
             </div>
         </div>

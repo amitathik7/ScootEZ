@@ -50,6 +50,10 @@ export default function NavBar() {
         {
             title: 'MY RENTALS',
             url: '/current-rentals'
+        },
+        {
+            title: 'HISTORY',
+            url: '/rental-history'
         }
     ]
 
