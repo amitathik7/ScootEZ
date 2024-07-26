@@ -463,11 +463,11 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
 
-		const {input_password} = req.body;
+		const input_password = req.body;
 
-		const account = await Account.findById({accountId});
+		const account = await Account.findById(accountId);
 
-		if (account && (await bcrypt.compare(input_password, account.password))) {
+		if (account && (await bcrypt.compare(input_password.oldPassword, account.password))) {
 			res.json(true);
 			res.status(201);
 		} else {
@@ -475,7 +475,8 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 			res.status(400);
 		}
 	} catch (err) {
-		res.status(500).send(error);
+		console.log(err);
+		res.status(500).send(err);
 	}
 });
 
