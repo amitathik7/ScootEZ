@@ -229,11 +229,11 @@ app.delete("/api/users/delete", authenticateToken, async (req, res) => {
 
 		if (!account) {
 			console.log("account not found");
-			return res.status(404);
+			return res.status(404).json({message: "account not found"});
 		}
 
 		console.log("account deleted");
-		res.status(200);
+		res.status(200).json({message: "successfully deleted"});
 	} catch (error) {
 		res.status(500).send(error);
 	}
