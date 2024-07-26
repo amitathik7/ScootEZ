@@ -459,13 +459,13 @@ app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
 	}
 });
 
-app.get("/api/users/check_password", authenticateToken, async (req, res) => {
+app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
 
 		const input_password = req.body;
 
-		const account = await Account.findById(accountId);
+		const account = await Account.findById({accountId});
 
 		if (account && (await bcrypt.compare(input_password, account.password))) {
 			res.json(true);

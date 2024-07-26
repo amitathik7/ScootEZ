@@ -55,7 +55,9 @@ export default function ProfilePage() {
         email: '',
         password: '',
         address: '',
-        creditCard: ''
+        creditCardNumber: '',
+        creditCardExpirationDate: '',
+	    creditCardCVV: '',
     });
     function handleFirstNameChange(e) {
         setFieldInfo({
@@ -87,10 +89,22 @@ export default function ProfilePage() {
             address: e.target.value
         });
     }
-    function handleCardChange(e) {
+    function handleCardNumChange(e) {
         setFieldInfo({
             ...fieldInfo,
-            creditCard: e.target.value
+            creditCardNumber: e.target.value
+        });
+    }
+    function handleCardDateChange(e) {
+        setFieldInfo({
+            ...fieldInfo,
+            creditCardExpirationDate: e.target.value
+        });
+    }
+    function handleCardCVVChange(e) {
+        setFieldInfo({
+            ...fieldInfo,
+            creditCardCVV: e.target.value
         });
     }
 
@@ -121,9 +135,10 @@ export default function ProfilePage() {
 
     // get account information from backend
     async function validateOldPassword() {
+        console.log(oldPassword);
         try {
             const response = await fetch(
-                "http://localhost:5000/api/users/validatePassword",
+                "http://localhost:5000/api/users/check_password",
                 {
                     method: "POST",
                     headers: {
@@ -206,10 +221,10 @@ export default function ProfilePage() {
             // clear previous entry in oldpassword
             setOldPassword('');
             // toggle on
-            setIsPasswordActive((props) => !props);
+            setIsPasswordActive(true);
         }
         return (
-            <button className="button1"
+            <button className="button4"
             style={{display: `${isPasswordActive ? "none" : "inline"}`}}
             onClick={handleClick}>
                 CHANGE PASSWORD
@@ -230,6 +245,69 @@ export default function ProfilePage() {
             }
           })
         }
+    }
+
+    function handleSubmitOldPassword() {
+        validateOldPassword().then((isSuccess) => {
+            if (isSuccess){
+                setOldPasswordValid(true);
+            }
+            else {
+                alert("Password is not valid");
+                setOldPasswordValid(false);
+            }
+        })
+    }
+
+    const [hasCreditCard, setHasCreditCard] = useState(false);
+    function handleOldPasswordChange(e) {
+        setOldPassword(e.target.value);
+    }
+
+    // button that activates the password field
+    function CreditCardButton() {
+        function handleClick() {
+            // clear the credit card fields
+            setFieldInfo({
+                ...fieldInfo,
+                creditCardNumber: ''
+            });
+            setFieldInfo({
+                ...fieldInfo,
+                creditCardExpirationDate: ''
+            });
+            setFieldInfo({
+                ...fieldInfo,
+                creditCardCVV: ''
+            });
+
+            setHasCreditCard(false);
+        }
+
+        if (hasCreditCard) {
+            return (
+                <div>
+                    <p style={{display: `${isCardActive ? "none" : "inline"}`}}>
+                        {fieldInfo.creditCardNumber}
+                    </p> <br/>
+                    <button className="button4"
+                    style={{display: `${isCardActive ? "none" : "inline"}`}}
+                    onClick={handleClick}>
+                        DELETE CARD
+                    </button>
+                </div>
+            );
+        }
+        else {
+            return (
+                <button className="button4"
+                style={{display: `${isCardActive ? "none" : "inline"}`}}
+                onClick={() => setIsCardActive(true)}>
+                    ADD CREDIT CARD
+                </button>
+            );
+        }
+        
     }
 
     // button that saves the changed account info
@@ -460,6 +538,11 @@ export default function ProfilePage() {
 
                 setFieldInfo(data);
 
+                // if the credit card number exists, set hasCard
+                if (fieldInfo.creditCardNumber != '') {
+                    setHasCreditCard(true);
+                }
+
                 setNeedsAccountData(false);
             })();
         }
@@ -510,8 +593,11 @@ export default function ProfilePage() {
                         placeholder="Current Password"
                         value={oldPassword}
                         onChange={handleOldPasswordChange}
-                        onKeyDown={handleKeyPress}
                     />
+                    <button className="button4" style={{display: `${isPasswordActive ? "inline" : "none"}`}}
+                    onClick={handleSubmitOldPassword}>
+                        SUBMIT
+                    </button>
                     <button className="button4" style={{display: `${isPasswordActive ? "inline" : "none"}`}}
                     onClick={() => setIsPasswordActive(false)}>
                         CANCEL
@@ -550,16 +636,39 @@ export default function ProfilePage() {
                     </button>
 
                     <p>Payment:</p>
-                    <input className="input2" disabled={ isCardActive ? false : true}
+                    <CreditCardButton />
+
+                    <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>Credit card number:</p>
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
                         type="text"
-                        placeholder="FIXME - multiple fields"
-                        value={fieldInfo.creditCard}
-                        onChange={handleCardChange}
+                        placeholder="XXXX-XXXX-XXXX-XXXX"
+                        value={fieldInfo.creditCardNumber}
+                        onChange={handleCardNumChange}
                     />
-                    <button className="button4" onClick={() => setIsCardActive((props) => !props)}>
-                        <PencilIcon style={{ height: "30px", fill: "black" }} />
+                    <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>Expiration date:</p>
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
+                        type="text"
+                        placeholder="XX/XX"
+                        value={fieldInfo.creditCardExpirationDate}
+                        onChange={handleCardDateChange}
+                    />
+                    <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>CVC code:</p>
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
+                        type="text"
+                        placeholder="XXX"
+                        value={fieldInfo.creditCardCVV}
+                        onChange={handleCardCVVChange}
+                    />
+                    <button className="button4" style={{display: `${isCardActive ? "inline" : "none"}`}}
+                    onClick={() => {setIsCardActive(false); setHasCreditCard(true)}}>
+                        SUBMIT
+                    </button>
+                    <button className="button4" style={{display: `${isCardActive ? "inline" : "none"}`}}
+                    onClick={() => {setIsCardActive(false)}}>
+                        CANCEL
                     </button> <br/>
 
+                    <br/>
                     <SaveChangesButton /> <br/>
                     <DeleteConformationBox />
                     <DeleteAccountButton />
