@@ -448,6 +448,25 @@ export default function ProfilePage() {
         
     }
 
+    function handleSubmitCreditCard() {
+        if (cardNumRef.current.validity.valid &&
+            cardDateRef.current.validity.valid &&
+            cardCVVRef.current.validity.valid
+        ) {
+            SaveAccountData({
+                creditCardNumber: fieldInfo.creditCardNumber,
+                creditCardExpirationDate: fieldInfo.creditCardExpirationDate,
+                creditCardCVV: fieldInfo.creditCardCVV
+            })
+            setConfirmationMessageStatus('success');
+            setIsCardActive(false);
+            setHasCreditCard(true);
+        }
+        else {
+            setConfirmationMessageStatus('fail');
+        }
+    }
+
 //#endregion  ========================================================================================
 
     //#region DELETE ACCOUNT FUNCTIONS ========================================================================================
@@ -737,31 +756,34 @@ export default function ProfilePage() {
                     <CreditCardButton />
 
                     <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>Credit card number:</p>
-                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
-                        type="text"
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}} required
+                        type="tel"
+                        pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}"
                         placeholder="XXXX-XXXX-XXXX-XXXX"
                         ref={cardNumRef}
                         value={fieldInfo.creditCardNumber}
                         onChange={handleCardNumChange}
                     />
                     <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>Expiration date:</p>
-                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
-                        type="text"
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}} required
+                        type="tel"
+                        pattern="[0-9]{2}/[0-9]{2}"
                         placeholder="XX/XX"
                         ref={cardDateRef}
                         value={fieldInfo.creditCardExpirationDate}
                         onChange={handleCardDateChange}
                     />
                     <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>CVC code:</p>
-                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}} required
                         type="text"
+                        pattern="[0-9]{3}"
                         placeholder="XXX"
                         ref={cardCVVRef}
                         value={fieldInfo.creditCardCVV}
                         onChange={handleCardCVVChange}
                     />
                     <button className="button4" style={{display: `${isCardActive ? "inline" : "none"}`}}
-                    onClick={() => {setIsCardActive(false); setHasCreditCard(true)}}>
+                    onClick={handleSubmitCreditCard}>
                         SUBMIT
                     </button>
                     <button className="button4" style={{display: `${isCardActive ? "inline" : "none"}`}}
