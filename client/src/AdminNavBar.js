@@ -6,7 +6,8 @@ import styles from './styles.css';
 
 export default function AdminNavBar() {
     // global context
-    const { isLoggedIn } = useContext(IsLoggedInContext);
+    const { isLoggedIn, setIsLoggedIn, setIsAdmin } = useContext(IsLoggedInContext);
+    const navigate = useNavigate();
 
     // states
     const [accountInitials, setAccountInitials] = useState(null);
@@ -80,13 +81,12 @@ export default function AdminNavBar() {
     // logout button
     function LogoutButton() {
         function handleClick() {
-            alert("logout button clicked, but logout hasn't been implemented yet");
+            localStorage.removeItem("token");
+            setIsLoggedIn(false);
+            setIsAdmin(false);
+            navigate("/");
         }
-        return (
-            <button className="navbarLink logout" onClick={handleClick}>
-                LOGOUT
-            </button>
-        );
+        return <button className="navbarLink logout" onClick={handleClick}>LOGOUT</button>;
     }
 
     // account profile button
