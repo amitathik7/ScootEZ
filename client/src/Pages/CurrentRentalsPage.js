@@ -8,9 +8,50 @@ import { IsLoggedInContext } from '../App.js';
 export default function CurrentRentalsPage() {
     // global context
     const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+
+    const [isAuthenticated, setIsAuthenticated] = useState('fetching');
+
+    async function AuthenticateUser() {
+        // if the token doesn't exist...
+        if (localStorage.getItem("token") == null) {
+            return false;
+        }
+        try {    
+            console.log("in the fetch request");
+            const response = await fetch('http://localhost:5000/api/token/verify', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+          });
+          const {message} = await response.json(); // this will return true or false in "status"
+          return message;
+        }
+        catch (error) {
+          console.error("error encountered in authenticating the token" + error);
+          return false;
+        }
+    }
     
-    // authentication
-    if (isLoggedIn) {
+
+    if (isAuthenticated === 'fetching') {
+        // call authentification function
+        (async function(){
+            const result = await AuthenticateUser();
+            if (result) {
+                setIsLoggedIn(true);
+                setIsAuthenticated('true');
+            }
+            else {setIsAuthenticated('false');}
+        })();
+
+        return (
+            <div>
+                One moment...
+            </div>
+        );
+    }
+    else if (isAuthenticated === 'true') {
 
         return (
             <div className="fullBox">
@@ -34,6 +75,7 @@ export default function CurrentRentalsPage() {
         );
     }
     else {
+        setIsLoggedIn(false);
         return (
             <Navigate to='/login' />
         );

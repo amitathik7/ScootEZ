@@ -13,6 +13,10 @@ export default function ProfilePage() {
     const [isAuthenticated, setIsAuthenticated] = useState('fetching');
 
     async function AuthenticateUser() {
+        // if the token doesn't exist...
+        if (localStorage.getItem("token") == null) {
+            return false;
+        }
         try {    
             console.log("in the fetch request");
             const response = await fetch('http://localhost:5000/api/token/verify', {
@@ -431,7 +435,10 @@ export default function ProfilePage() {
         // call authentification function
         (async function(){
             const result = await AuthenticateUser();
-            if (result) {setIsAuthenticated('true');}
+            if (result) {
+                setIsLoggedIn(true);
+                setIsAuthenticated('true');
+            }
             else {setIsAuthenticated('false');}
         })();
 
@@ -561,6 +568,7 @@ export default function ProfilePage() {
         );
     }
     else {
+        setIsLoggedIn(false);
         return (
             <Navigate to='/login' />
         );
