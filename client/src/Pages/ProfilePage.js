@@ -472,17 +472,17 @@ export default function ProfilePage() {
 
     function DeleteConformationBox() {
         const navigate = useNavigate();
-        function handleClick() {
-            DeleteAccount().then((isSuccess) => {
-                if (isSuccess){
-                    alert("Successfuly deleted your account");
-                    localStorage.removeItem("token");   //delete token
-                    navigate("/", {});  // navigate home
-                }
-                else {
-                    alert("Failed to save changes to your account");
-                }
-            })   
+        async function handleClick() {
+            console.log("delete button pressed, working...");
+            if (await DeleteAccount()){
+                localStorage.removeItem("token");   //delete token
+                setIsLoggedIn(false);
+                setIsAuthenticated(false);
+                navigate("/", {});  // navigate home
+            }
+            else {
+                alert("Failed to delete your account.");
+            }  
         }
         if (isConfirmationBoxOpen) {
             return (
@@ -646,7 +646,7 @@ export default function ProfilePage() {
                 setFieldInfo(data);
 
                 // if the credit card number exists, set hasCard
-                if (data.creditCardNumber !== '') {
+                if (fieldInfo.creditCardNumber !== '') {
                     setHasCreditCard(true);
                 }
 

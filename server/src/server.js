@@ -223,14 +223,16 @@ app.get("/api/users", authenticateToken, async (req, res) => {
 });
 
 
-app.delete("/api/user/delete", authenticateToken, async (req, res) => {
+app.delete("/api/users/delete", authenticateToken, async (req, res) => {
 	try {
 		const account = await Account.findByIdAndDelete(req.user.id);
 
 		if (!account) {
+			console.log("account not found");
 			return res.status(404);
 		}
 
+		console.log("account deleted");
 		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
