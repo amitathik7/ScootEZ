@@ -197,7 +197,9 @@ app.get("/api/users/accountInfo", authenticateToken, async (req, res) => {
 			email: account.email,
 			password: account.password,
 			address: account.address,
-			creditCard: account.creditCard,
+			creditCardNumber: account.creditCardNumber,
+			creditCardExpirationDate: account.creditCardExpirationDate,
+			creditCardCVV: account.creditCardCVV,
 		});
 	} catch (error) {
 		res.status(500).send(error);

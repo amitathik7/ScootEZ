@@ -12,6 +12,7 @@
     --light-green: #d5f1c0;
     --mid-green: #61ad2b;
     --dark-green: #38611b;
+    --gray0: #f0f0f0;
     --gray1: #d9d9d9;
     --gray2: #cccccc;
     --gray3: #999999;
@@ -300,7 +301,7 @@ body {
     margin-bottom: 0px;
 }
 .input2:disabled {
-    background-color: var(--gray1);
+    background-color: var(--gray0);
 }
 .input2:active:focus {
     outline: none;
@@ -479,7 +480,7 @@ label {
 
 /* for the edit pencil buttons */
 .button4 {
-    background-color: var(--gray2);
+    background-color: var(--gray1);
     border: none;
     padding: 5px;
     border-radius: 10px;

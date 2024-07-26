@@ -408,28 +408,18 @@ export default function ProfilePage() {
             // clear the credit card fields
             setFieldInfo({
                 ...fieldInfo,
-                creditCardNumber: ''
-            });
-            setFieldInfo({
-                ...fieldInfo,
-                creditCardExpirationDate: ''
-            });
-            setFieldInfo({
-                ...fieldInfo,
+                creditCardNumber: '',
+                creditCardExpirationDate: '',
                 creditCardCVV: ''
             });
-
             setHasCreditCard(false);
         }
 
         if (hasCreditCard) {
             return (
                 <div>
-                    <p style={{display: `${isCardActive ? "none" : "inline"}`}}>
-                        {fieldInfo.creditCardNumber}
-                    </p> <br/>
+                    <p>{fieldInfo.creditCardNumber}</p>
                     <button className="button4"
-                    style={{display: `${isCardActive ? "none" : "inline"}`}}
                     onClick={handleClick}>
                         DELETE CARD
                     </button>
@@ -635,8 +625,11 @@ export default function ProfilePage() {
         })();
 
         return (
-            <div>
-                One moment...
+            <div className="fullBox">
+                <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>One Moment</h1>
+                    <h2>Loading your account...</h2>
+                </div>
             </div>
         );
     }
@@ -653,7 +646,7 @@ export default function ProfilePage() {
                 setFieldInfo(data);
 
                 // if the credit card number exists, set hasCard
-                if (fieldInfo.creditCardNumber !== '') {
+                if (data.creditCardNumber !== '') {
                     setHasCreditCard(true);
                 }
 
@@ -662,7 +655,7 @@ export default function ProfilePage() {
         }
 
         return (
-            <div className="fullBox gray">
+            <div className="fullBox">
                 <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
                     <h1>My Profile</h1>
                     <ConfirmationMessage />

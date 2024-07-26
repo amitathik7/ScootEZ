@@ -13,6 +13,7 @@ import ScooterProductPage from './Pages/ScooterProductPage.js'
 import ScooterPage from './Pages/ScooterPage.js';
 import ProfilePage from './Pages/ProfilePage.js';
 import CurrentRentalsPage from './Pages/CurrentRentalsPage.js';
+import RentalHistoryPage from './Pages/RentalHistoryPage.js';
 import EmployeeLoginPage from './Pages/EmployeeLoginPage.js';
 import AdminLoginPage from './Pages/AdminLoginPage.js';
 import AdminDashboard from './Pages/AdminDashboard.js';
@@ -47,6 +48,7 @@ function App() {
             </Route>
             <Route path="/profile" element={<ProfilePage/>} />
             <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
+            <Route path="/rental-history" element={<RentalHistoryPage/>} />
             <Route path="/employee-login" element={<EmployeeLoginPage/>} />
             <Route path="/admin-login" element={<AdminLoginPage/>} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
