@@ -122,8 +122,11 @@ export default function NavBar() {
 
     // logout button
     function LogoutButton() {
+        const navigate = useNavigate();
         function handleClick() {
-            alert("logout button clicked, but logout hasn't been implemented yet")
+            localStorage.removeItem("token");
+            setIsLoggedIn(false);
+            navigate("/", {});  // navigate home
         }
         return (
             <button className="navbarLink logout"

@@ -203,7 +203,22 @@ body {
     height: 40px;
 }
 
+.deleteConfirmationBox {
+    position: fixed;
+    top: 200px;
+    left: 600px;
+    z-index: 5;
+    width: 300px;
+    height: 200px;
 
+    padding: 20px;
+
+    background-color: var(--dark);
+    color: white;
+    text-align: center;
+
+    border-radius: 12px;
+}
 
 /*========================LINKS========================*/
 
@@ -336,6 +351,12 @@ label {
 .warningText {
     font-size: 10px;
     color: red;
+    margin: 0px;
+}
+
+.successText {
+    font-size: 10px;
+    color: green;
     margin: 0px;
 }
 
