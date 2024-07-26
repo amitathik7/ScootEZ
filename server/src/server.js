@@ -463,7 +463,7 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
 
-		const input_password = req.body;
+		const {input_password} = req.body;
 
 		const account = await Account.findById({accountId});
 

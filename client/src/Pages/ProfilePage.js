@@ -464,21 +464,6 @@ export default function ProfilePage() {
         }
     }
 
-    function OldPasswordInput() {
-        if (isPasswordActive) {
-            return (
-                <div>
-                    Please enter your current password:
-                </div>
-            );
-        }
-        else {
-            return (
-                <div />
-            );
-        }
-    }
-
     function ShowPasswordBox() {
         // if the password is hidden or shows as text
         function ToggleShowPassword() {
@@ -558,7 +543,7 @@ export default function ProfilePage() {
                         value={fieldInfo.firstName}
                         onChange={handleFirstNameChange}
                     />
-                    <button className="button4" onClick={() => setIsFirstNameActive((props) => !props)}>
+                    <button className="button4" onClick={() => {setIsFirstNameActive((props) => !props)}}>
                         <PencilIcon style={{ height: "30px", fill: "black" }} />
                     </button>
 
