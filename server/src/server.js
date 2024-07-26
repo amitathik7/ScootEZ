@@ -42,7 +42,9 @@ const accountSchema = new mongoose.Schema({
 	email: String,
 	password: String,
 	address: String,
-	creditCard: String,
+	creditCardNumber: String,
+	creditCardExpirationDate: String,
+	creditCardCVV: String,
 });
 
 const scooterSchema = new mongoose.Schema({
@@ -237,6 +239,10 @@ app.put("/api/users/update", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
 		const newData = req.body;
+
+		if (newData.password) {
+			newData.password = await bcrypt.hash(newData.password, 10);
+		}
 
 		const account = await Account.findByIdAndUpdate(accountId, newData, {
 			new: true,
@@ -450,6 +456,26 @@ app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
 		res.json(employee_accounts);
 	} catch (error) {
 		return res.status(500).send(error);
+	}
+});
+
+app.get("/api/users/check_password", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+
+		const input_password = req.body;
+
+		const account = await Account.findById(accountId);
+
+		if (account && (await bcrypt.compare(input_password, account.password))) {
+			res.json(true);
+			res.status(201);
+		} else {
+			res.json(false);
+			res.status(400);
+		}
+	} catch (err) {
+		res.status(500).send(error);
 	}
 });
 
