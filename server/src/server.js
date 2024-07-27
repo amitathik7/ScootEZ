@@ -103,8 +103,16 @@ app.listen(port, () => {
 });
 
 app.post("/api/users/create", async (req, res) => {
-	const { firstName, lastName, email, password, address, creditCard } =
-		req.body;
+	const {
+		firstName,
+		lastName,
+		email,
+		password,
+		address,
+		creditCardNumber,
+		creditCardExpirationDate,
+		creditCardCVV,
+	} = req.body;
 
 	try {
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -115,7 +123,9 @@ app.post("/api/users/create", async (req, res) => {
 			email: email,
 			password: hashedPassword,
 			address: address,
-			creditCard: creditCard,
+			creditCardNumber: creditCardNumber,
+			creditCardExpirationDate: creditCardExpirationDate,
+			creditCardCVV: creditCardCVV,
 		});
 
 		// save the new account to DB
@@ -156,18 +166,6 @@ app.post("/api/users/login", async (req, res) => {
 	}
 });
 
-// Gets the location of all scooters for the user's map.
-app.get("/api/scooters", async (req, res) => {
-	try {
-		const scooters = await Scooter.find();
-
-		res.json({ scooters });
-		res.status(200);
-	} catch (error) {
-		res.status(500).send(error);
-	}
-});
-
 // Returns the user's full name for the navbar.
 app.get("/api/users/accountName", authenticateToken, async (req, res) => {
 	try {
@@ -197,7 +195,9 @@ app.get("/api/users/accountInfo", authenticateToken, async (req, res) => {
 			email: account.email,
 			password: account.password,
 			address: account.address,
-			creditCard: account.creditCard,
+			creditCardNumber: account.creditCardNumber,
+			creditCardExpirationDate: account.creditCardExpirationDate,
+			creditCardCVV: account.creditCardCVV,
 		});
 	} catch (error) {
 		res.status(500).send(error);
@@ -205,31 +205,32 @@ app.get("/api/users/accountInfo", authenticateToken, async (req, res) => {
 });
 
 app.get("/api/users", authenticateToken, async (req, res) => {
-    try {
-        const admin = await Admin.findById(req.user.id);
-        const employee = await Employee.findById(req.user.id);
+	try {
+		const admin = await Admin.findById(req.user.id);
+		const employee = await Employee.findById(req.user.id);
 
-        if (!admin && !employee) {
-            return res.status(403).send("Access denied.");
-        }
+		if (!admin && !employee) {
+			return res.status(403).send("Access denied.");
+		}
 
-        const accounts = await Account.find();
-        res.status(200).json(accounts);
-    } catch (error) {
-        res.status(500).send(error);
-    }
+		const accounts = await Account.find();
+		res.status(200).json(accounts);
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
-
-app.delete("/api/user/delete", authenticateToken, async (req, res) => {
+app.delete("/api/users/delete", authenticateToken, async (req, res) => {
 	try {
 		const account = await Account.findByIdAndDelete(req.user.id);
 
 		if (!account) {
-			return res.status(404);
+			console.log("account not found");
+			return res.status(404).json({ message: "account not found" });
 		}
 
-		res.status(200);
+		console.log("account deleted");
+		res.status(200).json({ message: "successfully deleted" });
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -258,8 +259,46 @@ app.put("/api/users/update", authenticateToken, async (req, res) => {
 			email: account.email,
 			password: account.password,
 			address: account.address,
-			creditCard: account.creditCard,
+			creditCardNumber: creditCardNumber,
+			creditCardExpirationDate: creditCardExpirationDate,
+			creditCardCVV: creditCardCVV,
 		});
+		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post("/api/users/check_password", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+
+		const input_password = req.body;
+
+		const account = await Account.findById(accountId);
+
+		if (
+			account &&
+			(await bcrypt.compare(input_password.oldPassword, account.password))
+		) {
+			res.json(true);
+			res.status(201);
+		} else {
+			res.json(false);
+			res.status(400);
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).send(err);
+	}
+});
+
+// Gets the location of all scooters for the user's map.
+app.get("/api/scooters", async (req, res) => {
+	try {
+		const scooters = await Scooter.find();
+
+		res.json({ scooters });
 		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
@@ -314,6 +353,40 @@ app.get("/api/employee/scooters", authenticateToken, async (req, res) => {
 		const scooters = await Scooter.find();
 
 		res.json(scooters);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/employee/user_accounts", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(404).send("Invalid Token");
+		}
+
+		const accounts = await Account.find();
+		res.json(accounts);
+	} catch (error) {
+		return res.status(500).send(error);
+	}
+});
+
+app.post("/api/employee/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	try {
+		const employee = await Employee.findOne({ email: email });
+
+		if (employee && (await bcrypt.compare(password, employee.password))) {
+			const token = jwt.sign({ id: employee._id }, "secret");
+			res.json({ token });
+			res.status(201);
+		} else {
+			res.status(400).json({ message: "Invalid Employee Credentials" });
+		}
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -391,24 +464,6 @@ app.post("/api/admin/create_admin", authenticateToken, async (req, res) => {
 	}
 });
 
-app.post("/api/employee/login", async (req, res) => {
-	const { email, password } = req.body;
-
-	try {
-		const employee = await Employee.findOne({ email: email });
-
-		if (employee && (await bcrypt.compare(password, employee.password))) {
-			const token = jwt.sign({ id: employee._id }, "secret");
-			res.json({ token });
-			res.status(201);
-		} else {
-			res.status(400).json({ message: "Invalid Employee Credentials" });
-		}
-	} catch (error) {
-		res.status(500).send(error);
-	}
-});
-
 app.post("/api/admin/login", async (req, res) => {
 	const { email, password } = req.body;
 	console.log(await bcrypt.hash(password, 10));
@@ -428,22 +483,6 @@ app.post("/api/admin/login", async (req, res) => {
 	}
 });
 
-app.get("/api/employee/user_accounts", authenticateToken, async (req, res) => {
-	try {
-		const employee = await Employee.findById(req.user.id);
-		const admin = await Admin.findById(req.user.id);
-
-		if (!admin && !employee) {
-			return res.status(404).send("Invalid Token");
-		}
-
-		const accounts = await Account.find();
-		res.json(accounts);
-	} catch (error) {
-		return res.status(500).send(error);
-	}
-});
-
 app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
 	try {
 		const admin = await Admin.findById(req.user.id);
@@ -459,24 +498,17 @@ app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
 	}
 });
 
-app.post("/api/users/check_password", authenticateToken, async (req, res) => {
+app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
 	try {
-		const accountId = req.user.id;
+		const account = await Admin.findById(req.user.id);
 
-		const input_password = req.body;
-
-		const account = await Account.findById(accountId);
-
-		if (account && (await bcrypt.compare(input_password.oldPassword, account.password))) {
-			res.json(true);
-			res.status(201);
-		} else {
-			res.json(false);
-			res.status(400);
+		if (!account) {
+			return res.status(404);
 		}
-	} catch (err) {
-		console.log(err);
-		res.status(500).send(err);
+
+		res.json({ firstName: account.firstName, lastName: account.lastName });
+	} catch (error) {
+		res.status(500).send(error);
 	}
 });
 

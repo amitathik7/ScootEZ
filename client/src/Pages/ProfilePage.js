@@ -408,28 +408,18 @@ export default function ProfilePage() {
             // clear the credit card fields
             setFieldInfo({
                 ...fieldInfo,
-                creditCardNumber: ''
-            });
-            setFieldInfo({
-                ...fieldInfo,
-                creditCardExpirationDate: ''
-            });
-            setFieldInfo({
-                ...fieldInfo,
+                creditCardNumber: '',
+                creditCardExpirationDate: '',
                 creditCardCVV: ''
             });
-
             setHasCreditCard(false);
         }
 
         if (hasCreditCard) {
             return (
                 <div>
-                    <p style={{display: `${isCardActive ? "none" : "inline"}`}}>
-                        {fieldInfo.creditCardNumber}
-                    </p> <br/>
+                    <p>{fieldInfo.creditCardNumber}</p>
                     <button className="button4"
-                    style={{display: `${isCardActive ? "none" : "inline"}`}}
                     onClick={handleClick}>
                         DELETE CARD
                     </button>
@@ -448,6 +438,25 @@ export default function ProfilePage() {
         
     }
 
+    function handleSubmitCreditCard() {
+        if (cardNumRef.current.validity.valid &&
+            cardDateRef.current.validity.valid &&
+            cardCVVRef.current.validity.valid
+        ) {
+            SaveAccountData({
+                creditCardNumber: fieldInfo.creditCardNumber,
+                creditCardExpirationDate: fieldInfo.creditCardExpirationDate,
+                creditCardCVV: fieldInfo.creditCardCVV
+            })
+            setConfirmationMessageStatus('success');
+            setIsCardActive(false);
+            setHasCreditCard(true);
+        }
+        else {
+            setConfirmationMessageStatus('fail');
+        }
+    }
+
 //#endregion  ========================================================================================
 
     //#region DELETE ACCOUNT FUNCTIONS ========================================================================================
@@ -463,17 +472,17 @@ export default function ProfilePage() {
 
     function DeleteConformationBox() {
         const navigate = useNavigate();
-        function handleClick() {
-            DeleteAccount().then((isSuccess) => {
-                if (isSuccess){
-                    alert("Successfuly deleted your account");
-                    localStorage.removeItem("token");   //delete token
-                    navigate("/", {});  // navigate home
-                }
-                else {
-                    alert("Failed to save changes to your account");
-                }
-            })   
+        async function handleClick() {
+            console.log("delete button pressed, working...");
+            if (await DeleteAccount()){
+                localStorage.removeItem("token");   //delete token
+                setIsLoggedIn(false);
+                setIsAuthenticated(false);
+                navigate("/", {});  // navigate home
+            }
+            else {
+                alert("Failed to delete your account.");
+            }  
         }
         if (isConfirmationBoxOpen) {
             return (
@@ -616,8 +625,11 @@ export default function ProfilePage() {
         })();
 
         return (
-            <div>
-                One moment...
+            <div className="fullBox">
+                <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>One Moment</h1>
+                    <h2>Loading your account...</h2>
+                </div>
             </div>
         );
     }
@@ -643,7 +655,7 @@ export default function ProfilePage() {
         }
 
         return (
-            <div className="fullBox gray">
+            <div className="fullBox">
                 <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
                     <h1>My Profile</h1>
                     <ConfirmationMessage />
@@ -737,31 +749,34 @@ export default function ProfilePage() {
                     <CreditCardButton />
 
                     <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>Credit card number:</p>
-                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
-                        type="text"
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}} required
+                        type="tel"
+                        pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}"
                         placeholder="XXXX-XXXX-XXXX-XXXX"
                         ref={cardNumRef}
                         value={fieldInfo.creditCardNumber}
                         onChange={handleCardNumChange}
                     />
                     <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>Expiration date:</p>
-                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
-                        type="text"
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}} required
+                        type="tel"
+                        pattern="[0-9]{2}/[0-9]{2}"
                         placeholder="XX/XX"
                         ref={cardDateRef}
                         value={fieldInfo.creditCardExpirationDate}
                         onChange={handleCardDateChange}
                     />
                     <p style={{display: `${isCardActive ? "inline" : "none"}`}}> <br/>CVC code:</p>
-                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}}
+                    <input className="input2" style={{display: `${isCardActive ? "inline" : "none"}`}} required
                         type="text"
+                        pattern="[0-9]{3}"
                         placeholder="XXX"
                         ref={cardCVVRef}
                         value={fieldInfo.creditCardCVV}
                         onChange={handleCardCVVChange}
                     />
                     <button className="button4" style={{display: `${isCardActive ? "inline" : "none"}`}}
-                    onClick={() => {setIsCardActive(false); setHasCreditCard(true)}}>
+                    onClick={handleSubmitCreditCard}>
                         SUBMIT
                     </button>
                     <button className="button4" style={{display: `${isCardActive ? "inline" : "none"}`}}
