@@ -498,4 +498,18 @@ app.get("/api/admin/employee_accounts", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
+	try {
+		const account = await Admin.findById(req.user.id);
+
+		if (!account) {
+			return res.status(404);
+		}
+
+		res.json({ firstName: account.firstName, lastName: account.lastName });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 module.exports = { app };
