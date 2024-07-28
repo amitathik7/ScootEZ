@@ -48,7 +48,7 @@ export default function ScooterPage() {
         // get scooter info function
         (async function(){
             console.log("getting scooter info...");
-            const result = await getScooters()
+            const result = await getScooters();
             setIsScooterLoaded('true');
             if (!result) {
                 console.log("result is null")

@@ -49,13 +49,13 @@ export default function RentPage() {
     async function getScooters() {
         try {
             const response = await fetch(
-                "http://localhost:5000/api/scooters",
+                "http://localhost:5000/api/scooters/find",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(id)
+                    body: JSON.stringify({scooterId: id})
                 }
             );
             if (response.ok) {
@@ -96,21 +96,12 @@ export default function RentPage() {
         // get scooter info function
         (async function(){
             const result = await getScooters();
-            if (result == null) {
-                alert("error occured in fetching scooter info")
+            setIsScooterLoaded('true');
+            if (!result) {
                 setIsScooterLoaded('error')
             }
             else {
-                setScooterInfo({
-                    id: result.id,
-                    model: result.model,
-                    latitude: result.latitude,
-                    longitude: result.longitude,
-                    battery: result.battery,
-                    availability: result.availability,
-                    rentalPrice: result.rentalPrice
-                })
-                setIsScooterLoaded('true');
+                setScooterInfo(result);
             }
         })();
 
