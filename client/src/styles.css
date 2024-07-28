@@ -427,6 +427,7 @@ label {
     height: 50px;
     padding: 5px;
     border-radius: 10px;
+    text-decoration: none;
 }
 .button1:hover {
     background-color: var(--mid-green);

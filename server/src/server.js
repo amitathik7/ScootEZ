@@ -55,6 +55,7 @@ const scooterSchema = new mongoose.Schema({
 	availability: Boolean,
 	rentalPrice: Number,
 	id: Number,
+	waitTimeMinutes: Number
 });
 
 const employeeSchema = new mongoose.Schema({
@@ -300,6 +301,27 @@ app.get("/api/scooters", async (req, res) => {
 
 		res.json({ scooters });
 		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post("/api/scooters/find", async (req, res) => {
+	const { scooterId } = req.body;
+
+	try {
+		console.log("scooter id recieved: " + scooterId);
+		console.log("finding...");
+		const scooter = await Scooter.findOne({ id: scooterId });
+		console.log(scooter);
+		if (scooter) {
+			console.log("returning the scooter...");
+			res.json(scooter);
+			res.status(201);
+		} else {
+			console.log("Unsuccessful");
+			res.status(400).json({ message: "Could not find scooter by id" });
+		}
 	} catch (error) {
 		res.status(500).send(error);
 	}
