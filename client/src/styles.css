@@ -412,6 +412,25 @@ label {
     text-align: right;
 }
 
+.scooterList {
+    line-height: 40px;
+}
+
+.scooterListItems {
+    display: block;
+    text-decoration: none;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    width: 100%;
+
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: var(--gray2);
+}
+
 /*========================BUTTONS========================*/
 
 /* Big green button */
