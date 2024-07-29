@@ -512,4 +512,25 @@ app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/users/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const account = await Account.findById(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            firstName: account.firstName,
+            lastName: account.lastName,
+            email: account.email,
+            address: account.address,
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+
 module.exports = { app };

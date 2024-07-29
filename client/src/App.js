@@ -17,6 +17,11 @@ import RentalHistoryPage from './Pages/RentalHistoryPage.js';
 import EmployeeLoginPage from './Pages/EmployeeLoginPage.js';
 import AdminLoginPage from './Pages/AdminLoginPage.js';
 import AdminDashboard from './Pages/AdminDashboard.js';
+import CreateEmployee from './Pages/CreateEmployee.js';
+import CreateAdmin from './Pages/CreateAdmin.js';
+import AdminProfilePage from './Pages/AdminProfilePage.js';
+import UserAccountsPage from './Pages/UserAccountsPage.js';
+import UserInfoPage from './Pages/UserInfoPage.js';
 
 import NavBar from "./NavBar.js";
 import AdminNavBar from "./AdminNavBar.js";
@@ -52,6 +57,11 @@ function App() {
             <Route path="/employee-login" element={<EmployeeLoginPage/>} />
             <Route path="/admin-login" element={<AdminLoginPage/>} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+            <Route path="/create-employee" element={<CreateEmployee />} />
+            <Route path="/create-admin" element={<CreateAdmin />} />
+            <Route path="/admin-profile" element={<AdminProfilePage/>} />
+            <Route path="/admin/users" element={<UserAccountsPage/>} />
+            <Route path="/user/:id" element={<UserInfoPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>

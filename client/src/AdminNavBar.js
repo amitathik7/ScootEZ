@@ -34,7 +34,7 @@ export default function AdminNavBar() {
     const accountSubmenuItems = [
         {
             title: 'ACCOUNT',
-            url: '/profile'
+            url: '/admin-profile'
         },
     ];
 
@@ -105,6 +105,29 @@ export default function AdminNavBar() {
                     isExpanded={isExpanded} isAccountDropdown={true} />
             </div>
         );
+    }
+
+    async function getAccountName() {
+        try {    
+            const response = await fetch('http://localhost:5000/api/admin/accountName', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const fullName = await response.json();
+            return fullName;    // fullName is an object of { firstName, lastName }
+        }
+        catch (error) {
+            console.error("error encountered in getting name" + error);
+        }
+    }
+
+    if (isLoggedIn) {
+        getAccountName().then((fullName) => {
+            setAccountInitials(fullName.firstName.charAt(0) + fullName.lastName.charAt(0));
+        });
     }
 
     return(
