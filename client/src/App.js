@@ -11,6 +11,7 @@ import MapPage from './Pages/MapPage.js';
 import FaqPage from './Pages/FaqPage.js';
 import ScooterProductPage from './Pages/ScooterProductPage.js'
 import ScooterPage from './Pages/ScooterPage.js';
+import RentPage from './Pages/RentPage.js';
 import ProfilePage from './Pages/ProfilePage.js';
 import CurrentRentalsPage from './Pages/CurrentRentalsPage.js';
 import RentalHistoryPage from './Pages/RentalHistoryPage.js';
@@ -51,6 +52,7 @@ function App() {
               <Route index element={<ScooterPage/>} />
               <Route path=":id" element={<ScooterProductPage/>} />
             </Route>
+            <Route path="/rent/:id" element={<RentPage/>} />
             <Route path="/profile" element={<ProfilePage/>} />
             <Route path="/current-rentals" element={<CurrentRentalsPage/>} />
             <Route path="/rental-history" element={<RentalHistoryPage/>} />
