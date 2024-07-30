@@ -79,11 +79,12 @@ export default function ScooterPage() {
                         {scooters.map((scooter, index) => (
                         <li className="scooterListItems" key={index}>
                             <h2>{scooter.model}</h2>
-                            <h3>ID: {scooter.id}</h3>
-                            <p>Current location: {scooter.latitude}, {scooter.longitude}</p>
-                            <p>Battery charge: {scooter.battery}</p>
-                            <p>Availability: { scooter.availability ? "available now" : scooter.waitTimeMinutes }</p>
-                            <p>Rental price: {scooter.rentalPrice}</p>
+                            <h3><strong>ID</strong>: {scooter.id}</h3>
+                            <p><strong>Model</strong>: {scooter.model}</p>
+                            <p><strong>Starting location</strong>: {scooter.latitude}, {scooter.longitude}</p>
+                            <p><strong>Battery charge</strong>: {scooter.battery}%</p>
+                            <p><strong>Rental price</strong>: ${scooter.rentalPrice}</p>
+                            <p><strong>Availability</strong>: { scooter.availability ? "availabile to rent now" : scooter.waitTimeMinutes + " minutes wait" }</p>
                             <MoreInfoButton scooterId={scooter.id}/>
                         </li>
                         ))}

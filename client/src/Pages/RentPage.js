@@ -121,17 +121,16 @@ export default function RentPage() {
                 <h1>Rent {scooterInfo.model}</h1>
                 <h2>Scooter information:</h2>
                 <ul>
-                    <li>Model: {scooterInfo.model}</li>
-                    <li>Starting location: {scooterInfo.latitude}, {scooterInfo.longitude}</li>
-                    <li>Battery charge: {scooterInfo.battery}</li>
-                    <li>Rental price: {scooterInfo.rentalPrice}</li>
-                    <li>time specified</li>
-                    <li>ACTIVE countdown</li>
-                    <li>time the rental is due</li>
+                    <li><strong>Model</strong>: {scooterInfo.model}</li>
+                    <li><strong>Starting location</strong>: {scooterInfo.latitude}, {scooterInfo.longitude}</li>
+                    <li><strong>Battery charge</strong>: {scooterInfo.battery}%</li>
+                    <li><strong>Rental price</strong>: ${scooterInfo.rentalPrice}</li>
+                    <li><strong>Availability</strong>: { scooterInfo.availability ? "availabile to rent now" : scooterInfo.waitTimeMinutes + " minutes wait" }</li>
                 </ul>
                 <h2>Rental details:</h2>
                 <p>Rent time:</p>
                 <p>Put an input field here</p>
+                <p>Then say when it will be due</p>
                 <p>Payment method:</p>
                 <p>TODO: load the account info and get credit card, else have na input field</p>
             </div>
