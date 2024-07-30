@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { IsLoggedInContext } from '../App.js';
 
@@ -22,6 +22,8 @@ export default function RentPage() {
         availability: false,
         rentalPrice: null
     });
+
+    const [currentTime, setCurrentTime] = useState(null);
 
     async function AuthenticateUser() {
         // if the token doesn't exist...
@@ -69,7 +71,28 @@ export default function RentPage() {
             console.error("error detected: ", error);
             return null;
         }
-    }    
+    }   
+    
+    // gets the current time in hours and minutes, sets the state to a string for the input
+    function clock() {         
+        setTimeout(function() {   
+          let currentHours = new Date().getHours();
+          let currentMinutes = new Date().getMinutes();
+          if (currentHours.toString().length <= 1) {currentMinutes = "0" + currentHours}
+          if (currentMinutes.toString().length <= 1) {currentMinutes = "0" + currentMinutes}
+          setCurrentTime(currentHours + ":" + currentMinutes);  
+          clock();         
+        }, 1000)
+    }
+
+    function useCurrentTimeForMin() {
+        if (Date().getHours() > 6) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     if (isAuthenticated === 'fetching') {
         // call authentification function
@@ -102,6 +125,7 @@ export default function RentPage() {
             }
             else {
                 setScooterInfo(result);
+                clock();
             }
         })();
 
@@ -129,8 +153,11 @@ export default function RentPage() {
                 </ul>
                 <h2>Rental details:</h2>
                 <p>Rent time:</p>
-                <p>Put an input field here</p>
-                <p>Then say when it will be due</p>
+                <input aria-label="Time" name="current time" type="time"
+                    className="timeField currentTime" readOnly={true} value={currentTime} />
+                <input aria-label="Time" name="return time" type="time" required
+                    min={useCurrentTimeForMin ? currentTime : "06:00"} max="18:00"
+                    className="timeField"/>
                 <p>Payment method:</p>
                 <p>TODO: load the account info and get credit card, else have na input field</p>
             </div>
