@@ -294,6 +294,88 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 	}
 });
 
+app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const scooterData = req.body;
+		console.log(req.body);
+
+		const account = await Account.findById(accountId);
+		const scooter = await Scooter.findById(scooterData.scooterId);
+		
+
+		if (!account) {
+			throw new Error("Invalid Account Token");
+		}
+
+		if (!scooter) {
+			throw new Error("Invalid Scooter ID");
+		}
+
+		if (scooter.availability === false) {
+			throw new Error("Scooter Unavailable");
+		}
+
+		// Create a new scooter rental history fwithout defining the final coordinates
+		const scooter_document = new RentalHistory({
+			scooter: scooter,
+			timeRented: Date.now(),
+			account: account,
+			startLatitude: scooter.latitude,
+			startLongitude: scooter.longitude,
+		});
+
+		await scooter_document.save();
+
+		scooter.availability = false;
+		scooter.waitTimeMinutes = scooterData.timeDifference;
+		await scooter.save();
+
+		res.status(201).json("Successful Transaction");
+	} catch (err) {
+		console.log(err);
+		res.status(500).send(err);
+	}
+});
+
+app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const { scooterId, latitude, longitude } = req.body;
+
+		const account = await Account.findById(accountId);
+		const scooter = await Scooter.findById({ id: scooterId });
+
+		if (!account) {
+			throw new Error("Invalid Account Token");
+		}
+
+		if (!scooter) {
+			throw new Error("Invalid Scooter ID");
+		}
+
+		if (scooter.availability === false) {
+			throw new Error("Scooter Unavailable");
+		}
+
+		const rental_document = RentalHistory.find({
+			scooter: scooter,
+			account: account,
+			endLatitude: { $exists: false },
+			endLongitude: { $exists: falase },
+		});
+
+		rental_document.endLatitude = latitude;
+		rental_document.endLongitude = longitude;
+
+		rental_document.save();
+
+		res.status(201).json("Ended Rental");
+	} catch (err) {
+		res.status(500).send(err);
+	}
+});
+
 // Gets the location of all scooters for the user's map.
 app.get("/api/scooters", async (req, res) => {
 	try {
