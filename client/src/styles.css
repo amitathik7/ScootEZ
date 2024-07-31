@@ -50,9 +50,11 @@ nav {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    z-index: 100;
 }
 .navBarItem {
     display: inline;
+    z-index: 100;
 }
 
 body {
@@ -68,6 +70,7 @@ body {
     background-color: var(--dark-green);
     width: 100%;
     margin-left: 0%;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
 }
@@ -127,6 +130,7 @@ body {
 /* Dropdown styling */
 .dropdown {
     line-height: 20px;
+    z-index: 100;
 }
 
 .dropdown.Show {
@@ -141,6 +145,7 @@ body {
     text-decoration: none;
     display: block;
     text-align: right;
+    z-index: 100;
 }
 
 
@@ -219,6 +224,22 @@ body {
     text-align: center;
 
     border-radius: 12px;
+}
+
+.rentBox {
+    height: 400px;
+    width: 40%;
+    display: inline-block;
+    vertical-align: top;
+    padding: 20px;
+}
+
+.rentBox.outlined {
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--gray2);
+    border-radius: 20px;
+    line-height: 24px;
 }
 
 /*========================LINKS========================*/
@@ -431,6 +452,28 @@ label {
     border-color: var(--gray2);
 }
 
+
+.timeField {
+    width: 100px;
+    height: 30px;
+    padding: 5px;
+    border: solid;
+    display: inline-block;
+}
+
+.timeField.currentTime {
+    background-color: var(--gray1);
+}
+
+.timeField:valid {
+    border-color: green;
+}
+
+.timeField:invalid {
+    border-color: red;
+}
+
+
 /*========================BUTTONS========================*/
 
 /* Big green button */
@@ -555,6 +598,7 @@ label {
 /* set sizing of map container */
 .leaflet-container {
     height: 100vh;
+    z-index: 1;
 }/* dashboard styles */
 .dashboard {
     display: grid;
