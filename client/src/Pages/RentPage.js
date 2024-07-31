@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { IsLoggedInContext } from '../App.js';
 
 export default function RentPage() {
@@ -146,12 +146,16 @@ export default function RentPage() {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`
                     },
-                    body: JSON.stringify({scooterId: id, timeDifference: timeDifference})
+                    body: JSON.stringify({scooterId: scooterInfo._id, timeDifference: timeDifference})
                 }
             );
             if (!response.ok) {
                 throw new Error('Network response was not ok, see console for details');
+            }
+            else {
+                return true;
             }
         }
         catch (error) {
@@ -196,8 +200,17 @@ export default function RentPage() {
     }
 
     function RentButton() {
+        const navigate = useNavigate();
         function handleClick() {
-            rent();
+            rent().then((result) => {
+                if (result) {
+                    alert("success");
+                    navigate("/current-rentals", {});
+                }
+                else {
+                    alert("Sorry, unable to rent " + scooterInfo.model + " right now.")
+                }
+            });
         }
         return (
             <button className="button1" onClick={handleClick}

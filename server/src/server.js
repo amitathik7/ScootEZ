@@ -298,9 +298,11 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
 		const scooterData = req.body;
+		console.log(req.body);
 
 		const account = await Account.findById(accountId);
-		const scooter = await Scooter.findById({ id: scooterData.scooterId });
+		const scooter = await Scooter.findById(scooterData.scooterId);
+		
 
 		if (!account) {
 			throw new Error("Invalid Account Token");
