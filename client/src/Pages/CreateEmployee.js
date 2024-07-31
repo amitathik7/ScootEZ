@@ -74,14 +74,16 @@ export default function CreateEmployee() {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
                     },
                     body: JSON.stringify(accountInfo)
                 }
             );
             if (response.ok) {
-                const data = await response.json(); // should return the token for the account
-                localStorage.setItem("token", data.token);
-                setIsLoggedIn(true);
+                // const data = await response.json(); // should return the token for the account
+                // localStorage.setItem("token", data.token);
+                // setIsLoggedIn(true);
+                console.log('successful');
                 setIsAdmin(true);
                 return true;
             } else {

@@ -443,8 +443,9 @@ app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
 			address: address,
 		});
 
-		const token = jwt.sign({ id: employee._id }, "secret");
-		res.status(201).json({ token });
+		// const token = jwt.sign({ id: employee._id }, "secret");
+		// res.status(201).json({ token });
+		res.status(201);
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -479,8 +480,8 @@ app.post("/api/admin/create_admin", authenticateToken, async (req, res) => {
 			address: address,
 		});
 
-		const token = jwt.sign({ id: admin_account._id }, "secret");
-		res.status(201).json({ token });
+		//const token = jwt.sign({ id: admin_account._id }, "secret");
+		res.status(201);
 	} catch (error) {
 		res.status(500).send(error);
 	}

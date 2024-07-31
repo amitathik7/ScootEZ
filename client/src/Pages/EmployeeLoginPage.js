@@ -43,7 +43,7 @@ export default function EmployeeLoginPage() {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/api/employee-login`, 
+                `http://localhost:5000/api/employee/login`, 
                 {
                     method: 'POST',
                     headers: {

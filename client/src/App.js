@@ -23,6 +23,8 @@ import CreateAdmin from './Pages/CreateAdmin.js';
 import AdminProfilePage from './Pages/AdminProfilePage.js';
 import UserAccountsPage from './Pages/UserAccountsPage.js';
 import UserInfoPage from './Pages/UserInfoPage.js';
+import AdminScooterMap from './Pages/AdminScooterMap.js';
+import AdminScooterPage from './Pages/AdminScooterPage.js';
 
 import NavBar from "./NavBar.js";
 import AdminNavBar from "./AdminNavBar.js";
@@ -64,6 +66,8 @@ function App() {
             <Route path="/admin-profile" element={<AdminProfilePage/>} />
             <Route path="/admin/users" element={<UserAccountsPage/>} />
             <Route path="/user/:id" element={<UserInfoPage />} />
+            <Route path="/admin/scooters" element={<AdminScooterMap />} />
+            <Route path="/admin/scooters/:id" element={<ScooterPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>
