@@ -441,11 +441,19 @@ label {
     width: 100px;
     height: 30px;
     padding: 5px;
+    border: solid;
 }
 
 .timeField.currentTime {
     background-color: var(--gray1);
+}
 
+.timeField:valid {
+    border-color: green;
+}
+
+.timeField:invalid {
+    border-color: red;
 }
 
 
