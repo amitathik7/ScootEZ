@@ -32,6 +32,27 @@ export default function RentPage() {
         creditCardExpirationDate: '',
 	    creditCardCVV: '',
     });
+    function handleCardNumChange(e) {
+        setAccountInfo({
+            ...accountInfo,
+            creditCardNumber: e.target.value
+        });
+    }
+    function handleCardDateChange(e) {
+        setAccountInfo({
+            ...accountInfo,
+            creditCardExpirationDate: e.target.value
+        });
+    }
+    function handleCardCVVChange(e) {
+        setAccountInfo({
+            ...accountInfo,
+            creditCardCVV: e.target.value
+        });
+    }
+    const cardNumRef = useRef(null);
+    const cardDateRef = useRef(null);
+    const cardCVVRef = useRef(null);
 
     const [currentTime, setCurrentTime] = useState("00:00");
     function handleTimeChange(e) {
@@ -43,8 +64,8 @@ export default function RentPage() {
         let minDiff = parseInt(e.target.value.toString().substring(3,)) - parseInt(currentTime.substring(3,));
         if (hourDiff <= 0) {hourDiff = 0}
         if (minDiff <= 0) {minDiff = 0}
-
-        setPrice(scooterInfo.rentalPrice * (hourDiff + (minDiff / 60.00)));
+        
+        setPrice(Math.round((scooterInfo.rentalPrice * (hourDiff + (minDiff / 60.00))) * 100) / 100);
     }
     const [price, setPrice] = useState(0.00);
 
@@ -155,8 +176,55 @@ export default function RentPage() {
             alert("rent");
         }
         return (
-            <button className="button1" onClick={handleClick}>RENT</button>
+            <button className="button1" onClick={handleClick} disabled={price == 0 ? true : false}>
+                RENT
+            </button>
         );
+    }
+
+    function CreditCardDisplay() {
+        if (accountInfo.creditCardNumber === '') {
+            return (
+                <div>
+                    <p>You have no saved card. Please enter one below for a one-time payment.</p>
+                    <p>Credit card number:</p>
+                    <input className="input2" required
+                        type="tel"
+                        pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}"
+                        placeholder="XXXX-XXXX-XXXX-XXXX"
+                        ref={cardNumRef}
+                        value={accountInfo.creditCardNumber}
+                        onChange={handleCardNumChange}
+                    />
+                    <p>Expiration date:</p>
+                    <input className="input2" required
+                        type="tel"
+                        pattern="[0-9]{2}/[0-9]{2}"
+                        placeholder="XX/XX"
+                        ref={cardDateRef}
+                        value={accountInfo.creditCardExpirationDate}
+                        onChange={handleCardDateChange}
+                    />
+                    <p>CVC code:</p>
+                    <input className="input2" required
+                        type="text"
+                        pattern="[0-9]{3}"
+                        placeholder="XXX"
+                        ref={cardCVVRef}
+                        value={accountInfo.creditCardCVV}
+                        onChange={handleCardCVVChange}
+                    />
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>
+                    <p>Use your saved card:</p>
+                    <p><strong>{accountInfo.creditCardNumber}</strong></p>
+                </div>
+            );
+        }
     }
 
     if (isAuthenticated === 'fetching') {
@@ -217,7 +285,7 @@ export default function RentPage() {
             <div className="fullBox">
             <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "48px"}}>
                 <div style={{textAlign: "center", width: "100%", marginBottom: "20px"}}><h1>Rent {scooterInfo.model}</h1></div>
-                <div style={{height: "400px", width: "50%", display: "inline-block", verticalAlign: "top"}}>
+                <div className="rentBox">
                     <h2>Scooter information:</h2>
                     <ul>
                         <li><strong>Model</strong>: {scooterInfo.model}</li>
@@ -227,21 +295,24 @@ export default function RentPage() {
                         <li><strong>Availability</strong>: { scooterInfo.availability ? "availabile to rent now" : scooterInfo.waitTimeMinutes + " minutes wait" }</li>
                     </ul>
                 </div>
-                <div style={{height: "400px", width: "50%", display: "inline-block", verticalAlign: "top"}}>
-                    <h2>Rental details:</h2>
+                <div className="rentBox outlined">
+                    <h2>Rental details:</h2> <br/>
                     <p>Rent time:</p>
-                    <input aria-label="Time" name="current time" type="time"
-                        className="timeField currentTime" readOnly={true} value={currentTime} />
-                    <input aria-label="Time" name="return time" type="time" required
-                        min={useCurrentTimeForMin ? currentTime : "06:00"} max="18:00"
-                        onChange={handleTimeChange}
-                        className="timeField"/>
+                    <div>
+                        <input aria-label="Time" name="current time" type="time"
+                            className="timeField currentTime" readOnly={true} value={currentTime} />
+                        <div style={{display: "inline-block", marginLeft: "5px", marginRight: "5px"}}>to</div>
+                        <input aria-label="Time" name="return time" type="time" required
+                            min={useCurrentTimeForMin ? currentTime : "06:00"} max="18:00"
+                            onChange={handleTimeChange}
+                            className="timeField"/>
+                    </div><br/>
                     
-                    <p>Price:</p>
-                    <p>{price}</p>
+                    <p>{price == 0 ? '' : `Price: \$${price}`}</p> <br/>
 
                     <p>Payment method:</p>
-                    <p>{accountInfo.creditCardNumber === '' ? '' : accountInfo.creditCardNumber}</p>
+                    <CreditCardDisplay />
+                    <br/>
                     <RentButton />
                 </div>
             </div>
