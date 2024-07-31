@@ -55,6 +55,7 @@ export default function RentPage() {
     const cardCVVRef = useRef(null);
 
     const [currentTime, setCurrentTime] = useState("00:00");
+    const [timeDifference, setTimeDifference] = useState(0);
     function handleTimeChange(e) {
         e.preventDefault();
         console.log("the target value" + e.target.value);   // log the value of the input field
@@ -66,6 +67,7 @@ export default function RentPage() {
         if (minDiff <= 0) {minDiff = 0}
         
         setPrice(Math.round((scooterInfo.rentalPrice * (hourDiff + (minDiff / 60.00))) * 100) / 100);
+        setTimeDifference((hourDiff * 60) + minDiff);
     }
     const [price, setPrice] = useState(0.00);
 
@@ -134,6 +136,28 @@ export default function RentPage() {
             console.error("error encountered in getting the account info" + error);
         }
     }
+
+    //rent the scooter
+    async function rent() {
+        try {
+            const response = await fetch(
+                "http://localhost:5000/api/users/rent_scooter",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({scooterId: id, timeDifference: timeDifference})
+                }
+            );
+            if (!response.ok) {
+                throw new Error('Network response was not ok, see console for details');
+            }
+        }
+        catch (error) {
+            console.error("error detected: ", error);
+        }
+    }   
     
     // gets the current time in hours and minutes, sets the state to a string for the input
     function clock() {         
@@ -173,10 +197,15 @@ export default function RentPage() {
 
     function RentButton() {
         function handleClick() {
-            alert("rent");
+            rent();
         }
         return (
-            <button className="button1" onClick={handleClick} disabled={price == 0 ? true : false}>
+            <button className="button1" onClick={handleClick}
+            disabled={price != 0 &&
+                (accountInfo.creditCardNumber != '' || 
+                cardNumRef.current.validity.valid && cardDateRef.current.validity.valid && cardCVVRef.current.validity.valid)
+                ? false : true}
+            >
                 RENT
             </button>
         );
