@@ -15,7 +15,7 @@ export default function AdminNavBar() {
     const adminNavBarItems = [
         {
             title: 'HOME',
-            url: '/admin/home',
+            url: '/admin-dashboard',
         },
         {
             title: 'EMPLOYEES',

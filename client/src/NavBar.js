@@ -27,18 +27,24 @@ export default function NavBar() {
                     url: '/about',
                 },
                 {
-                title: 'SCOOTERS',
-                url: '/scooters',
+                title: 'FAQ',
+                url: '/faq',
                 }
             ],
         },
         {
             title: 'RENT',
             url: '/map',
-        },
-        {
-            title: 'FAQ',
-            url: '/faq',
+            submenu: [
+                {
+                    title: 'MAP',
+                    url: '/map',
+                },
+                {
+                title: 'SCOOTERS',
+                url: '/scooters',
+                }
+            ],
         },
     ];
 
@@ -63,15 +69,15 @@ export default function NavBar() {
 
         if (items.submenu) {
             return (
-                <div>
-                    <button style={{float: "right", marginBottom: "15px"}}
+                <div style={{lineHeight: "50px"}}>
+                    <button style={{float: "right"}}
                     type="button" className="navbarLink"
                     aria-haspopup="menu" aria-expanded={isExpanded ? "true" : "false"}
                     onMouseOver={() => setIsExpanded(true)}
                     onClick={() => setIsExpanded((props) => !props)}>
                         {items.title}
-                    </button>
-                    <Dropdown style={{float: "right"}} submenu={items.submenu} isExpanded={isExpanded} />
+                    </button> <br/>
+                    <Dropdown style={{float: "right"}} submenu={items.submenu} isExpanded={isExpanded} setIsExpanded={setIsExpanded}/>
                 </div>
             );
         }
@@ -83,14 +89,16 @@ export default function NavBar() {
     }
 
     // component for the dropdown submenu lists
-    function Dropdown({submenu, isExpanded, isAccountDropdown}) {
+    function Dropdown({submenu, isExpanded, isAccountDropdown, setIsExpanded}) {
         if (!isAccountDropdown) {
             return (
                 <ul className={isExpanded ? "dropdown Show" : "dropdown Hide"}>
                     {/* map each submenu to its own link */}
                     {submenu.map((submenu, index) => (
                     <li key={index} className="dropdownItems">
-                        <NavLink className="navbarLink" to={submenu.url}>{submenu.title}</NavLink>
+                        <NavLink className="navbarLink" to={submenu.url} onClick={() => setIsExpanded(false)}>
+                            {submenu.title}
+                        </NavLink>
                     </li>
                     ))}
                 </ul>
