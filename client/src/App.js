@@ -111,6 +111,8 @@ import UserInfoPage from './Pages/UserInfoPage.js';
 import AdminScooterMap from './Pages/AdminScooterMap.js';
 import AdminScooterPage from './Pages/AdminScooterPage.js';
 import AdminScooterProducts from './Pages/AdminScooterProducts.js';
+import EmployeeProfilePage from './Pages/EmployeeProfilePage.js';
+import EmployeeDashboard from './Pages/EmployeeDashboard.js';
 
 import NavBar from "./NavBar.js";
 import AdminNavBar from "./AdminNavBar.js";
@@ -153,9 +155,11 @@ function App() {
             {/* Protected Routes */}
             <Route element={<ProtectedRoute isAuthenticated={isLoggedIn} isAdmin={isAdmin} isEmployee={isEmployee} />}>
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
               <Route path="/create-employee" element={<CreateEmployee />} />
               <Route path="/create-admin" element={<CreateAdmin />} />
               <Route path="/admin-profile" element={<AdminProfilePage />} />
+              <Route path="/employee-profile" element={<EmployeeProfilePage />} />
               <Route path="/admin/map" element={<AdminScooterMap />} />
               <Route path="/admin/scooters">
                 <Route index element={<AdminScooterPage />} />

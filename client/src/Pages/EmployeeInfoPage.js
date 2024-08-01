@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-export default function UserInfoPage() {
+export default function EmployeeInfoPage() {
     const { id } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    const navigate = useNavigate(); 
-
 
     useEffect(() => {
         if (id) {
@@ -16,7 +14,7 @@ export default function UserInfoPage() {
 
     const fetchUser = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+            const response = await fetch(`http://localhost:5000/api/employee/${id}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -36,25 +34,24 @@ export default function UserInfoPage() {
         }
     };
 
-    const deleteUser = async () => {
+    const deleteEmployee = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/users/delete', {
+            const response = await fetch(`http://localhost:5000/api/employee/delete`, { 
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id: user.id }), 
             });
 
             if (!response.ok) {
-                throw new Error('Failed to delete user');
+                throw new Error('Failed to delete employee');
             }
 
             navigate('/'); 
         } catch (error) {
-            setError('Error deleting user');
-            console.error('Error deleting user:', error);
+            setError('Error deleting employee');
+            console.error('Error deleting employee:', error);
         }
     };
 
@@ -65,8 +62,7 @@ export default function UserInfoPage() {
         <div>
             <h1>{user.firstName} {user.lastName}</h1>
             <p>Email: {user.email}</p>
-            <p>Address: {user.address}</p>
-            <button onClick={deleteUser} style={{ backgroundColor: 'red', color: 'white' }}>
+            <button onClick={deleteEmployee} style={{ backgroundColor: 'red', color: 'white' }}>
                 Delete Account
             </button>
         </div>

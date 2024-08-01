@@ -237,6 +237,22 @@ app.delete("/api/users/delete", authenticateToken, async (req, res) => {
 	}
 });
 
+app.delete("/api/employees/delete", authenticateToken, async (req, res) => {
+	try {
+		const account = await Employee.findByIdAndDelete(req.user.id);
+
+		if (!account) {
+			console.log("account not found");
+			return res.status(404).json({ message: "account not found" });
+		}
+
+		console.log("account deleted");
+		res.status(200).json({ message: "successfully deleted" });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 app.put("/api/users/update", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
@@ -413,6 +429,21 @@ app.get("/api/employee/scooters", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/employees", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(403).send("Access denied.");
+		}
+
+		const accounts = await Employee.find();
+		res.status(200).json(accounts);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 app.get("/api/employee/user_accounts", authenticateToken, async (req, res) => {
 	try {
 		const employee = await Employee.findById(req.user.id);
@@ -568,8 +599,6 @@ app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
 	}
 });
 
-<<<<<<< Updated upstream
-=======
 app.get("/api/employee/accountName", authenticateToken, async (req, res) => {
 	try {
 		const account = await Employee.findById(req.user.id);
@@ -591,6 +620,26 @@ app.get("/api/users/:id", authenticateToken, async (req, res) => {
 
         if (!account) {
             return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            firstName: account.firstName,
+            lastName: account.lastName,
+            email: account.email,
+            address: account.address,
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.get("/api/employee/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const account = await Employee.findById(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "Employee not found" });
         }
 
         res.json({
@@ -652,5 +701,4 @@ app.put("api/scooters/update", authenticateToken, async (req, res) => {
 });
 
 
->>>>>>> Stashed changes
 module.exports = { app };
