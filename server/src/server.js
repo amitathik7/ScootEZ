@@ -260,9 +260,9 @@ app.put("/api/users/update", authenticateToken, async (req, res) => {
 			email: account.email,
 			password: account.password,
 			address: account.address,
-			creditCardNumber: creditCardNumber,
-			creditCardExpirationDate: creditCardExpirationDate,
-			creditCardCVV: creditCardCVV,
+			creditCardNumber: account.creditCardNumber,
+			creditCardExpirationDate: account.creditCardExpirationDate,
+			creditCardCVV: account.creditCardCVV,
 		});
 		res.status(200);
 	} catch (error) {
@@ -611,6 +611,86 @@ app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
 		}
 
 		res.json({ firstName: account.firstName, lastName: account.lastName });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/admin/accountInfo", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: admin.firstName,
+			lastName: admin.lastName,
+			email: admin.email,
+			password: admin.password,
+			address: admin.address,
+			creditCardNumber: admin.creditCardNumber,
+			creditCardExpirationDate: admin.creditCardExpirationDate,
+			creditCardCVV: admin.creditCardCVV,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post("/api/admin/check_password", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+
+		const input_password = req.body;
+
+		const admin = await Admin.findById(accountId);
+
+		if (
+			admin &&
+			(await bcrypt.compare(input_password.oldPassword, admin.password))
+		) {
+			res.json(true);
+			res.status(201);
+		} else {
+			res.json(false);
+			res.status(400);
+		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).send(err);
+	}
+});
+
+app.put("/api/admin/update", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const newData = req.body;
+
+		if (newData.password) {
+			newData.password = await bcrypt.hash(newData.password, 10);
+		}
+
+		const admin = await Admin.findByIdAndUpdate(accountId, newData, {
+			new: true,
+		});
+
+		if (!admin) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: admin.firstName,
+			lastName: admin.lastName,
+			email: admin.email,
+			password: admin.password,
+			address: admin.address,
+			creditCardNumber: admin.creditCardNumber,
+			creditCardExpirationDate: admin.creditCardExpirationDate,
+			creditCardCVV: admin.creditCardCVV,
+		});
+		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
 	}
