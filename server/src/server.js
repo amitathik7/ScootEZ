@@ -384,6 +384,39 @@ app.get("/api/scooters", async (req, res) => {
 	}
 });
 
+app.put("/api/scooters/update", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			throw new Error("Invalid Admin Token");
+		}
+
+		const { scooter_id, newData } = req.body;
+
+		const scooter = await Scooter.findByIdAndUpdate(scooter_id, newData, {
+			new: true,
+		});
+
+		if (!scooter) {
+			return res.status(404);
+		}
+
+		res.json({
+			latitude: Number,
+			longitude: Number,
+			battery: Number,
+			model: String,
+			availability: Boolean,
+			rentalPrice: Number,
+			id: Number,
+		});
+		res.status(200);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+});
+
 // This is a test function for the token
 app.get("/api/token/verify", authenticateToken, async (req, res) => {
 	try {
