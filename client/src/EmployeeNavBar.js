@@ -6,20 +6,16 @@ import styles from './styles.css';
 
 export default function AdminNavBar() {
     // global context
-    const { isLoggedIn, setIsLoggedIn, setIsAdmin } = useContext(IsLoggedInContext);
+    const { isLoggedIn, setIsLoggedIn, setIsEmployee } = useContext(IsLoggedInContext);
     const navigate = useNavigate();
 
     // states
     const [accountInitials, setAccountInitials] = useState(null);
 
-    const adminNavBarItems = [
+    const employeeNavBarItems = [
         {
             title: 'HOME',
-            url: '/admin-dashboard',
-        },
-        {
-            title: 'EMPLOYEES',
-            url: '/admin/employees',
+            url: '/employee-dashboard',
         },
         {
             title: 'USERS',
@@ -44,7 +40,7 @@ export default function AdminNavBar() {
     const accountSubmenuItems = [
         {
             title: 'ACCOUNT',
-            url: '/admin-profile'
+            url: '/employee-profile'
         },
     ];
 
@@ -93,7 +89,7 @@ export default function AdminNavBar() {
         function handleClick() {
             localStorage.removeItem("token");
             setIsLoggedIn(false);
-            setIsAdmin(false);
+            setIsEmployee(false);
             navigate("/");
         }
         return <button className="navbarLink logout" onClick={handleClick}>LOGOUT</button>;
@@ -119,7 +115,7 @@ export default function AdminNavBar() {
 
     async function getAccountName() {
         try {    
-            const response = await fetch('http://localhost:5000/api/admin/accountName', {
+            const response = await fetch('http://localhost:5000/api/employee/accountName', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`,
@@ -147,7 +143,7 @@ export default function AdminNavBar() {
                     <Logo height={50} fill="#96ea59" />
                 </NavLink></div>
                 <div style={{width: "45%", display: "flex", justifyContent:"space-between"}}>
-                    {adminNavBarItems.map((menu, index) => {
+                    {employeeNavBarItems.map((menu, index) => {
                         return (
                             <div style={{width: "200px"}} key={index}>
                                 <MenuItem items={menu} key={index} />

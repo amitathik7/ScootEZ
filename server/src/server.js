@@ -294,88 +294,6 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 	}
 });
 
-app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
-	try {
-		const accountId = req.user.id;
-		const scooterData = req.body;
-		console.log(req.body);
-
-		const account = await Account.findById(accountId);
-		const scooter = await Scooter.findById(scooterData.scooterId);
-		
-
-		if (!account) {
-			throw new Error("Invalid Account Token");
-		}
-
-		if (!scooter) {
-			throw new Error("Invalid Scooter ID");
-		}
-
-		if (scooter.availability === false) {
-			throw new Error("Scooter Unavailable");
-		}
-
-		// Create a new scooter rental history fwithout defining the final coordinates
-		const scooter_document = new RentalHistory({
-			scooter: scooter,
-			timeRented: Date.now(),
-			account: account,
-			startLatitude: scooter.latitude,
-			startLongitude: scooter.longitude,
-		});
-
-		await scooter_document.save();
-
-		scooter.availability = false;
-		scooter.waitTimeMinutes = scooterData.timeDifference;
-		await scooter.save();
-
-		res.status(201).json("Successful Transaction");
-	} catch (err) {
-		console.log(err);
-		res.status(500).send(err);
-	}
-});
-
-app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
-	try {
-		const accountId = req.user.id;
-		const { scooterId, latitude, longitude } = req.body;
-
-		const account = await Account.findById(accountId);
-		const scooter = await Scooter.findById({ id: scooterId });
-
-		if (!account) {
-			throw new Error("Invalid Account Token");
-		}
-
-		if (!scooter) {
-			throw new Error("Invalid Scooter ID");
-		}
-
-		if (scooter.availability === false) {
-			throw new Error("Scooter Unavailable");
-		}
-
-		const rental_document = RentalHistory.find({
-			scooter: scooter,
-			account: account,
-			endLatitude: { $exists: false },
-			endLongitude: { $exists: falase },
-		});
-
-		rental_document.endLatitude = latitude;
-		rental_document.endLongitude = longitude;
-
-		rental_document.save();
-
-		res.status(201).json("Ended Rental");
-	} catch (err) {
-		res.status(500).send(err);
-	}
-});
-
 // Gets the location of all scooters for the user's map.
 app.get("/api/scooters", async (req, res) => {
 	try {
@@ -617,4 +535,89 @@ app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
 	}
 });
 
+<<<<<<< Updated upstream
+=======
+app.get("/api/employee/accountName", authenticateToken, async (req, res) => {
+	try {
+		const account = await Employee.findById(req.user.id);
+
+		if (!account) {
+			return res.status(404);
+		}
+
+		res.json({ firstName: account.firstName, lastName: account.lastName });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/users/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const account = await Account.findById(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({
+            firstName: account.firstName,
+            lastName: account.lastName,
+            email: account.email,
+            address: account.address,
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.put("api/scooters/update", authenticateToken, async (req, res) => {
+    try {
+        const { id, model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes } = req.body;
+
+        // Validate request data
+        if (!id) {
+            console.error('Scooter ID is required');
+            return res.status(400).json({ message: 'Scooter ID is required' });
+        }
+
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            console.error('Invalid Scooter ID');
+            return res.status(400).json({ message: 'Invalid Scooter ID' });
+        }
+
+        console.log('Updating scooter with ID:', id);
+        console.log('New values:', { model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes });
+
+        // Find and update scooter
+        const updatedScooter = await Scooter.findByIdAndUpdate(
+            id,
+            {
+                model,
+                latitude,
+                longitude,
+                battery,
+                availability,
+                rentalPrice,
+                waitTimeMinutes
+            },
+            { new: true }
+        );
+
+        if (!updatedScooter) {
+            console.error('Scooter not found');
+            return res.status(404).json({ message: 'Scooter not found' });
+        }
+
+        // Respond with updated scooter data
+        res.json(updatedScooter);
+    } catch (error) {
+        console.error("Update error:", error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+
+>>>>>>> Stashed changes
 module.exports = { app };
