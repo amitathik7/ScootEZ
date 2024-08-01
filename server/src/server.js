@@ -55,6 +55,7 @@ const scooterSchema = new mongoose.Schema({
 	availability: Boolean,
 	rentalPrice: Number,
 	id: Number,
+	waitTimeMinutes: Number
 });
 
 const employeeSchema = new mongoose.Schema({
@@ -296,10 +297,12 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
-		const scooterId = req.body;
+		const scooterData = req.body;
+		console.log(req.body);
 
 		const account = await Account.findById(accountId);
-		const scooter = await Scooter.findById({ id: scooterId });
+		const scooter = await Scooter.findById(scooterData.scooterId);
+		
 
 		if (!account) {
 			throw new Error("Invalid Account Token");
@@ -325,6 +328,7 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 		await scooter_document.save();
 
 		scooter.availability = false;
+		scooter.waitTimeMinutes = scooterData.timeDifference;
 		await scooter.save();
 
 		res.status(201).json("Successful Transaction");
@@ -414,6 +418,27 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);
+  }
+});
+    
+app.post("/api/scooters/find", async (req, res) => {
+	const { scooterId } = req.body;
+
+	try {
+		console.log("scooter id recieved: " + scooterId);
+		console.log("finding...");
+		const scooter = await Scooter.findOne({ id: scooterId });
+		console.log(scooter);
+		if (scooter) {
+			console.log("returning the scooter...");
+			res.json(scooter);
+			res.status(201);
+		} else {
+			console.log("Unsuccessful");
+			res.status(400).json({ message: "Could not find scooter by id" });
+		}
+	} catch (error) {
+		res.status(500).send(error);
 	}
 });
 

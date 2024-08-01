@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css"; // for tile styling and avoiding glitching tiles
 import L from 'leaflet'; // for map initialization and use
 import React, { useEffect, useRef } from 'react';
+import { NavLink } from 'react-router-dom';
 
 export default function MapPage() {
     const mapContainerRef = useRef(null); // Useref for the map container
@@ -64,7 +65,7 @@ export default function MapPage() {
                             <h4 style="margin: 5px;">Scooter ID: ${scooter.id}</h4>
                             <p style="margin: 5px;"><strong>Model:</strong> ${scooter.model}</p>
                             <p style="margin: 5px;"><strong>Location:</strong> ${scooter.latitude}, ${scooter.longitude}</p>
-                            <p style="margin: 5px;"><a href="https://example.com/scooter/${scooter.id}" target="_blank" style="text-decoration: none; color: blue;">More Details</a></p>
+                            <p style="margin: 5px;"><a href="http://localhost:3000/scooters/${scooter.id}" style="text-decoration: none; color: blue;">More Details</a></p>
                         </div>
                         `;
 
