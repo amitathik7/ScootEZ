@@ -127,13 +127,15 @@ export default function AdminScooterProducts() {
                 }
             );
             if (response.ok) {
-                return await response.json();
+                const data = await response.json();
+                setScooterInfo(data); // Ensure this is a valid object
             } else {
                 throw new Error('Network response was not ok');
             }
         } catch (error) {
             console.error("error detected: ", error);
-            return null;
+            setIsScooterLoaded('error');
+           // return null;
         }
     }
 
