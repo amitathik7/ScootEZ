@@ -11,7 +11,6 @@ export default function RentPage() {
 
     const [isAuthenticated, setIsAuthenticated] = useState('fetching');
     const [isScooterLoaded, setIsScooterLoaded] = useState('false');
-    const [needsAccountData, setNeedsAccountData] = useState(true);
 
     const [scooterInfo, setScooterInfo] = useState({
         id: null,
