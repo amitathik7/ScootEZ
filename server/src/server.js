@@ -539,6 +539,90 @@ app.post("/api/employee/login", async (req, res) => {
 	}
 });
 
+app.get("/api/employee/accountInfo", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+
+		if (!employee) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: employee.firstName,
+			lastName: employee.lastName,
+			email: employee.email,
+			password: employee.password,
+			address: employee.address,
+			creditCardNumber: employee.creditCardNumber,
+			creditCardExpirationDate: employee.creditCardExpirationDate,
+			creditCardCVV: employee.creditCardCVV,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post(
+	"/api/employee/check_password",
+	authenticateToken,
+	async (req, res) => {
+		try {
+			const accountId = req.user.id;
+
+			const input_password = req.body;
+
+			const employee = await Employee.findById(accountId);
+
+			if (
+				employee &&
+				(await bcrypt.compare(input_password.oldPassword, employee.password))
+			) {
+				res.json(true);
+				res.status(201);
+			} else {
+				res.json(false);
+				res.status(400);
+			}
+		} catch (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}
+	}
+);
+
+app.put("/api/employee/update", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const newData = req.body;
+
+		if (newData.password) {
+			newData.password = await bcrypt.hash(newData.password, 10);
+		}
+
+		const employee = await Employee.findByIdAndUpdate(accountId, newData, {
+			new: true,
+		});
+
+		if (!employee) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: employee.firstName,
+			lastName: employee.lastName,
+			email: employee.email,
+			password: employee.password,
+			address: employee.address,
+			creditCardNumber: employee.creditCardNumber,
+			creditCardExpirationDate: employee.creditCardExpirationDate,
+			creditCardCVV: employee.creditCardCVV,
+		});
+		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
 	const { firstName, lastName, email, password, address } = req.body;
 
@@ -740,3 +824,4 @@ app.put("/api/admin/update", authenticateToken, async (req, res) => {
 });
 
 module.exports = { app };
+// admin account info emlpoyee account info admin/employee check pssword admin/empoyee update
