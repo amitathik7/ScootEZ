@@ -55,7 +55,7 @@ const scooterSchema = new mongoose.Schema({
 	availability: Boolean,
 	rentalPrice: Number,
 	id: Number,
-	waitTimeMinutes: Number
+	waitTimeMinutes: Number,
 });
 
 const employeeSchema = new mongoose.Schema({
@@ -78,7 +78,10 @@ const rentalHistorySchema = new mongoose.Schema({
 	scooter: {
 		type: scooterSchema,
 	},
-	timeRented: {
+	rental_start: {
+		type: Date,
+	},
+	rental_end: {
 		type: Date,
 	},
 	account: {
@@ -302,7 +305,6 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 
 		const account = await Account.findById(accountId);
 		const scooter = await Scooter.findById(scooterData.scooterId);
-		
 
 		if (!account) {
 			throw new Error("Invalid Account Token");
@@ -319,7 +321,7 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 		// Create a new scooter rental history fwithout defining the final coordinates
 		const scooter_document = new RentalHistory({
 			scooter: scooter,
-			timeRented: Date.now(),
+			rental_start: Date.now(),
 			account: account,
 			startLatitude: scooter.latitude,
 			startLongitude: scooter.longitude,
@@ -359,14 +361,22 @@ app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 		}
 
 		const rental_document = RentalHistory.find({
+			rental_end: { $exists: false },
+			cost: { $exists: false },
 			scooter: scooter,
 			account: account,
 			endLatitude: { $exists: false },
-			endLongitude: { $exists: falase },
+			endLongitude: { $exists: false },
 		});
+
+		const total_time =
+			(Date.now() - rental_document.rental_start) / (1000 * 60 * 60);
+		const cost = total_time * scooter.rentalPrice;
 
 		rental_document.endLatitude = latitude;
 		rental_document.endLongitude = longitude;
+		rental_document.cost = cost;
+		rental_document.rental_end = Date.now();
 
 		rental_document.save();
 
@@ -418,9 +428,9 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);
-  }
+	}
 });
-    
+
 app.post("/api/scooters/find", async (req, res) => {
 	const { scooterId } = req.body;
 
