@@ -418,9 +418,9 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);
-	}
+  }
 });
-
+    
 app.post("/api/scooters/find", async (req, res) => {
 	const { scooterId } = req.body;
 
