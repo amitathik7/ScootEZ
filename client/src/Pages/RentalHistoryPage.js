@@ -11,6 +11,10 @@ export default function RentalHistoryPage() {
 
     const [isAuthenticated, setIsAuthenticated] = useState('fetching');
 
+    const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
+    const [history, setHistory] = useState(null);
+
+
     async function AuthenticateUser() {
         // if the token doesn't exist...
         if (localStorage.getItem("token") == null) {
@@ -32,7 +36,32 @@ export default function RentalHistoryPage() {
           return false;
         }
     }
-    
+
+    // get scooter info from backend (from DB)
+    async function getHistory() {
+        try {
+            const response = await fetch(
+                "http://localhost:5000/api/FIXMEEEEEEEEEEEEEEEEEEEE",
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${localStorage.getItem("token")}`
+                    },
+                }
+            );
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log("response is ok");
+            return await response.json(); // scooter object
+        }
+        catch (error) {
+            console.error("error detected: ", error);
+            return null;
+        }
+    } 
+
 
     if (isAuthenticated === 'fetching') {
         // call authentification function
@@ -41,6 +70,7 @@ export default function RentalHistoryPage() {
             if (result) {
                 setIsLoggedIn(true);
                 setIsAuthenticated('true');
+                clock();    //start clock
             }
             else {setIsAuthenticated('false');}
         })();
@@ -54,26 +84,57 @@ export default function RentalHistoryPage() {
             </div>
         );
     }
-    else if (isAuthenticated === 'true') {
+    else if (isAuthenticated === 'true' && isHistoryLoaded === 'false') {
+
+        // get history info function
+        (async function(){
+            const result = await getHistory();
+            setIsHistoryLoaded('true');
+            if (!result) {
+                setIsHistoryLoaded('error')
+            }
+            else {
+                setHistory(result);
+            }
+        })();
 
         return (
             <div className="fullBox">
-            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                <h1>Rental History</h1>
-                <h2>TODO:</h2>
-                <p>
-                    list all past rentals for this account including info on:
-                </p>
-                <ul>
-                    <li>Date of rental</li>
-                    <li>scooter model name</li>
-                    <li>scooter starting location</li>
-                    <li>scooter ending location</li>
-                    <li>total rental price</li>
-                    <li>total rental time</li>
-                </ul>
+                <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>One Moment</h1>
+                    <h2>Loading the scooter information...</h2>
+                </div>
             </div>
-        </div>
+        );
+    }
+    else if (isAuthenticated === 'true' && isHistoryLoaded === 'true'){
+        return(
+            <div className="fullBox">
+                <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                    <h1>Current Rentals</h1>
+                    <ul className="scooterList">
+                        {history.map((rental, index) => (
+                        <li className="scooterListItems" key={index}>
+                            <h2>{rental.scooter.model}</h2>
+                            <h3><strong>ID</strong>: {rental.scooter.id}</h3>
+                            <p><strong>Model</strong>: {rental.scooter.model}</p>
+                            <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
+                            <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
+                            <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
+                            <p><strong>Final Price</strong>: ${rental.finalPrice}</p>
+                            <p><strong>Time started</strong>: ${rental.timeRented}</p>
+                            <p><strong>Time ended</strong>: ${rental.timeEnded}</p>
+                        </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        );
+    }
+    else if (isHistoryLoaded === 'error') {
+        alert("Error loading current rentals.");
+        return (
+            <Navigate to='/profile' />
         );
     }
     else {
