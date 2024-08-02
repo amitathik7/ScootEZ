@@ -81,7 +81,7 @@ const rentalHistorySchema = new mongoose.Schema({
 	timeRented: {
 		type: Date,
 	},
-	user: {
+	account: {
 		type: accountSchema,
 	},
 	cost: Number,
@@ -469,7 +469,7 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 			return res.status(404).send("Invalid token");
 		}
 
-		const histories = await RentalHistory.find({ user: account });
+		const histories = await RentalHistory.find({ account: account });
 
 		res.json({ histories });
 		res.status(200);
