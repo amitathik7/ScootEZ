@@ -55,7 +55,7 @@ const scooterSchema = new mongoose.Schema({
 	availability: Boolean,
 	rentalPrice: Number,
 	id: Number,
-	waitTimeMinutes: Number
+	waitTimeMinutes: Number,
 });
 
 const employeeSchema = new mongoose.Schema({
@@ -78,10 +78,13 @@ const rentalHistorySchema = new mongoose.Schema({
 	scooter: {
 		type: scooterSchema,
 	},
-	timeRented: {
+	rental_start: {
 		type: Date,
 	},
-	user: {
+	rental_end: {
+		type: Date,
+	},
+	account: {
 		type: accountSchema,
 	},
 	cost: Number,
@@ -302,7 +305,6 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 
 		const account = await Account.findById(accountId);
 		const scooter = await Scooter.findById(scooterData.scooterId);
-		
 
 		if (!account) {
 			throw new Error("Invalid Account Token");
@@ -319,7 +321,7 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 		// Create a new scooter rental history fwithout defining the final coordinates
 		const scooter_document = new RentalHistory({
 			scooter: scooter,
-			timeRented: Date.now(),
+			rental_start: Date.now(),
 			account: account,
 			startLatitude: scooter.latitude,
 			startLongitude: scooter.longitude,
@@ -359,14 +361,22 @@ app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 		}
 
 		const rental_document = RentalHistory.find({
+			rental_end: { $exists: false },
+			cost: { $exists: false },
 			scooter: scooter,
 			account: account,
 			endLatitude: { $exists: false },
-			endLongitude: { $exists: falase },
+			endLongitude: { $exists: false },
 		});
+
+		const total_time =
+			(Date.now() - rental_document.rental_start) / (1000 * 60 * 60);
+		const cost = total_time * scooter.rentalPrice;
 
 		rental_document.endLatitude = latitude;
 		rental_document.endLongitude = longitude;
+		rental_document.cost = cost;
+		rental_document.rental_end = Date.now();
 
 		rental_document.save();
 
@@ -418,9 +428,9 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);
-  }
+	}
 });
-    
+
 app.post("/api/scooters/find", async (req, res) => {
 	const { scooterId } = req.body;
 
@@ -469,7 +479,7 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 			return res.status(404).send("Invalid token");
 		}
 
-		const histories = await RentalHistory.find({ user: account });
+		const histories = await RentalHistory.find({ account: account });
 
 		res.json({ histories });
 		res.status(200);
@@ -524,6 +534,90 @@ app.post("/api/employee/login", async (req, res) => {
 		} else {
 			res.status(400).json({ message: "Invalid Employee Credentials" });
 		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/employee/accountInfo", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+
+		if (!employee) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: employee.firstName,
+			lastName: employee.lastName,
+			email: employee.email,
+			password: employee.password,
+			address: employee.address,
+			creditCardNumber: employee.creditCardNumber,
+			creditCardExpirationDate: employee.creditCardExpirationDate,
+			creditCardCVV: employee.creditCardCVV,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post(
+	"/api/employee/check_password",
+	authenticateToken,
+	async (req, res) => {
+		try {
+			const accountId = req.user.id;
+
+			const input_password = req.body;
+
+			const employee = await Employee.findById(accountId);
+
+			if (
+				employee &&
+				(await bcrypt.compare(input_password.oldPassword, employee.password))
+			) {
+				res.json(true);
+				res.status(201);
+			} else {
+				res.json(false);
+				res.status(400);
+			}
+		} catch (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}
+	}
+);
+
+app.put("/api/employee/update", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const newData = req.body;
+
+		if (newData.password) {
+			newData.password = await bcrypt.hash(newData.password, 10);
+		}
+
+		const employee = await Employee.findByIdAndUpdate(accountId, newData, {
+			new: true,
+		});
+
+		if (!employee) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: employee.firstName,
+			lastName: employee.lastName,
+			email: employee.email,
+			password: employee.password,
+			address: employee.address,
+			creditCardNumber: employee.creditCardNumber,
+			creditCardExpirationDate: employee.creditCardExpirationDate,
+			creditCardCVV: employee.creditCardCVV,
+		});
+		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -730,3 +824,4 @@ app.put("/api/admin/update", authenticateToken, async (req, res) => {
 });
 
 module.exports = { app };
+// admin account info emlpoyee account info admin/employee check pssword admin/empoyee update
