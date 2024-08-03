@@ -387,6 +387,24 @@ app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+
+		const account = await Account.findById(accountId);
+
+		if (!account) {
+			throw new Error("Invalid Account Token");
+		}
+
+		const ongoing_rentals = await RentalHistory.find({ rental_end : { $exists: false } });
+		res.json(ongoing_rentals);
+		res.status(200);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+})
+
 // Gets the location of all scooters for the user's map.
 app.get("/api/scooters", async (req, res) => {
 	try {
@@ -825,4 +843,3 @@ app.put("/api/admin/update", authenticateToken, async (req, res) => {
 });
 
 module.exports = { app };
-// admin account info emlpoyee account info admin/employee check pssword admin/empoyee update
