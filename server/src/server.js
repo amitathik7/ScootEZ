@@ -322,6 +322,7 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 		const scooter_document = new RentalHistory({
 			scooter: scooter,
 			rental_start: Date.now(),
+			timeDifference: timeDifference,
 			account: account,
 			startLatitude: scooter.latitude,
 			startLongitude: scooter.longitude,

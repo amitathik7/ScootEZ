@@ -70,7 +70,6 @@ export default function RentalHistoryPage() {
             if (result) {
                 setIsLoggedIn(true);
                 setIsAuthenticated('true');
-                clock();    //start clock
             }
             else {setIsAuthenticated('false');}
         })();
