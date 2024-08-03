@@ -11,7 +11,7 @@ export default function RentalHistoryPage() {
 
     const [isAuthenticated, setIsAuthenticated] = useState('fetching');
 
-    const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
+    const [isHistoryLoaded, setIsHistoryLoaded] = useState('false');
     const [history, setHistory] = useState(null);
 
 
@@ -41,7 +41,7 @@ export default function RentalHistoryPage() {
     async function getHistory() {
         try {
             const response = await fetch(
-                "http://localhost:5000/api/FIXMEEEEEEEEEEEEEEEEEEEE",
+                "http://localhost:5000/api/history",
                 {
                     method: "GET",
                     headers: {
@@ -88,12 +88,12 @@ export default function RentalHistoryPage() {
         // get history info function
         (async function(){
             const result = await getHistory();
-            setIsHistoryLoaded('true');
             if (!result) {
                 setIsHistoryLoaded('error')
             }
             else {
                 setHistory(result);
+                setIsHistoryLoaded('true');
             }
         })();
 

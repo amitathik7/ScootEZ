@@ -397,7 +397,7 @@ app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) =>
 			throw new Error("Invalid Account Token");
 		}
 
-		const ongoing_rentals = await RentalHistory.find({ rental_end : { $exists: false } });
+		const ongoing_rentals = await RentalHistory.find({ account: account, rental_end : { $exists: false } });
 		res.json(ongoing_rentals);
 		res.status(200);
 	} catch (err) {
@@ -500,7 +500,7 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 
 		const histories = await RentalHistory.find({ account: account });
 
-		res.json({ histories });
+		res.json(histories);
 		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);

@@ -14,7 +14,7 @@ export default function CurrentRentalsPage() {
     const [isHistoryLoaded, setIsHistoryLoaded] = useState('false');
     const [history, setHistory] = useState(null);
 
-    const [currentTime, setCurrentTime] = useState(null);
+    const [currentTime, setCurrentTime] = useState(new Date());
     const [countdownTime, setCountdownTime] = useState(null);
 
 
@@ -44,7 +44,7 @@ export default function CurrentRentalsPage() {
     async function getHistory() {
         try {
             const response = await fetch(
-                "http://localhost:5000/api/history",
+                "http://localhost:5000/api/users/get_ongoing_rentals",
                 {
                     method: "GET",
                     headers: {
@@ -105,11 +105,14 @@ export default function CurrentRentalsPage() {
     function CountdownTimer({startTime, timeToRent}) {
         // add timeToRent (in miliseconds) to the start time to get the endRentTime, NOTE timeToRent is in minutes
         // then subtract the current time from that endRentTime
-        const timeToRentInMilisecs = timeToRent * 60 * 1000;
-        const countdownTime = ((startTime + timeToRent) - currentTime.getTime()) / (1000.0 * 60.0);
+        const endRentTime = startTime + (timeToRent * 60 * 1000);
+        const countdownTime = (endRentTime - currentTime.getTime());
+        const countdownTimeMinutes = Math.floor(countdownTime / (60.00 * 1000.0));
+        const countdownTimeSeconds = Math.round(((countdownTime / (60.0 * 1000.0)) - countdownTimeMinutes) * 100);
+
 
         return(
-            <p>Minutes remaining in rental: {countdownTime}</p>
+            <p><strong>Minutes remaining in rental</strong>: {countdownTimeMinutes}:{countdownTimeSeconds}</p>
         );
     }
 
@@ -127,6 +130,18 @@ export default function CurrentRentalsPage() {
         return (
             <button className="button1" onClick={handleClick}>
                 RETURN
+            </button>
+        );
+    }
+
+    function RentNowButton() {
+        const navigate = useNavigate();
+        function handleClick() {
+            navigate("/scooters", {})
+        }
+        return (
+            <button className="button1" onClick={handleClick}>
+                RENT ONE NOW
             </button>
         );
     }
@@ -158,12 +173,13 @@ export default function CurrentRentalsPage() {
         // get history info function
         (async function(){
             const result = await getHistory();
-            setIsHistoryLoaded('true');
             if (!result) {
                 setIsHistoryLoaded('error')
             }
             else {
-                setHistory(result.histories);
+                console.log(result);
+                setHistory(result);
+                setIsHistoryLoaded('true');
             }
         })();
 
@@ -177,51 +193,63 @@ export default function CurrentRentalsPage() {
         );
     }
     else if (isAuthenticated === 'true' && isHistoryLoaded === 'true'){
-        return(
-            <div className="fullBox">
-                <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                    <h1>Current Rentals</h1>
-                    <ul className="scooterList">
-                        {history.map((rental, index) => (
-                        <li className="scooterListItems" key={index}>
-                            <h2>{rental.scooter.model}</h2>
-                            <h3><strong>ID</strong>: {rental.scooter.id}</h3>
-                            <p><strong>Model</strong>: {rental.scooter.model}</p>
-                            <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
-                            <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
-                            <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
-                            <p><strong>Time started</strong>:&nbsp;
-                                {new Date(rental.rental_start).getMonth() + 1}/
-                                {new Date(rental.rental_start).getDate()}/
-                                {new Date(rental.rental_start).getFullYear()}&ensp;
-                                {new Date(rental.rental_start).getHours() < 12 ? 
-                                    new Date(rental.rental_start).getHours() + ":"
-                                        + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " AM"
-                                    : new Date(rental.rental_start).getHours() - 12 + ":"
-                                        + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " PM"
-                                }
-                            </p>
-                            {/* <CountdownTimer startTime={rental.rental_start} timeToRent={rental.scooter.waitTimeMinutes}/> */}
-                            <ReturnButton scooter={rental.scooter} />
-                        </li>
-                        ))}
-                    </ul>
+        // if there are no scooters in the history object, display this message
+        if (history == null) {
+            return(
+                <div className="fullBox">
+                    <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                        <h1>Current Rentals</h1>
+                        <h2>No current rentals!</h2>
+                        <RentNowButton />
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
+        else {
+            return(
+                <div className="fullBox">
+                    <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                        <h1>Current Rentals</h1>
+                        <ul className="scooterList">
+                            {history.map((rental, index) => (
+                            <li className="scooterListItems" key={index}>
+                                <h2>{rental.scooter.model}</h2>
+                                <h3><strong>ID</strong>: {rental.scooter.id}</h3>
+                                <p><strong>Model</strong>: {rental.scooter.model}</p>
+                                <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
+                                <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
+                                <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
+                                <p><strong>Time started</strong>:&nbsp;
+                                    {new Date(rental.rental_start).getMonth() + 1}/
+                                    {new Date(rental.rental_start).getDate()}/
+                                    {new Date(rental.rental_start).getFullYear()}&ensp;
+                                    {new Date(rental.rental_start).getHours() < 12 ? 
+                                        new Date(rental.rental_start).getHours() + ":"
+                                            + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " AM"
+                                        : new Date(rental.rental_start).getHours() - 12 + ":"
+                                            + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " PM"
+                                    }
+                                </p>
+                                <CountdownTimer startTime={new Date(rental.rental_start).getTime()} timeToRent={rental.scooter.waitTimeMinutes}/>
+                                <ReturnButton scooter={rental.scooter} />
+                            </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
     }
     else if (isHistoryLoaded === 'error') {
         alert("Error loading current rentals.");
         return (
-            <div>Error</div>
-            // <Navigate to='/profile' />
+            <Navigate to='/profile' />
         );
     }
     else if (isAuthenticated === 'false') {
         alert("Error Authneticating.");
         return (
-            <div>Error</div>
-            // <Navigate to='/profile' />
+            <Navigate to='/profile' />
         );
     }
     else {
