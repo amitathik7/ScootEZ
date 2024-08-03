@@ -11,7 +11,7 @@ export default function CurrentRentalsPage() {
 
     const [isAuthenticated, setIsAuthenticated] = useState('fetching');
 
-    const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
+    const [isHistoryLoaded, setIsHistoryLoaded] = useState('false');
     const [history, setHistory] = useState(null);
 
     const [currentTime, setCurrentTime] = useState(null);
@@ -44,7 +44,7 @@ export default function CurrentRentalsPage() {
     async function getHistory() {
         try {
             const response = await fetch(
-                "http://localhost:5000/api/FIXMEEEEEEEEEEEEEEEEEEEE",
+                "http://localhost:5000/api/history",
                 {
                     method: "GET",
                     headers: {
@@ -76,7 +76,7 @@ export default function CurrentRentalsPage() {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${localStorage.getItem("token")}`
                     },
-                    body: JSON.stringify({scooterId: scooter._id})
+                    body: JSON.stringify({scooterId: scooter._id, latitude: Math.random() + 29, longitude: Math.random() - 83})
                 }
             );
             if (!response.ok) {
@@ -106,12 +106,10 @@ export default function CurrentRentalsPage() {
         // add timeToRent (in miliseconds) to the start time to get the endRentTime, NOTE timeToRent is in minutes
         // then subtract the current time from that endRentTime
         const timeToRentInMilisecs = timeToRent * 60 * 1000;
-        const countdownTime = (startTime.getTime() + timeToRent) - currentTime.getTime();
+        const countdownTime = ((startTime + timeToRent) - currentTime.getTime()) / (1000.0 * 60.0);
 
-        // then convert the countdown time into minutes from miliseconds
-        const countdownMinutes = countdownTime / (1000 * 60);
         return(
-            <p>Minutes remaining in rental: {countdownMinutes}</p>
+            <p>Minutes remaining in rental: {countdownTime}</p>
         );
     }
 
@@ -165,7 +163,7 @@ export default function CurrentRentalsPage() {
                 setIsHistoryLoaded('error')
             }
             else {
-                setHistory(result);
+                setHistory(result.histories);
             }
         })();
 
@@ -192,8 +190,18 @@ export default function CurrentRentalsPage() {
                             <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
                             <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
                             <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
-                            <p><strong>Time started</strong>: ${rental.timeRented}</p>
-                            <CountdownTimer startTime={rental.timeRented} timeToRent={rental.timeToRent}/>
+                            <p><strong>Time started</strong>:&nbsp;
+                                {new Date(rental.rental_start).getMonth() + 1}/
+                                {new Date(rental.rental_start).getDate()}/
+                                {new Date(rental.rental_start).getFullYear()}&ensp;
+                                {new Date(rental.rental_start).getHours() < 12 ? 
+                                    new Date(rental.rental_start).getHours() + ":"
+                                        + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " AM"
+                                    : new Date(rental.rental_start).getHours() - 12 + ":"
+                                        + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " PM"
+                                }
+                            </p>
+                            {/* <CountdownTimer startTime={rental.rental_start} timeToRent={rental.scooter.waitTimeMinutes}/> */}
                             <ReturnButton scooter={rental.scooter} />
                         </li>
                         ))}
@@ -205,7 +213,15 @@ export default function CurrentRentalsPage() {
     else if (isHistoryLoaded === 'error') {
         alert("Error loading current rentals.");
         return (
-            <Navigate to='/profile' />
+            <div>Error</div>
+            // <Navigate to='/profile' />
+        );
+    }
+    else if (isAuthenticated === 'false') {
+        alert("Error Authneticating.");
+        return (
+            <div>Error</div>
+            // <Navigate to='/profile' />
         );
     }
     else {

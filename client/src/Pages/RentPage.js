@@ -344,7 +344,7 @@ export default function RentPage() {
                             className="timeField currentTime" readOnly={true} value={currentTime} />
                         <div style={{display: "inline-block", marginLeft: "5px", marginRight: "5px"}}>to</div>
                         <input aria-label="Time" name="return time" type="time" required
-                            min={useCurrentTimeForMin ? currentTime : "06:00"} max="18:00"
+                            min={useCurrentTimeForMin ? currentTime : "06:00"} max="22:00"
                             onChange={handleTimeChange}
                             className="timeField"/>
                     </div><br/>

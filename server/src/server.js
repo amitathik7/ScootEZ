@@ -318,21 +318,21 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 			throw new Error("Scooter Unavailable");
 		}
 
+		// first update the scooter itself (availability and wait time)
+		scooter.availability = false;
+		scooter.waitTimeMinutes = scooterData.timeDifference;
+		await scooter.save();
+
 		// Create a new scooter rental history fwithout defining the final coordinates
 		const scooter_document = new RentalHistory({
 			scooter: scooter,
 			rental_start: Date.now(),
-			timeDifference: timeDifference,
+			cost: (scooterData.timeDifference / 60.00) * scooter.rentalPrice,
 			account: account,
 			startLatitude: scooter.latitude,
 			startLongitude: scooter.longitude,
 		});
-
 		await scooter_document.save();
-
-		scooter.availability = false;
-		scooter.waitTimeMinutes = scooterData.timeDifference;
-		await scooter.save();
 
 		res.status(201).json("Successful Transaction");
 	} catch (err) {
