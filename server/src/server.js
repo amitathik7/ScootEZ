@@ -22,6 +22,10 @@ dotenv.config();
 
 app.use(express.json());
 
+// for reading csv files
+const fs = require("fs");
+const readline = require("readline");
+
 if (process.env.NODE_ENV !== "test") {
 	mongoose.connect(process.env.DB_URI);
 }
@@ -105,6 +109,59 @@ const RentalHistory = mongoose.model("history", rentalHistorySchema);
 app.listen(port, () => {
 	console.log(`Server Started Port ${port}`);
 });
+
+async function generateUsers() {
+	// specify the path of the CSV file
+	const path = "src/Popular_Baby_Names.csv";
+
+	// Create a read stream
+	const readStream = fs.createReadStream(path);
+
+	// Create a readline interface
+	const readInterface = readline.createInterface({
+	input: readStream
+	});
+
+	// Initialize an array to store the parsed data
+	const output = [];
+
+	// Event handler for reading lines
+	readInterface.on("line", (line) => {
+	const row = line.split(",");
+	output.push(row);
+	});
+
+	// Event handler for the end of file
+	readInterface.on("close", () => {
+		//generate random users
+		for (let i = 2950; i < 3000; i++) {
+			try {
+				bcrypt.hash((output[i][3]).toUpperCase() + (output[i][3]).toLowerCase() + "11", 10).then((result) => {
+					const accountDocument = new Account({
+						firstName: (output[i][3]).toLowerCase(),
+						lastName: (output[Math.trunc(Math.random() * 100) + 100][3]).toLowerCase(),
+						email: (output[i][3]).toLowerCase() + "@mail.com",
+						password: result,
+					});
+					console.log(accountDocument);
+
+					// save the new account to DB
+					accountDocument.save();
+				})
+				
+			}
+			catch(err) {
+				console.log(err);
+			}
+		}
+	});
+
+	// Event handler for handling errors
+	readInterface.on("error", (err) => {
+	console.error("Error reading the CSV file:", err);
+	});
+}
+
 
 app.post("/api/users/create", async (req, res) => {
 	const {
@@ -853,5 +910,10 @@ app.put("/api/admin/update", authenticateToken, async (req, res) => {
 		res.status(500).send(error);
 	}
 });
+
+
+//generate a lot of database data
+//generateUsers();
+
 
 module.exports = { app };
