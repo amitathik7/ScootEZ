@@ -203,7 +203,6 @@ export default function RentPage() {
         function handleClick() {
             rent().then((result) => {
                 if (result) {
-                    alert("success");
                     navigate("/current-rentals", {});
                 }
                 else {
