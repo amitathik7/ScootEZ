@@ -347,43 +347,54 @@ app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 		const accountId = req.user.id;
 		const { scooterId, latitude, longitude } = req.body;
 
+		// get the account (to search for the history)
 		const account = await Account.findById(accountId);
-		const scooter = await Scooter.findById(scooterId);
-
 		if (!account) {
 			console.log("Invalid Account Token");
 			throw new Error("Invalid Account Token");
 		}
 
+		// get and update the scooter
+		const scooter = await Scooter.findById(scooterId);
 		if (!scooter) {
 			console.log("Invalid Scooter ID")
 			throw new Error("Invalid Scooter ID");
 		}
 
-		console.log(scooter);
-		const rental_document = RentalHistory.find({
-			rental_end: { $exists: false },
-			scooter: scooter,
-			account: account,
-			endLatitude: { $exists: false },
-			endLongitude: { $exists: false },
-		});
+		// get the old history
+		const oldHistory = await RentalHistory.findOne({ account: account, scooter: scooter, rental_end: {$exists: false} });
+		if (!oldHistory) {
+			console.log("Couldn't find history")
+			throw new Error("Couldn't find history");
+		}
 
-		console.log(rental_document);
+		// get and update the history
+		const updatedHistory = await RentalHistory.findOneAndUpdate(
+			{ account: account, scooter: scooter, rental_end: {$exists: false} },
+			{ $set: {
+				endLatitude: latitude,
+				endLongitude: longitude,
+				rental_end: Date.now(),
+				cost: ((Date.now() - new Date(oldHistory.rental_start).getTime()) / (60 *60 * 1000)) * scooter.rentalPrice
+			} },
+			{ new: true },
+		);
 
-		const total_time =
-			(Date.now() - rental_document.rental_start.getTime()) / (1000 * 60 * 60);
-		const cost = total_time * scooter.rentalPrice;
+		// update the scooter
+		await Scooter.findByIdAndUpdate(
+			scooterId,
+			{ $set: {
+				latitude: latitude,
+				longitude: longitude,
+				availability: true,
+				waitTimeMinutes: 0
+			} },
+			{new: true}
+		);
 
-		rental_document.endLatitude = latitude;
-		rental_document.endLongitude = longitude;
-		rental_document.cost = cost;
-		rental_document.rental_end = Date.now();
-
-		rental_document.save();
-
-		res.status(201).json("Ended Rental");
+		res.status(201).json(updatedHistory);
 	} catch (err) {
+		console.log(err);
 		res.status(500).send(err);
 	}
 });
@@ -398,8 +409,8 @@ app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) =>
 			throw new Error("Invalid Account Token");
 		}
 
-		const ongoing_rentals = await RentalHistory.find({ rental_end : { $exists: false } });
-		res.json({ongoing_rentals});
+		const ongoing_rentals = await RentalHistory.find({ account: account, rental_end : { $exists: false } });
+		res.json(ongoing_rentals);
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);

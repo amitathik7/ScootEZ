@@ -107,16 +107,17 @@ export default function CurrentRentalsPage() {
         // add timeToRent (in miliseconds) to the start time to get the endRentTime, NOTE timeToRent is in minutes
         // then subtract the current time from that endRentTime
         const endRentTime = startTime + (timeToRent * 60 * 1000);
-        const countdownTime = (endRentTime - currentTime.getTime());
-        const countdownTimeMinutes = Math.floor(countdownTime / (60.00 * 1000.0));
-        const countdownTimeSeconds = Math.round(((countdownTime / (60.0 * 1000.0)) - countdownTimeMinutes) * 100);
+        const countdownTime = endRentTime - currentTime.getTime();
+        const countdownTimeHours = Math.trunc(countdownTime / (60 * 60 * 1000));
+        const countdownTimeMinutes = Math.trunc((countdownTime / (60 * 1000)) - (countdownTimeHours * 60));
+        const countdownTimeSeconds = Math.trunc((countdownTime / (1000)) - (countdownTimeHours * 60 * 60) - (countdownTimeMinutes * 60));
 
         if (countdownTime <= 0) {
             // if countdown reaches zero, send alert and return the scooter
             alert("Rental time for " + scooter.model + " has ended. It will be automatically returned now.")
             returnScooter({scooter}).then((result) => {
                 if (result) {
-                    alert("success");
+                    console.log("successfully returned")
                 }
                 else {
                     alert("Sorry, unable to return " + scooter.model + " right now.")
@@ -126,7 +127,7 @@ export default function CurrentRentalsPage() {
 
 
         return(
-            <p><strong>Minutes remaining in rental</strong>: {countdownTimeMinutes}:{countdownTimeSeconds}</p>
+            <p><strong>Time remaining in rental</strong>: {countdownTimeHours}:{countdownTimeMinutes.toString().padStart(2,"0")}:{countdownTimeSeconds.toString().padStart(2,"0")}</p>
         );
     }
 
@@ -135,7 +136,8 @@ export default function CurrentRentalsPage() {
             console.log(scooter);
             returnScooter({scooter}).then((result) => {
                 if (result) {
-                    alert("success");
+                    console.log(result);
+                    setIsHistoryLoaded('false');    // reload the scooters now
                 }
                 else {
                     alert("Sorry, unable to return " + scooter.model + " right now.")
@@ -144,7 +146,7 @@ export default function CurrentRentalsPage() {
         }
         return (
             <button className="button1" onClick={handleClick}>
-                RETURN
+                RETURN EARLY
             </button>
         );
     }
@@ -209,7 +211,7 @@ export default function CurrentRentalsPage() {
     }
     else if (isAuthenticated === 'true' && isHistoryLoaded === 'true'){
         // if there are no scooters in the history object, display this message
-        if (history == null) {
+        if (history.length <= 0) {
             return(
                 <div className="fullBox">
                     <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
@@ -233,7 +235,8 @@ export default function CurrentRentalsPage() {
                                 <p><strong>Model</strong>: {rental.scooter.model}</p>
                                 <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
                                 <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
-                                <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
+                                <p><strong>Rental rate</strong>: ${Math.trunc(rental.scooter.rentalPrice)}.
+                                    {(Math.round((rental.scooter.rentalPrice - Math.trunc(rental.scooter.rentalPrice)) * 100)).toString().padStart(2,"0")} per hour</p>
                                 <p><strong>Time started</strong>:&nbsp;
                                     {new Date(rental.rental_start).getMonth() + 1}/
                                     {new Date(rental.rental_start).getDate()}/

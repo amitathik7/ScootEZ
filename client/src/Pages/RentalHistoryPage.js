@@ -120,7 +120,7 @@ export default function RentalHistoryPage() {
     }
     else if (isAuthenticated === 'true' && isHistoryLoaded === 'true'){
         // if there are no scooters in the history object, display this message
-        if (history.length == 0) {
+        if (history.length <= 0) {
             return(
                 <div className="fullBox">
                     <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
@@ -144,10 +144,32 @@ export default function RentalHistoryPage() {
                                 <p><strong>Model</strong>: {rental.scooter.model}</p>
                                 <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
                                 <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
-                                <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
-                                <p><strong>Final Price</strong>: ${rental.finalPrice}</p>
-                                <p><strong>Time started</strong>: ${rental.timeRented}</p>
-                                <p><strong>Time ended</strong>: ${rental.timeEnded}</p>
+                                <p><strong>Rental price</strong>: ${Math.trunc(rental.scooter.rentalPrice)}.
+                                    {(Math.round((rental.scooter.rentalPrice - Math.trunc(rental.scooter.rentalPrice)) * 100)).toString().padStart(2,"0")} per hour</p>
+                                <p><strong>Final Price</strong>: ${Math.trunc(rental.cost)}.
+                                    {(Math.round((rental.cost - Math.trunc(rental.cost)) * 100)).toString().padStart(2,"0")}</p>
+                                <p><strong>Time started</strong>:&nbsp;
+                                    {new Date(rental.rental_start).getMonth() + 1}/
+                                    {new Date(rental.rental_start).getDate()}/
+                                    {new Date(rental.rental_start).getFullYear()}&ensp;
+                                    {new Date(rental.rental_start).getHours() < 12 ? 
+                                        new Date(rental.rental_start).getHours() + ":"
+                                            + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " AM"
+                                        : new Date(rental.rental_start).getHours() - 12 + ":"
+                                            + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " PM"
+                                    }
+                                </p>
+                                <p><strong>Time Ended</strong>:&nbsp;
+                                    {new Date(rental.rental_end).getMonth() + 1}/
+                                    {new Date(rental.rental_end).getDate()}/
+                                    {new Date(rental.rental_end).getFullYear()}&ensp;
+                                    {new Date(rental.rental_end).getHours() < 12 ? 
+                                        new Date(rental.rental_end).getHours() + ":"
+                                            + new Date(rental.rental_end).getMinutes().toString().padStart(2, "0") + " AM"
+                                        : new Date(rental.rental_end).getHours() - 12 + ":"
+                                            + new Date(rental.rental_end).getMinutes().toString().padStart(2, "0") + " PM"
+                                    }
+                                </p>
                             </li>
                             ))}
                         </ul>
