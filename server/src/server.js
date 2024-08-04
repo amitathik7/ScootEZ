@@ -397,7 +397,7 @@ app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) =>
 		}
 
 		const ongoing_rentals = await RentalHistory.find({ rental_end : { $exists: false } });
-		res.json(ongoing_rentals);
+		res.json({ongoing_rentals});
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);
