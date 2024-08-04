@@ -68,6 +68,11 @@ export default function CurrentRentalsPage() {
     //rent the scooter
     async function returnScooter({scooter}) {
         try {
+            // generate random coordinates (NOTE: in an actual app we would access the GPS coordinates)
+            // generate random by randomly adding or subtracting a random hundredth number to the current coordinate
+            const newLatitude = ((Math.random() < 0.5 ? -1 : 1) * (Math.random() / 100)) + scooter.latitude;
+            const newLongitude = ((Math.random() < 0.5 ? -1 : 1) * (Math.random() / 100)) + scooter.longitude;
+
             console.log(scooter);
             const response = await fetch(
                 "http://localhost:5000/api/users/end_rental",
@@ -77,7 +82,7 @@ export default function CurrentRentalsPage() {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${localStorage.getItem("token")}`
                     },
-                    body: JSON.stringify({scooterId: scooter._id, latitude: Math.random() + 29, longitude: Math.random() - 83})
+                    body: JSON.stringify({scooterId: scooter._id, latitude: newLatitude, longitude: newLongitude})
                 }
             );
             if (!response.ok) {
@@ -127,7 +132,10 @@ export default function CurrentRentalsPage() {
 
 
         return(
-            <p><strong>Time remaining in rental</strong>: {countdownTimeHours}:{countdownTimeMinutes.toString().padStart(2,"0")}:{countdownTimeSeconds.toString().padStart(2,"0")}</p>
+            <p><strong>Time remaining in rental</strong>: {countdownTimeHours}:
+                {countdownTimeMinutes.toString().padStart(2,"0")}:
+                {countdownTimeSeconds.toString().padStart(2,"0")}
+            </p>
         );
     }
 
