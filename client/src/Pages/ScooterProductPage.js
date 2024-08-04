@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Navigate, NavLink } from 'react-router-dom';
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
 
 export default function ScooterPage() {
     // this is the scooter id from the url
@@ -43,6 +43,19 @@ export default function ScooterPage() {
             return null;
         }
     }
+
+    function RentButton({scooterInfo}) {
+        const navigate = useNavigate();
+        function handleClick() {
+            navigate(`/rent/${scooterInfo.id}`, {});
+        }
+        return (
+            <button className="button1" onClick={handleClick}
+            disabled={scooterInfo.availability ? false : true}>
+                RENT
+            </button>
+        );
+    }
     
     if (isScooterLoaded === 'false') {
         // get scooter info function
@@ -81,10 +94,10 @@ export default function ScooterPage() {
                     <li><strong>Starting location</strong>: {scooterInfo.latitude}, {scooterInfo.longitude}</li>
                     <li><strong>Battery charge</strong>: {scooterInfo.battery}%</li>
                     <li><strong>Rental price</strong>: ${scooterInfo.rentalPrice}</li>
-                    <li><strong>Availability</strong>: { scooterInfo.availability ? "availabile to rent now" : scooterInfo.waitTimeMinutes + " minutes wait" }</li>
+                    <li><strong>Availability</strong>: { scooterInfo.availability ? "availabile now" : scooterInfo.waitTimeMinutes + " minute wait" }</li>
                 </ul>
 
-                <NavLink className="button1" to={`/rent/${scooterInfo.id}`}>RENT</NavLink>
+                <RentButton scooterInfo={scooterInfo} />
             </div>
         </div>
         );

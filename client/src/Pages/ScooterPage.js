@@ -84,7 +84,7 @@ export default function ScooterPage() {
                             <p><strong>Starting location</strong>: {scooter.latitude}, {scooter.longitude}</p>
                             <p><strong>Battery charge</strong>: {scooter.battery}%</p>
                             <p><strong>Rental price</strong>: ${scooter.rentalPrice}</p>
-                            <p><strong>Availability</strong>: { scooter.availability ? "availabile to rent now" : scooter.waitTimeMinutes + " minutes wait" }</p>
+                            <p><strong>Availability</strong>: { scooter.availability ? "availabile now" : scooter.waitTimeMinutes + " minute wait" }</p>
                             <MoreInfoButton scooterId={scooter.id}/>
                         </li>
                         ))}
