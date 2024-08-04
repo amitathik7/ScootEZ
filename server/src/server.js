@@ -318,20 +318,21 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 			throw new Error("Scooter Unavailable");
 		}
 
+		// first update the scooter itself (availability and wait time)
+		scooter.availability = false;
+		scooter.waitTimeMinutes = scooterData.timeDifference;
+		await scooter.save();
+
 		// Create a new scooter rental history fwithout defining the final coordinates
 		const scooter_document = new RentalHistory({
 			scooter: scooter,
 			rental_start: Date.now(),
+			cost: (scooterData.timeDifference / 60.00) * scooter.rentalPrice,
 			account: account,
 			startLatitude: scooter.latitude,
 			startLongitude: scooter.longitude,
 		});
-
 		await scooter_document.save();
-
-		scooter.availability = false;
-		scooter.waitTimeMinutes = scooterData.timeDifference;
-		await scooter.save();
 
 		res.status(201).json("Successful Transaction");
 	} catch (err) {
@@ -396,7 +397,7 @@ app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) =>
 			throw new Error("Invalid Account Token");
 		}
 
-		const ongoing_rentals = await RentalHistory.find({ rental_end : { $exists: false } });
+		const ongoing_rentals = await RentalHistory.find({ account: account, rental_end : { $exists: false } });
 		res.json(ongoing_rentals);
 		res.status(200);
 	} catch (err) {
@@ -499,7 +500,7 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 
 		const histories = await RentalHistory.find({ account: account });
 
-		res.json({ histories });
+		res.json(histories);
 		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
