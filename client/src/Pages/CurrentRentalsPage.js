@@ -68,6 +68,7 @@ export default function CurrentRentalsPage() {
     //rent the scooter
     async function returnScooter({scooter}) {
         try {
+            console.log(scooter);
             const response = await fetch(
                 "http://localhost:5000/api/users/end_rental",
                 {
@@ -102,13 +103,26 @@ export default function CurrentRentalsPage() {
         }, 1000)
     }
 
-    function CountdownTimer({startTime, timeToRent}) {
+    function CountdownTimer({scooter, startTime, timeToRent}) {
         // add timeToRent (in miliseconds) to the start time to get the endRentTime, NOTE timeToRent is in minutes
         // then subtract the current time from that endRentTime
         const endRentTime = startTime + (timeToRent * 60 * 1000);
         const countdownTime = (endRentTime - currentTime.getTime());
         const countdownTimeMinutes = Math.floor(countdownTime / (60.00 * 1000.0));
         const countdownTimeSeconds = Math.round(((countdownTime / (60.0 * 1000.0)) - countdownTimeMinutes) * 100);
+
+        if (countdownTime <= 0) {
+            // if countdown reaches zero, send alert and return the scooter
+            alert("Rental time for " + scooter.model + " has ended. It will be automatically returned now.")
+            returnScooter({scooter}).then((result) => {
+                if (result) {
+                    alert("success");
+                }
+                else {
+                    alert("Sorry, unable to return " + scooter.model + " right now.")
+                }
+            });
+        }
 
 
         return(
@@ -118,7 +132,8 @@ export default function CurrentRentalsPage() {
 
     function ReturnButton({scooter}) {
         function handleClick() {
-            returnScooter().then((result) => {
+            console.log(scooter);
+            returnScooter({scooter}).then((result) => {
                 if (result) {
                     alert("success");
                 }
@@ -230,7 +245,7 @@ export default function CurrentRentalsPage() {
                                             + new Date(rental.rental_start).getMinutes().toString().padStart(2, "0") + " PM"
                                     }
                                 </p>
-                                <CountdownTimer startTime={new Date(rental.rental_start).getTime()} timeToRent={rental.scooter.waitTimeMinutes}/>
+                                <CountdownTimer scooter={rental.scooter} startTime={new Date(rental.rental_start).getTime()} timeToRent={rental.scooter.waitTimeMinutes}/>
                                 <ReturnButton scooter={rental.scooter} />
                             </li>
                             ))}

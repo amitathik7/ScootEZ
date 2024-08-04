@@ -62,6 +62,18 @@ export default function RentalHistoryPage() {
         }
     } 
 
+    function RentNowButton() {
+        const navigate = useNavigate();
+        function handleClick() {
+            navigate("/scooters", {})
+        }
+        return (
+            <button className="button1" onClick={handleClick}>
+                RENT ONE NOW
+            </button>
+        );
+    }
+
 
     if (isAuthenticated === 'fetching') {
         // call authentification function
@@ -107,28 +119,42 @@ export default function RentalHistoryPage() {
         );
     }
     else if (isAuthenticated === 'true' && isHistoryLoaded === 'true'){
-        return(
-            <div className="fullBox">
-                <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                    <h1>Current Rentals</h1>
-                    <ul className="scooterList">
-                        {history.map((rental, index) => (
-                        <li className="scooterListItems" key={index}>
-                            <h2>{rental.scooter.model}</h2>
-                            <h3><strong>ID</strong>: {rental.scooter.id}</h3>
-                            <p><strong>Model</strong>: {rental.scooter.model}</p>
-                            <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
-                            <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
-                            <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
-                            <p><strong>Final Price</strong>: ${rental.finalPrice}</p>
-                            <p><strong>Time started</strong>: ${rental.timeRented}</p>
-                            <p><strong>Time ended</strong>: ${rental.timeEnded}</p>
-                        </li>
-                        ))}
-                    </ul>
+        // if there are no scooters in the history object, display this message
+        if (history.length == 0) {
+            return(
+                <div className="fullBox">
+                    <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                        <h1>Rental History</h1>
+                        <h2>No previous rentals!</h2>
+                        <RentNowButton />
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
+        else {
+            return(
+                <div className="fullBox">
+                    <div style={{width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                        <h1>Rental History</h1>
+                        <ul className="scooterList">
+                            {history.map((rental, index) => (
+                            <li className="scooterListItems" key={index}>
+                                <h2>{rental.scooter.model}</h2>
+                                <h3><strong>ID</strong>: {rental.scooter.id}</h3>
+                                <p><strong>Model</strong>: {rental.scooter.model}</p>
+                                <p><strong>Starting location</strong>: {rental.startLatitude}, {rental.startLongitude}</p>
+                                <p><strong>Battery charge</strong>: {rental.scooter.battery}%</p>
+                                <p><strong>Rental price</strong>: ${rental.scooter.rentalPrice}</p>
+                                <p><strong>Final Price</strong>: ${rental.finalPrice}</p>
+                                <p><strong>Time started</strong>: ${rental.timeRented}</p>
+                                <p><strong>Time ended</strong>: ${rental.timeEnded}</p>
+                            </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
     }
     else if (isHistoryLoaded === 'error') {
         alert("Error loading current rentals.");

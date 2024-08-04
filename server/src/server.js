@@ -343,35 +343,36 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 
 app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 	try {
+		console.log(req.body);
 		const accountId = req.user.id;
 		const { scooterId, latitude, longitude } = req.body;
 
 		const account = await Account.findById(accountId);
-		const scooter = await Scooter.findById({ id: scooterId });
+		const scooter = await Scooter.findById(scooterId);
 
 		if (!account) {
+			console.log("Invalid Account Token");
 			throw new Error("Invalid Account Token");
 		}
 
 		if (!scooter) {
+			console.log("Invalid Scooter ID")
 			throw new Error("Invalid Scooter ID");
 		}
 
-		if (scooter.availability === false) {
-			throw new Error("Scooter Unavailable");
-		}
-
+		console.log(scooter);
 		const rental_document = RentalHistory.find({
 			rental_end: { $exists: false },
-			cost: { $exists: false },
 			scooter: scooter,
 			account: account,
 			endLatitude: { $exists: false },
 			endLongitude: { $exists: false },
 		});
 
+		console.log(rental_document);
+
 		const total_time =
-			(Date.now() - rental_document.rental_start) / (1000 * 60 * 60);
+			(Date.now() - rental_document.rental_start.getTime()) / (1000 * 60 * 60);
 		const cost = total_time * scooter.rentalPrice;
 
 		rental_document.endLatitude = latitude;
@@ -498,7 +499,7 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 			return res.status(404).send("Invalid token");
 		}
 
-		const histories = await RentalHistory.find({ account: account });
+		const histories = await RentalHistory.find({ account: account, rental_end : { $exists: true } });
 
 		res.json(histories);
 		res.status(200);
