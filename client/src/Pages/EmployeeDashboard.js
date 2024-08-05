@@ -4,8 +4,10 @@ import '../styles.css';
 
 export default function EmployeeDashboard() {
     return (
-        <div>
-            <h1>This is the employee dashboard - idk what to put here</h1>
+        <div className="fullBox">
+            <div style={{width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px", height: "500px"}}>
+                <h1>Employee Dashboard</h1>
+            </div>
         </div>
     );
 }

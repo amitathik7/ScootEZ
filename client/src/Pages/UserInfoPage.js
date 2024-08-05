@@ -79,11 +79,13 @@ export default function UserInfoPage() {
     if (!user) return <div>Loading...</div>;
 
     return (
-        <div>
-            <h1>{user.firstName} {user.lastName}</h1>
-            <p>Email: {user.email}</p>
-            <p>Address: {user.address}</p>
-            <DeleteButton />
+        <div className="fullBox">
+            <div style={{width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                <h1>{user.firstName} {user.lastName}</h1>
+                <p>Email: {user.email}</p>
+                <p>Address: {user.address}</p>
+                <DeleteButton />
+            </div>
         </div>
     );
 }
