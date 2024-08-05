@@ -108,6 +108,8 @@ import CreateAdmin from './Pages/CreateAdmin.js';
 import AdminProfilePage from './Pages/AdminProfilePage.js';
 import UserAccountsPage from './Pages/UserAccountsPage.js';
 import UserInfoPage from './Pages/UserInfoPage.js';
+import EmployeeAccountsPage from './Pages/EmployeeAccountsPage.js';
+import EmployeeInfoPage from './Pages/EmployeeInfoPage.js';
 import AdminScooterMap from './Pages/AdminScooterMap.js';
 import AdminScooterPage from './Pages/AdminScooterPage.js';
 import AdminScooterProducts from './Pages/AdminScooterProducts.js';
@@ -167,6 +169,8 @@ function App() {
               </Route>
               <Route path="/admin/users" element={<UserAccountsPage />} />
               <Route path="/user/:id" element={<UserInfoPage />} />
+              <Route path="/admin/employees" element={<EmployeeAccountsPage />} />
+              <Route path="/employee/:id" element={<EmployeeInfoPage />} />
             </Route>
 
             <Route path="*" element={<ErrorPage />} />

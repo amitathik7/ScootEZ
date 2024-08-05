@@ -80,11 +80,8 @@ export default function CreateEmployee() {
                 }
             );
             if (response.ok) {
-                // const data = await response.json(); // should return the token for the account
-                // localStorage.setItem("token", data.token);
-                // setIsLoggedIn(true);
+
                 console.log('successful');
-                setIsAdmin(true);
                 return true;
             } else {
                 throw new Error(response.statusText);

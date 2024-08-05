@@ -16,7 +16,7 @@ export default function EmployeeAccountsPage() {
         } else {
             navigate('/');
         }
-    }, [isLoggedIn, isEmployee]);
+    }, [isLoggedIn, isAdmin]);
 
     const fetchUsers = async () => {
         try {

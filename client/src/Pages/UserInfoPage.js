@@ -36,9 +36,9 @@ export default function UserInfoPage() {
         }
     };
 
-    const deleteUser = async () => {
+    async function deleteUser() {
         try {
-            const response = await fetch('http://localhost:5000/api/users/delete', {
+            const response = await fetch(`http://localhost:5000/api/users/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -51,12 +51,29 @@ export default function UserInfoPage() {
                 throw new Error('Failed to delete user');
             }
 
-            navigate('/'); 
+            return true;
         } catch (error) {
             setError('Error deleting user');
             console.error('Error deleting user:', error);
+            return false;
         }
-    };
+    }
+
+    function DeleteButton() {
+        const navigate = useNavigate();
+        function handleClick() {
+            deleteUser().then((result) => {
+                if (result) {
+                    navigate('/admin/users')
+                }
+            })
+        }
+        return (
+            <button onClick={handleClick} style={{ backgroundColor: 'red', color: 'white' }}>
+                Delete Account
+            </button>
+        )
+    }
 
     if (error) return <div>{error}</div>;
     if (!user) return <div>Loading...</div>;
@@ -66,9 +83,7 @@ export default function UserInfoPage() {
             <h1>{user.firstName} {user.lastName}</h1>
             <p>Email: {user.email}</p>
             <p>Address: {user.address}</p>
-            <button onClick={deleteUser} style={{ backgroundColor: 'red', color: 'white' }}>
-                Delete Account
-            </button>
+            <DeleteButton />
         </div>
     );
 }

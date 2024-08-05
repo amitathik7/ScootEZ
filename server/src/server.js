@@ -297,7 +297,7 @@ app.delete("/api/users/delete", authenticateToken, async (req, res) => {
 	}
 });
 
-app.delete("/api/employees/delete", authenticateToken, async (req, res) => {
+app.delete("/api/employee/delete", authenticateToken, async (req, res) => {
 	try {
 		const account = await Employee.findByIdAndDelete(req.user.id);
 
@@ -800,16 +800,10 @@ app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
 
 		await employeeDocument.save();
 
-		const employee = await Employee.findOne({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			address: address,
-		});
 
 		// const token = jwt.sign({ id: employee._id }, "secret");
 		// res.status(201).json({ token });
-		res.status(201);
+		res.status(201).json({message: "Successfully created account"});
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -837,15 +831,8 @@ app.post("/api/admin/create_admin", authenticateToken, async (req, res) => {
 
 		await adminDocument.save();
 
-		const admin_account = await Admin.findOne({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			address: address,
-		});
-
 		//const token = jwt.sign({ id: admin_account._id }, "secret");
-		res.status(201);
+		res.status(201).json({message: "Successfully created account"});
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -933,6 +920,22 @@ app.get("/api/users/:id", authenticateToken, async (req, res) => {
     }
 });
 
+app.delete("/api/users/delete/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+		const account = await Account.findByIdAndDelete(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "User not found" });
+        }
+		console.log("user account deleted");
+		res.status(200).json({ message: "successfully deleted" });
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 app.get("/api/employee/:id", authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
@@ -948,6 +951,22 @@ app.get("/api/employee/:id", authenticateToken, async (req, res) => {
             email: account.email,
             address: account.address,
         });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.delete("/api/employee/delete/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+		const account = await Employee.findByIdAndDelete(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "Employee account not found" });
+        }
+		console.log("employee account deleted");
+		res.status(200).json({ message: "successfully deleted" });
+
     } catch (error) {
         res.status(500).send(error);
     }
