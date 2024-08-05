@@ -104,7 +104,8 @@ export default function EmployeeLoginPage() {
     }
 
     return (
-        <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px", paddingTop: "150px", paddingBottom: "150px" }}>
+        <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px",
+            paddingTop: "150px", paddingBottom: "150px", backgroundColor: "#d5f1c0" }}>
             <div style={{ width: "60%", display: "inline-block", lineHeight: "40px" }}>
                 <h1>Employee Login</h1>
                 <InvalidCredentialsMessage />
