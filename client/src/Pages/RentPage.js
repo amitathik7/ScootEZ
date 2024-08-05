@@ -31,22 +31,27 @@ export default function RentPage() {
         creditCardExpirationDate: '',
 	    creditCardCVV: '',
     });
+    const [tempCard, setTempCard] = useState({
+        tempCardNum: '',
+        tempCardDate: '',
+        tempCardCVV: ''
+    })
     function handleCardNumChange(e) {
-        setAccountInfo({
-            ...accountInfo,
-            creditCardNumber: e.target.value
+        setTempCard({
+            ...tempCard,
+            tempCardNum: e.target.value
         });
     }
     function handleCardDateChange(e) {
-        setAccountInfo({
-            ...accountInfo,
-            creditCardExpirationDate: e.target.value
+        setTempCard({
+            ...tempCard,
+            tempCardDate: e.target.value
         });
     }
     function handleCardCVVChange(e) {
-        setAccountInfo({
-            ...accountInfo,
-            creditCardCVV: e.target.value
+        setTempCard({
+            ...tempCard,
+            tempCardCVV: e.target.value
         });
     }
     const cardNumRef = useRef(null);
@@ -213,58 +218,13 @@ export default function RentPage() {
         return (
             <button className="button1" onClick={handleClick}
             disabled={price != 0 &&
-                (accountInfo.creditCardNumber != '' || 
-                cardNumRef.current.validity.valid && cardDateRef.current.validity.valid && cardCVVRef.current.validity.valid)
+                ((accountInfo.creditCardNumber != null && accountInfo.creditCardNumber != '') || 
+                (cardNumRef.current.validity.valid && cardDateRef.current.validity.valid && cardCVVRef.current.validity.valid))
                 ? false : true}
             >
                 RENT
             </button>
         );
-    }
-
-    function CreditCardDisplay() {
-        if (accountInfo.creditCardNumber === '') {
-            return (
-                <div>
-                    <p>You have no saved card. Please enter one below for a one-time payment.</p>
-                    <p>Credit card number:</p>
-                    <input className="input2" required
-                        type="tel"
-                        pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}"
-                        placeholder="XXXX-XXXX-XXXX-XXXX"
-                        ref={cardNumRef}
-                        value={accountInfo.creditCardNumber}
-                        onChange={handleCardNumChange}
-                    />
-                    <p>Expiration date:</p>
-                    <input className="input2" required
-                        type="tel"
-                        pattern="[0-9]{2}/[0-9]{2}"
-                        placeholder="XX/XX"
-                        ref={cardDateRef}
-                        value={accountInfo.creditCardExpirationDate}
-                        onChange={handleCardDateChange}
-                    />
-                    <p>CVC code:</p>
-                    <input className="input2" required
-                        type="text"
-                        pattern="[0-9]{3}"
-                        placeholder="XXX"
-                        ref={cardCVVRef}
-                        value={accountInfo.creditCardCVV}
-                        onChange={handleCardCVVChange}
-                    />
-                </div>
-            );
-        }
-        else {
-            return (
-                <div>
-                    <p>Use your saved card:</p>
-                    <p><strong>{accountInfo.creditCardNumber}</strong></p>
-                </div>
-            );
-        }
     }
 
     if (isAuthenticated === 'fetching') {
@@ -351,7 +311,40 @@ export default function RentPage() {
                     <p>{price == 0 ? '' : `Price: \$${price}`}</p> <br/>
 
                     <p>Payment method:</p>
-                    <CreditCardDisplay />
+                    <div style={{display: `${accountInfo.creditCardNumber === '' || accountInfo.creditCardNumber == null ? "block" : "none"}`}}>
+                        <p>You have no saved card. Please enter one below for a one-time payment.</p>
+                        <p>Credit card number:</p>
+                        <input className="input2" required
+                            type="tel"
+                            pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}"
+                            placeholder="XXXX-XXXX-XXXX-XXXX"
+                            ref={cardNumRef}
+                            value={tempCard.tempCardNum}
+                            onChange={handleCardNumChange}
+                        />
+                        <p>Expiration date:</p>
+                        <input className="input2" required
+                            type="tel"
+                            pattern="[0-9]{2}/[0-9]{2}"
+                            placeholder="XX/XX"
+                            ref={cardDateRef}
+                            value={tempCard.tempCardDate}
+                            onChange={handleCardDateChange}
+                        />
+                        <p>CVC code:</p>
+                        <input className="input2" required
+                            type="text"
+                            pattern="[0-9]{3}"
+                            placeholder="XXX"
+                            ref={cardCVVRef}
+                            value={tempCard.tempCardCVV}
+                            onChange={handleCardCVVChange}
+                        />
+                    </div>
+                    <div style={{display: `${accountInfo.creditCardNumber != '' || accountInfo.creditCardNumber != null ? "block" : "none"}`}}>
+                        <p>Use your saved card:</p>
+                        <p><strong>{accountInfo.creditCardNumber}</strong></p>
+                    </div>
                     <br/>
                     <RentButton />
                 </div>
