@@ -556,11 +556,47 @@ app.post("/api/scooters/find", async (req, res) => {
 	}
 });
 
-// This is a test function for the token
+// This authenticates the token (FOR USERS)
 app.get("/api/token/verify", authenticateToken, async (req, res) => {
 	try {
 		console.log("Searching for account...");
 		const account = await Account.findById(req.user.id);
+
+		if (!account) {
+			console.log("Account not found.");
+			return res.status(404).json({ message: false });
+		} else {
+			console.log("Account found.");
+			return res.status(200).json({ message: true });
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// This authenticates the token (FOR ADMIN)
+app.get("/api/token/verify/admin", authenticateToken, async (req, res) => {
+	try {
+		console.log("Searching for account...");
+		const account = await Admin.findById(req.user.id);
+
+		if (!account) {
+			console.log("Account not found.");
+			return res.status(404).json({ message: false });
+		} else {
+			console.log("Account found.");
+			return res.status(200).json({ message: true });
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// This authenticates the token (FOR EMPLOYEES)
+app.get("/api/token/verify/employee", authenticateToken, async (req, res) => {
+	try {
+		console.log("Searching for account...");
+		const account = await Employee.findById(req.user.id);
 
 		if (!account) {
 			console.log("Account not found.");

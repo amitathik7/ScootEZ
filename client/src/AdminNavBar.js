@@ -76,7 +76,7 @@ export default function AdminNavBar() {
     // component for the dropdown submenu lists
     function Dropdown({ submenu, isExpanded, isAccountDropdown }) {
         return (
-            <ul className={isExpanded ? "dropdown Show" : "dropdown Hide"}>
+            <ul className={isExpanded ? "dropdown Show admin" : "dropdown Hide"}>
                 {/* map each submenu to its own link */}
                 {submenu.map((submenu, index) => (
                     <li key={index} className="dropdownItems">

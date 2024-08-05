@@ -703,7 +703,7 @@ export default function AdminProfilePage() {
         }
         try {
             console.log("in the fetch request");
-            const response = await fetch('http://localhost:5000/api/token/verify', {
+            const response = await fetch('http://localhost:5000/api/token/verify/admin', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem("token")}`
@@ -1092,8 +1092,8 @@ export default function AdminProfilePage() {
     else {
         // otherwise display the profile page
         return (
-            <div>
-                <div className="centered-container">
+            <div className="fullBox">
+                <div style={{width: "30%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
                     <h2>My Profile</h2>
                     <form onSubmit={handleSubmit}>
                         <label>
@@ -1140,13 +1140,13 @@ export default function AdminProfilePage() {
                             Cancel
                         </button>
                     </form>
+                    {confirmationMessageStatus === 'success' && (
+                        <div className="success-message">Changes saved successfully!</div>
+                    )}
+                    {confirmationMessageStatus === 'fail' && (
+                        <div className="error-message">Failed to save changes. Please try again.</div>
+                    )}
                 </div>
-                {confirmationMessageStatus === 'success' && (
-                    <div className="success-message">Changes saved successfully!</div>
-                )}
-                {confirmationMessageStatus === 'fail' && (
-                    <div className="error-message">Failed to save changes. Please try again.</div>
-                )}
             </div>
         );
     }

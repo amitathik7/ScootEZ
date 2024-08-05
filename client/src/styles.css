@@ -423,6 +423,11 @@ label {
 }
 .dropdown.Show {
     background: var(--dark);
+    z-index: 20;
+}
+.dropdown.Show.admin {
+    background: var(--dark-green);
+    z-index: 20;
 }
 .dropdown.Hide {
     display: none;
