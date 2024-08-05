@@ -75,7 +75,7 @@ export default function RentPage() {
     }
     const [price, setPrice] = useState(0.00);
 
-    async function AuthenticateUser() {
+    async function AuthenticateUser() {       
         // if the token doesn't exist...
         if (localStorage.getItem("token") == null) {
             return false;
@@ -248,6 +248,31 @@ export default function RentPage() {
         );
 
     }
+    // else if (isAuthenticated === false && isScooterLoaded === 'false')
+    // {
+    //     // set isAuthenticated back to 'fetching' since we will be navigating user to the login page
+    //     isAuthenticated = 'fetching';
+
+    //     // get scooter info function
+    //     (async function(){
+    //         const result = await getScooters();
+    //         setIsScooterLoaded('true');
+    //         if (!result) {
+    //             setIsScooterLoaded('error')
+    //         }
+    //         else {
+    //             setScooterInfo(result);
+    //             clock();
+    //         }
+    //     })();
+
+    //     // now that scooter info has been loaded, pass the redirt url to the login page so it knows to navigate back to it
+    //     const href = '/login?redirect=' + encodeURIComponent('/rent/' + scooterInfo.id);
+    //     console.log('/login?redirect=/rent/' + scooterInfo.id);
+    //     return (
+    //         <Navigate to={href} />
+    //     );
+    // }
     else if (isAuthenticated === 'true' && isScooterLoaded === 'false') {
         // get scooter info function
         (async function(){
@@ -359,8 +384,38 @@ export default function RentPage() {
     }
     else {
         setIsLoggedIn(false);
-        return (
-            <Navigate to='/login' />
-        );
+
+        // get scooter info function for href
+        if (isScooterLoaded === 'false') {
+            // get scooter info function
+            (async function(){
+                const result = await getScooters();
+                setIsScooterLoaded('true');
+                if (!result) {
+                    setIsScooterLoaded('error')
+                }
+                else {
+                    setScooterInfo(result);
+                    clock();
+                }
+            })();
+    
+            return (
+                <div className="fullBox">
+                    <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                        <h1>One Moment</h1>
+                        <h2>Loading the scooter information...</h2>
+                    </div>
+                </div>
+            );
+        }
+        else{
+            // now that scooter info has been loaded, use the id to create a redirect link
+            const href = '/login?redirect=' + encodeURIComponent('/rent/' + scooterInfo.id);
+            return (
+                <Navigate to={href} />
+            );
+        }
+
     }
 }
