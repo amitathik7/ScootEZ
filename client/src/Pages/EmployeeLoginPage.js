@@ -5,7 +5,7 @@ import styles from "../styles.css";
 
 export default function EmployeeLoginPage() {
     // global context
-    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+    const { isLoggedIn, setIsLoggedIn, setIsEmployee } = useContext(IsLoggedInContext);
 
     // states
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
@@ -57,6 +57,7 @@ export default function EmployeeLoginPage() {
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
                 setIsLoggedIn(true);
+                setIsEmployee(true);
                 navigate('/employee-dashboard'); 
             } else {
                 setIsInvalidCredentials(true); 

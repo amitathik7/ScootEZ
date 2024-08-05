@@ -4,17 +4,17 @@ import { IsLoggedInContext } from '../App';
 import styles from '../styles.css';
 
 export default function UserAccountsPage() {
-    const { isLoggedIn, isAdmin } = useContext(IsLoggedInContext);
+    const { isLoggedIn, isAdmin, isEmployee } = useContext(IsLoggedInContext);
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (isLoggedIn && isAdmin) {
+        if (isLoggedIn && (isAdmin || isEmployee)) {
             fetchUsers();
         } else {
             navigate('/login');
         }
-    }, [isLoggedIn, isAdmin]);
+    }, [isLoggedIn, isAdmin, isEmployee]);
 
     const fetchUsers = async () => {
         try {
