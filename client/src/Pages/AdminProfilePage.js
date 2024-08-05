@@ -1042,7 +1042,8 @@ export default function AdminProfilePage() {
         if (isAuthenticated !== "fetching") {
             // if not authenticated, navigate back to login page
             if (!isAuthenticated) {
-                navigate('/');
+                setIsLoggedIn(false);
+                navigate('/admin-login');
             }
         }
         else {
