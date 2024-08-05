@@ -297,6 +297,22 @@ app.delete("/api/users/delete", authenticateToken, async (req, res) => {
 	}
 });
 
+app.delete("/api/employee/delete", authenticateToken, async (req, res) => {
+	try {
+		const account = await Employee.findByIdAndDelete(req.user.id);
+
+		if (!account) {
+			console.log("account not found");
+			return res.status(404).json({ message: "account not found" });
+		}
+
+		console.log("account deleted");
+		res.status(200).json({ message: "successfully deleted" });
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 app.put("/api/users/update", authenticateToken, async (req, res) => {
 	try {
 		const accountId = req.user.id;
@@ -540,11 +556,47 @@ app.post("/api/scooters/find", async (req, res) => {
 	}
 });
 
-// This is a test function for the token
+// This authenticates the token (FOR USERS)
 app.get("/api/token/verify", authenticateToken, async (req, res) => {
 	try {
 		console.log("Searching for account...");
 		const account = await Account.findById(req.user.id);
+
+		if (!account) {
+			console.log("Account not found.");
+			return res.status(404).json({ message: false });
+		} else {
+			console.log("Account found.");
+			return res.status(200).json({ message: true });
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// This authenticates the token (FOR ADMIN)
+app.get("/api/token/verify/admin", authenticateToken, async (req, res) => {
+	try {
+		console.log("Searching for account...");
+		const account = await Admin.findById(req.user.id);
+
+		if (!account) {
+			console.log("Account not found.");
+			return res.status(404).json({ message: false });
+		} else {
+			console.log("Account found.");
+			return res.status(200).json({ message: true });
+		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+// This authenticates the token (FOR EMPLOYEES)
+app.get("/api/token/verify/employee", authenticateToken, async (req, res) => {
+	try {
+		console.log("Searching for account...");
+		const account = await Employee.findById(req.user.id);
 
 		if (!account) {
 			console.log("Account not found.");
@@ -588,6 +640,21 @@ app.get("/api/employee/scooters", authenticateToken, async (req, res) => {
 		const scooters = await Scooter.find();
 
 		res.json(scooters);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/employees", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(403).send("Access denied.");
+		}
+
+		const accounts = await Employee.find();
+		res.status(200).json(accounts);
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -733,15 +800,10 @@ app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
 
 		await employeeDocument.save();
 
-		const employee = await Employee.findOne({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			address: address,
-		});
 
-		const token = jwt.sign({ id: employee._id }, "secret");
-		res.status(201).json({ token });
+		// const token = jwt.sign({ id: employee._id }, "secret");
+		// res.status(201).json({ token });
+		res.status(201).json({message: "Successfully created account"});
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -769,15 +831,8 @@ app.post("/api/admin/create_admin", authenticateToken, async (req, res) => {
 
 		await adminDocument.save();
 
-		const admin_account = await Admin.findOne({
-			firstName: firstName,
-			lastName: lastName,
-			email: email,
-			address: address,
-		});
-
-		const token = jwt.sign({ id: admin_account._id }, "secret");
-		res.status(201).json({ token });
+		//const token = jwt.sign({ id: admin_account._id }, "secret");
+		res.status(201).json({message: "Successfully created account"});
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -831,86 +886,138 @@ app.get("/api/admin/accountName", authenticateToken, async (req, res) => {
 	}
 });
 
-app.get("/api/admin/accountInfo", authenticateToken, async (req, res) => {
+app.get("/api/employee/accountName", authenticateToken, async (req, res) => {
 	try {
-		const admin = await Admin.findById(req.user.id);
+		const account = await Employee.findById(req.user.id);
 
-		if (!admin) {
+		if (!account) {
 			return res.status(404);
 		}
 
-		res.json({
-			firstName: admin.firstName,
-			lastName: admin.lastName,
-			email: admin.email,
-			password: admin.password,
-			address: admin.address,
-			creditCardNumber: admin.creditCardNumber,
-			creditCardExpirationDate: admin.creditCardExpirationDate,
-			creditCardCVV: admin.creditCardCVV,
-		});
+		res.json({ firstName: account.firstName, lastName: account.lastName });
 	} catch (error) {
 		res.status(500).send(error);
 	}
 });
 
-app.post("/api/admin/check_password", authenticateToken, async (req, res) => {
-	try {
-		const accountId = req.user.id;
+app.get("/api/users/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const account = await Account.findById(id);
 
-		const input_password = req.body;
+        if (!account) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-		const admin = await Admin.findById(accountId);
-
-		if (
-			admin &&
-			(await bcrypt.compare(input_password.oldPassword, admin.password))
-		) {
-			res.json(true);
-			res.status(201);
-		} else {
-			res.json(false);
-			res.status(400);
-		}
-	} catch (err) {
-		console.log(err);
-		res.status(500).send(err);
-	}
+        res.json({
+            firstName: account.firstName,
+            lastName: account.lastName,
+            email: account.email,
+            address: account.address,
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
-app.put("/api/admin/update", authenticateToken, async (req, res) => {
-	try {
-		const accountId = req.user.id;
-		const newData = req.body;
+app.delete("/api/users/delete/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+		const account = await Account.findByIdAndDelete(id);
 
-		if (newData.password) {
-			newData.password = await bcrypt.hash(newData.password, 10);
-		}
+        if (!account) {
+            return res.status(404).json({ message: "User not found" });
+        }
+		console.log("user account deleted");
+		res.status(200).json({ message: "successfully deleted" });
 
-		const admin = await Admin.findByIdAndUpdate(accountId, newData, {
-			new: true,
-		});
-
-		if (!admin) {
-			return res.status(404);
-		}
-
-		res.json({
-			firstName: admin.firstName,
-			lastName: admin.lastName,
-			email: admin.email,
-			password: admin.password,
-			address: admin.address,
-			creditCardNumber: admin.creditCardNumber,
-			creditCardExpirationDate: admin.creditCardExpirationDate,
-			creditCardCVV: admin.creditCardCVV,
-		});
-		res.status(200);
-	} catch (error) {
-		res.status(500).send(error);
-	}
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
+app.get("/api/employee/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const account = await Employee.findById(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+
+        res.json({
+            firstName: account.firstName,
+            lastName: account.lastName,
+            email: account.email,
+            address: account.address,
+        });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+app.delete("/api/employee/delete/:id", authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+		const account = await Employee.findByIdAndDelete(id);
+
+        if (!account) {
+            return res.status(404).json({ message: "Employee account not found" });
+        }
+		console.log("employee account deleted");
+		res.status(200).json({ message: "successfully deleted" });
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+// app.put("api/scooters/update", authenticateToken, async (req, res) => {
+//     try {
+//         const { id, model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes } = req.body;
+
+//         // Validate request data
+//         if (!id) {
+//             console.error('Scooter ID is required');
+//             return res.status(400).json({ message: 'Scooter ID is required' });
+//         }
+
+//         // Validate ObjectId
+//         if (!mongoose.Types.ObjectId.isValid(id)) {
+//             console.error('Invalid Scooter ID');
+//             return res.status(400).json({ message: 'Invalid Scooter ID' });
+//         }
+
+//         console.log('Updating scooter with ID:', id);
+//         console.log('New values:', { model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes });
+
+//         // Find and update scooter
+//         const updatedScooter = await Scooter.findByIdAndUpdate(
+//             id,
+//             {
+//                 model,
+//                 latitude,
+//                 longitude,
+//                 battery,
+//                 availability,
+//                 rentalPrice,
+//                 waitTimeMinutes
+//             },
+//             { new: true }
+//         );
+
+//         if (!updatedScooter) {
+//             console.error('Scooter not found');
+//             return res.status(404).json({ message: 'Scooter not found' });
+//         }
+
+//         // Respond with updated scooter data
+//         res.json(updatedScooter);
+//     } catch (error) {
+//         console.error("Update error:", error);
+//         res.status(500).json({ message: 'Server error', error: error.message });
+//     }
+// });
 
 //generate a lot of database data
 //generateUsers();

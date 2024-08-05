@@ -423,6 +423,11 @@ label {
 }
 .dropdown.Show {
     background: var(--dark);
+    z-index: 20;
+}
+.dropdown.Show.admin {
+    background: var(--dark-green);
+    z-index: 20;
 }
 .dropdown.Hide {
     display: none;
@@ -625,5 +630,73 @@ label {
     font-size: 1.5em;
     text-align: center;
     margin-top: 20px;
+}
+
+/* admin */
+.admin-dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 40px; /* Space between buttons */
+}
+
+.circle-button {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: #4a4a4a; /* Darker gray color */
+    color: white;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.circle-button:hover {
+    background-color: #333333; /* Darker gray on hover */
+}
+
+/* user accounts */
+.user-accounts-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.user-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.user-card:hover {
+    transform: scale(1.05);
+}
+
+.user-initials {
+    background-color: #96ea59;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: white;
+    margin: 0 auto;
+}
+
+.user-name {
+    margin-top: 10px;
+    font-size: 18px;
 }
 
