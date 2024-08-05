@@ -646,7 +646,7 @@ export default function ProfilePage() {
                 setFieldInfo(data);
 
                 // if the credit card number exists, set hasCard
-                if (fieldInfo.creditCardNumber !== '') {
+                if (data.creditCardNumber != null) {
                     setHasCreditCard(true);
                 }
 

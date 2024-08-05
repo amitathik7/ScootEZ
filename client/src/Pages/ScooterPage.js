@@ -83,8 +83,9 @@ export default function ScooterPage() {
                             <p><strong>Model</strong>: {scooter.model}</p>
                             <p><strong>Starting location</strong>: {scooter.latitude}, {scooter.longitude}</p>
                             <p><strong>Battery charge</strong>: {scooter.battery}%</p>
-                            <p><strong>Rental price</strong>: ${scooter.rentalPrice}</p>
-                            <p><strong>Availability</strong>: { scooter.availability ? "availabile to rent now" : scooter.waitTimeMinutes + " minutes wait" }</p>
+                            <p><strong>Rental rate</strong>: ${Math.trunc(scooter.rentalPrice)}.
+                                {(Math.round((scooter.rentalPrice - Math.trunc(scooter.rentalPrice)) * 100)).toString().padStart(2,"0")} per hour</p>
+                            <p><strong>Availability</strong>: { scooter.availability ? "availabile now" : scooter.waitTimeMinutes + " minute wait" }</p>
                             <MoreInfoButton scooterId={scooter.id}/>
                         </li>
                         ))}

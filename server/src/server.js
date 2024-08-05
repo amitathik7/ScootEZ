@@ -22,6 +22,10 @@ dotenv.config();
 
 app.use(express.json());
 
+// for reading csv files
+const fs = require("fs");
+const readline = require("readline");
+
 if (process.env.NODE_ENV !== "test") {
 	mongoose.connect(process.env.DB_URI);
 }
@@ -55,7 +59,7 @@ const scooterSchema = new mongoose.Schema({
 	availability: Boolean,
 	rentalPrice: Number,
 	id: Number,
-	waitTimeMinutes: Number
+	waitTimeMinutes: Number,
 });
 
 const employeeSchema = new mongoose.Schema({
@@ -78,10 +82,13 @@ const rentalHistorySchema = new mongoose.Schema({
 	scooter: {
 		type: scooterSchema,
 	},
-	timeRented: {
+	rental_start: {
 		type: Date,
 	},
-	user: {
+	rental_end: {
+		type: Date,
+	},
+	account: {
 		type: accountSchema,
 	},
 	cost: Number,
@@ -102,6 +109,59 @@ const RentalHistory = mongoose.model("history", rentalHistorySchema);
 app.listen(port, () => {
 	console.log(`Server Started Port ${port}`);
 });
+
+async function generateUsers() {
+	// specify the path of the CSV file
+	const path = "src/Popular_Baby_Names.csv";
+
+	// Create a read stream
+	const readStream = fs.createReadStream(path);
+
+	// Create a readline interface
+	const readInterface = readline.createInterface({
+	input: readStream
+	});
+
+	// Initialize an array to store the parsed data
+	const output = [];
+
+	// Event handler for reading lines
+	readInterface.on("line", (line) => {
+	const row = line.split(",");
+	output.push(row);
+	});
+
+	// Event handler for the end of file
+	readInterface.on("close", () => {
+		//generate random users
+		for (let i = 2950; i < 3000; i++) {
+			try {
+				bcrypt.hash((output[i][3]).toUpperCase() + (output[i][3]).toLowerCase() + "11", 10).then((result) => {
+					const accountDocument = new Account({
+						firstName: (output[i][3]).toLowerCase(),
+						lastName: (output[Math.trunc(Math.random() * 100) + 100][3]).toLowerCase(),
+						email: (output[i][3]).toLowerCase() + "@mail.com",
+						password: result,
+					});
+					console.log(accountDocument);
+
+					// save the new account to DB
+					accountDocument.save();
+				})
+				
+			}
+			catch(err) {
+				console.log(err);
+			}
+		}
+	});
+
+	// Event handler for handling errors
+	readInterface.on("error", (err) => {
+	console.error("Error reading the CSV file:", err);
+	});
+}
+
 
 app.post("/api/users/create", async (req, res) => {
 	const {
@@ -310,6 +370,126 @@ app.post("/api/users/check_password", authenticateToken, async (req, res) => {
 	}
 });
 
+app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const scooterData = req.body;
+		console.log(req.body);
+
+		const account = await Account.findById(accountId);
+		const scooter = await Scooter.findById(scooterData.scooterId);
+
+		if (!account) {
+			throw new Error("Invalid Account Token");
+		}
+
+		if (!scooter) {
+			throw new Error("Invalid Scooter ID");
+		}
+
+		if (scooter.availability === false) {
+			throw new Error("Scooter Unavailable");
+		}
+
+		// first update the scooter itself (availability and wait time)
+		scooter.availability = false;
+		scooter.waitTimeMinutes = scooterData.timeDifference;
+		await scooter.save();
+
+		// Create a new scooter rental history fwithout defining the final coordinates
+		const scooter_document = new RentalHistory({
+			scooter: scooter,
+			rental_start: Date.now(),
+			cost: (scooterData.timeDifference / 60.00) * scooter.rentalPrice,
+			account: account,
+			startLatitude: scooter.latitude,
+			startLongitude: scooter.longitude,
+		});
+		await scooter_document.save();
+
+		res.status(201).json("Successful Transaction");
+	} catch (err) {
+		console.log(err);
+		res.status(500).send(err);
+	}
+});
+
+app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
+	try {
+		console.log(req.body);
+		const accountId = req.user.id;
+		const { scooterId, latitude, longitude } = req.body;
+
+		// get the account (to search for the history)
+		const account = await Account.findById(accountId);
+		if (!account) {
+			console.log("Invalid Account Token");
+			throw new Error("Invalid Account Token");
+		}
+
+		// get and update the scooter
+		const scooter = await Scooter.findById(scooterId);
+		if (!scooter) {
+			console.log("Invalid Scooter ID")
+			throw new Error("Invalid Scooter ID");
+		}
+
+		// get the old history
+		const oldHistory = await RentalHistory.findOne({ account: account, scooter: scooter, rental_end: {$exists: false} });
+		if (!oldHistory) {
+			console.log("Couldn't find history")
+			throw new Error("Couldn't find history");
+		}
+
+		// get and update the history
+		const updatedHistory = await RentalHistory.findOneAndUpdate(
+			{ account: account, scooter: scooter, rental_end: {$exists: false} },
+			{ $set: {
+				endLatitude: latitude,
+				endLongitude: longitude,
+				rental_end: Date.now(),
+				cost: ((Date.now() - new Date(oldHistory.rental_start).getTime()) / (60 *60 * 1000)) * scooter.rentalPrice
+			} },
+			{ new: true },
+		);
+
+		// update the scooter
+		await Scooter.findByIdAndUpdate(
+			scooterId,
+			{ $set: {
+				latitude: latitude,
+				longitude: longitude,
+				availability: true,
+				waitTimeMinutes: 0
+			} },
+			{new: true}
+		);
+
+		res.status(201).json(updatedHistory);
+	} catch (err) {
+		console.log(err);
+		res.status(500).send(err);
+	}
+});
+
+app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+
+		const account = await Account.findById(accountId);
+
+		if (!account) {
+			throw new Error("Invalid Account Token");
+		}
+
+		const ongoing_rentals = await RentalHistory.find({ account: account, rental_end : { $exists: false } });
+		res.json(ongoing_rentals);
+		res.status(200);
+	} catch (err) {
+		res.status(500).send(err);
+	}
+})
+
 // Gets the location of all scooters for the user's map.
 app.get("/api/scooters", async (req, res) => {
 	try {
@@ -352,9 +532,9 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 		res.status(200);
 	} catch (err) {
 		res.status(500).send(err);
-  }
+	}
 });
-    
+
 app.post("/api/scooters/find", async (req, res) => {
 	const { scooterId } = req.body;
 
@@ -403,9 +583,9 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 			return res.status(404).send("Invalid token");
 		}
 
-		const histories = await RentalHistory.find({ user: account });
+		const histories = await RentalHistory.find({ account: account, rental_end : { $exists: true } });
 
-		res.json({ histories });
+		res.json(histories);
 		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
@@ -473,6 +653,90 @@ app.post("/api/employee/login", async (req, res) => {
 		} else {
 			res.status(400).json({ message: "Invalid Employee Credentials" });
 		}
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.get("/api/employee/accountInfo", authenticateToken, async (req, res) => {
+	try {
+		const employee = await Employee.findById(req.user.id);
+
+		if (!employee) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: employee.firstName,
+			lastName: employee.lastName,
+			email: employee.email,
+			password: employee.password,
+			address: employee.address,
+			creditCardNumber: employee.creditCardNumber,
+			creditCardExpirationDate: employee.creditCardExpirationDate,
+			creditCardCVV: employee.creditCardCVV,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.post(
+	"/api/employee/check_password",
+	authenticateToken,
+	async (req, res) => {
+		try {
+			const accountId = req.user.id;
+
+			const input_password = req.body;
+
+			const employee = await Employee.findById(accountId);
+
+			if (
+				employee &&
+				(await bcrypt.compare(input_password.oldPassword, employee.password))
+			) {
+				res.json(true);
+				res.status(201);
+			} else {
+				res.json(false);
+				res.status(400);
+			}
+		} catch (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}
+	}
+);
+
+app.put("/api/employee/update", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const newData = req.body;
+
+		if (newData.password) {
+			newData.password = await bcrypt.hash(newData.password, 10);
+		}
+
+		const employee = await Employee.findByIdAndUpdate(accountId, newData, {
+			new: true,
+		});
+
+		if (!employee) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: employee.firstName,
+			lastName: employee.lastName,
+			email: employee.email,
+			password: employee.password,
+			address: employee.address,
+			creditCardNumber: employee.creditCardNumber,
+			creditCardExpirationDate: employee.creditCardExpirationDate,
+			creditCardCVV: employee.creditCardCVV,
+		});
+		res.status(200);
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -653,52 +917,55 @@ app.get("/api/employee/:id", authenticateToken, async (req, res) => {
     }
 });
 
-app.put("api/scooters/update", authenticateToken, async (req, res) => {
-    try {
-        const { id, model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes } = req.body;
+// app.put("api/scooters/update", authenticateToken, async (req, res) => {
+//     try {
+//         const { id, model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes } = req.body;
 
-        // Validate request data
-        if (!id) {
-            console.error('Scooter ID is required');
-            return res.status(400).json({ message: 'Scooter ID is required' });
-        }
+//         // Validate request data
+//         if (!id) {
+//             console.error('Scooter ID is required');
+//             return res.status(400).json({ message: 'Scooter ID is required' });
+//         }
 
-        // Validate ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            console.error('Invalid Scooter ID');
-            return res.status(400).json({ message: 'Invalid Scooter ID' });
-        }
+//         // Validate ObjectId
+//         if (!mongoose.Types.ObjectId.isValid(id)) {
+//             console.error('Invalid Scooter ID');
+//             return res.status(400).json({ message: 'Invalid Scooter ID' });
+//         }
 
-        console.log('Updating scooter with ID:', id);
-        console.log('New values:', { model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes });
+//         console.log('Updating scooter with ID:', id);
+//         console.log('New values:', { model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes });
 
-        // Find and update scooter
-        const updatedScooter = await Scooter.findByIdAndUpdate(
-            id,
-            {
-                model,
-                latitude,
-                longitude,
-                battery,
-                availability,
-                rentalPrice,
-                waitTimeMinutes
-            },
-            { new: true }
-        );
+//         // Find and update scooter
+//         const updatedScooter = await Scooter.findByIdAndUpdate(
+//             id,
+//             {
+//                 model,
+//                 latitude,
+//                 longitude,
+//                 battery,
+//                 availability,
+//                 rentalPrice,
+//                 waitTimeMinutes
+//             },
+//             { new: true }
+//         );
 
-        if (!updatedScooter) {
-            console.error('Scooter not found');
-            return res.status(404).json({ message: 'Scooter not found' });
-        }
+//         if (!updatedScooter) {
+//             console.error('Scooter not found');
+//             return res.status(404).json({ message: 'Scooter not found' });
+//         }
 
-        // Respond with updated scooter data
-        res.json(updatedScooter);
-    } catch (error) {
-        console.error("Update error:", error);
-        res.status(500).json({ message: 'Server error', error: error.message });
-    }
-});
+//         // Respond with updated scooter data
+//         res.json(updatedScooter);
+//     } catch (error) {
+//         console.error("Update error:", error);
+//         res.status(500).json({ message: 'Server error', error: error.message });
+//     }
+// });
+
+//generate a lot of database data
+//generateUsers();
 
 
 module.exports = { app };

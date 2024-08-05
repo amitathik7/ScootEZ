@@ -11,7 +11,6 @@ export default function RentPage() {
 
     const [isAuthenticated, setIsAuthenticated] = useState('fetching');
     const [isScooterLoaded, setIsScooterLoaded] = useState('false');
-    const [needsAccountData, setNeedsAccountData] = useState(true);
 
     const [scooterInfo, setScooterInfo] = useState({
         id: null,
@@ -204,7 +203,6 @@ export default function RentPage() {
         function handleClick() {
             rent().then((result) => {
                 if (result) {
-                    alert("success");
                     navigate("/current-rentals", {});
                 }
                 else {
@@ -345,7 +343,7 @@ export default function RentPage() {
                             className="timeField currentTime" readOnly={true} value={currentTime} />
                         <div style={{display: "inline-block", marginLeft: "5px", marginRight: "5px"}}>to</div>
                         <input aria-label="Time" name="return time" type="time" required
-                            min={useCurrentTimeForMin ? currentTime : "06:00"} max="18:00"
+                            min={useCurrentTimeForMin ? currentTime : "06:00"} max="22:00"
                             onChange={handleTimeChange}
                             className="timeField"/>
                     </div><br/>
