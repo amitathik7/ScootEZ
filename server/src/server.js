@@ -734,6 +734,29 @@ app.get("/api/employee/accountInfo", authenticateToken, async (req, res) => {
 	}
 });
 
+app.get("/api/admin/accountInfo", authenticateToken, async (req, res) => {
+	try {
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: admin.firstName,
+			lastName: admin.lastName,
+			email: admin.email,
+			password: admin.password,
+			address: admin.address,
+			creditCardNumber: admin.creditCardNumber,
+			creditCardExpirationDate: admin.creditCardExpirationDate,
+			creditCardCVV: admin.creditCardCVV,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
 app.post(
 	"/api/employee/check_password",
 	authenticateToken,
@@ -748,6 +771,34 @@ app.post(
 			if (
 				employee &&
 				(await bcrypt.compare(input_password.oldPassword, employee.password))
+			) {
+				res.json(true);
+				res.status(201);
+			} else {
+				res.json(false);
+				res.status(400);
+			}
+		} catch (err) {
+			console.log(err);
+			res.status(500).send(err);
+		}
+	}
+);
+
+app.post(
+	"/api/admin/check_password",
+	authenticateToken,
+	async (req, res) => {
+		try {
+			const accountId = req.user.id;
+
+			const input_password = req.body;
+
+			const admin = await Admin.findById(accountId);
+
+			if (
+				admin &&
+				(await bcrypt.compare(input_password.oldPassword, admin.password))
 			) {
 				res.json(true);
 				res.status(201);
@@ -788,6 +839,39 @@ app.put("/api/employee/update", authenticateToken, async (req, res) => {
 			creditCardNumber: employee.creditCardNumber,
 			creditCardExpirationDate: employee.creditCardExpirationDate,
 			creditCardCVV: employee.creditCardCVV,
+		});
+		res.status(200);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
+
+app.put("/api/admin/update", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
+		const newData = req.body;
+
+		if (newData.password) {
+			newData.password = await bcrypt.hash(newData.password, 10);
+		}
+
+		const admin = await Admin.findByIdAndUpdate(accountId, newData, {
+			new: true,
+		});
+
+		if (!admin) {
+			return res.status(404);
+		}
+
+		res.json({
+			firstName: admin.firstName,
+			lastName: admin.lastName,
+			//email: admin.email,
+			password: admin.password,
+			//address: admin.address,
+			//creditCardNumber: admin.creditCardNumber,
+			//creditCardExpirationDate: admin.creditCardExpirationDate,
+			//creditCardCVV: admin.creditCardCVV,
 		});
 		res.status(200);
 	} catch (error) {
