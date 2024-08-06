@@ -400,7 +400,7 @@ app.post("/api/users/rent_scooter", authenticateToken, async (req, res) => {
 		const scooter_document = new RentalHistory({
 			scooter: scooter,
 			rental_start: Date.now(),
-			cost: (scooterData.timeDifference / 60.00) * scooter.rentalPrice,
+			cost: (scooterData.timeDifference / 60.0) * scooter.rentalPrice,
 			account: account,
 			startLatitude: scooter.latitude,
 			startLongitude: scooter.longitude,
@@ -472,23 +472,29 @@ app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 	}
 });
 
-app.get("/api/users/get_ongoing_rentals", authenticateToken, async (req, res) => {
-	try {
-		const accountId = req.user.id;
+app.get(
+	"/api/users/get_ongoing_rentals",
+	authenticateToken,
+	async (req, res) => {
+		try {
+			const accountId = req.user.id;
 
-		const account = await Account.findById(accountId);
+			const account = await Account.findById(accountId);
 
-		if (!account) {
-			throw new Error("Invalid Account Token");
+			if (!account) {
+				throw new Error("Invalid Account Token");
+			}
+
+			const ongoing_rentals = await RentalHistory.find({
+				rental_end: { $exists: false },
+			});
+			res.json({ ongoing_rentals });
+			res.status(200);
+		} catch (err) {
+			res.status(500).send(err);
 		}
-
-		const ongoing_rentals = await RentalHistory.find({ account: account, rental_end : { $exists: false } });
-		res.json(ongoing_rentals);
-		res.status(200);
-	} catch (err) {
-		res.status(500).send(err);
 	}
-})
+);
 
 // Gets the location of all scooters for the user's map.
 app.get("/api/scooters", async (req, res) => {
@@ -1073,5 +1079,68 @@ app.delete("/api/employee/delete/:id", authenticateToken, async (req, res) => {
     }
 });
 
+app.post("/api/add_scooter", authenticateToken, async (req, res) => {
+	const {
+		latitude,
+		longitude,
+		batter,
+		model,
+		availability,
+		rentalPrice,
+		id,
+		waitTimeMinutes,
+	} = req.body;
+
+	try {
+		const employee = await Employee.findById(req.user.id);
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(404).send("Invalid Token");
+		}
+
+		const new_scooter = new Scooter({
+			latitude: latitude,
+			longitude: longitude,
+			battery: battery,
+			model: model,
+			availability: availability,
+			rentalPrice: rentalPrice,
+			id: id,
+			waitTimeMinutes: waitTimeMinutes,
+		});
+
+		await new_scooter.save();
+
+		res.status(201).json({ msg: "successfully made new scooter" });
+	} catch (err) {
+		return res.status(500).send(err);
+	}
+});
+
+app.delete("/api/delete_scooter", authenticateToken, async (req, res) => {
+	const { scooter_id } = req.body;
+
+	try {
+		const employee = await Employee.findById(req.user.id);
+		const admin = await Admin.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(404).send("Invalid Token");
+		}
+
+		const scooter = await Scooter.findByIdAndDelete(scooter_id);
+
+		if (!scooter) {
+			console.log("scooter not found ");
+			return res.status(404).json({ msg: "scooter not found" });
+		}
+
+		console.log("scooter deleted");
+		res.status(201).json({ msg: "scooter deleted" });
+	} catch (err) {
+		return res.status(500).send(err);
+	}
+});
 
 module.exports = { app };
