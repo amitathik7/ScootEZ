@@ -86,14 +86,32 @@ export default function CreateAccountPage() {
         }
     }
 
+    // function that gets the query parameter passed in from previous page
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
     // button that logs into account
     function CreateAccountButton() {
         const navigate = useNavigate();
         function handleClick() {
+            // if a query parameter is present, put it into 'rediretUrl'
+            const redirectUrl = getQueryParam('redirect');
+
             setIsCreateButtonActive(false);
             CreateAccount().then((isSuccess) => {
                 if (isSuccess){
-                    navigate("/map", {});
+                    // if 'redirectUrl' is not null, navigate to that page
+                    if (redirectUrl)
+                    {
+                        navigate(redirectUrl, {});
+                    }
+                    // else navigate to the map
+                    else
+                    {
+                        navigate("/map", {});
+                    }
                 }
                 else {
                     setIsCreateButtonActive(true);
