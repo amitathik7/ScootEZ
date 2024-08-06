@@ -1,11 +1,12 @@
 import "leaflet/dist/leaflet.css"; // for tile styling and avoiding glitching tiles
 import L from 'leaflet'; // for map initialization and use
 import React, { useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function AdminMapPage() {
     const mapContainerRef = useRef(null); // Useref for the map container
     const mapRef = useRef(null); // Useref to store the map instance
+    const navigate = useNavigate();
 
     function AdminMapCode()
     {
@@ -57,6 +58,7 @@ export default function AdminMapPage() {
                         popupAnchor: [0, -32]     // Popup anchor
                     });
 
+
                     // add the scooter markers to the map
                     scooters.forEach(scooter => {
                         const popupContent = `
@@ -65,7 +67,11 @@ export default function AdminMapPage() {
                             <h4 style="margin: 5px;">Scooter ID: ${scooter.id}</h4>
                             <p style="margin: 5px;"><strong>Model:</strong> ${scooter.model}</p>
                             <p style="margin: 5px;"><strong>Location:</strong> ${scooter.latitude}, ${scooter.longitude}</p>
-                            <p style="margin: 5px;"><a href="http://localhost:3000/admin/scooters/${scooter.id}" style="text-decoration: none; color: blue;">Edit Details</a></p>
+                            <p style="margin: 5px;">
+                                <a href="#" onclick="window.handleEditClick(${scooter.id}); return false;" style="text-decoration: none; color: blue;">
+                                    Edit Details
+                                </a>
+                            </p>
                         </div>
                         `;
 
@@ -76,6 +82,11 @@ export default function AdminMapPage() {
                         .addTo(map)
                         .bindPopup(popupContent);
                     });
+
+                    window.handleEditClick = (scooterId) => {
+                        navigate(`/admin/scooters/${scooterId}`);
+                    };
+                    
                 }
             
                 // Clean up the map instance when the component unmounts
