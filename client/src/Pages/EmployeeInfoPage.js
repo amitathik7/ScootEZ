@@ -77,9 +77,9 @@ export default function EmployeeInfoPage() {
 
     return (
         <div className="fullBox">
-            <div style={{width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                <h1>{user.firstName} {user.lastName}</h1>
-                <p>Email: {user.email}</p>
+            <div className="user-info-container">
+                <h1 className="user-name">{user.firstName} {user.lastName}</h1>
+                <p className="user-email">Email: {user.email}</p>
                 <DeleteButton />
             </div>
         </div>

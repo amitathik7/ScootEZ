@@ -108,18 +108,18 @@ export default function UserInfoPage() {
 
     return (
         <div className="fullBox">
-            <div style={{ width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
-                <h1>{user.firstName} {user.lastName}</h1>
-                <p>Email: {user.email}</p>
-                <p>Address: {user.address}</p>
+            <div className="user-info-container">
+                <h1 className="user-name">{user.firstName} {user.lastName}</h1>
+                <p className="user-email">Email: {user.email}</p>
+                <p className="user-address">Address: {user.address}</p>
                 <DeleteButton />
-                <h2>Rental History</h2>
+                <h2 className="rental-history-title">Rental History</h2>
                 {rentalHistory.length === 0 ? (
-                    <p>No rental history available.</p>
+                    <p className="no-history">No rental history available.</p>
                 ) : (
-                    <ul>
+                    <ul className="rental-history-list">
                         {rentalHistory.map((rental, index) => (
-                            <li key={index}>
+                            <li key={index} className="rental-history-item">
                                 <h3><strong>Scooter Model:</strong> {rental.scooter.model}</h3>
                                 <p><strong>ID:</strong> {rental.scooter.id}</p>
                                 <p><strong>Starting Location:</strong> {rental.startLatitude}, {rental.startLongitude}</p>
@@ -135,6 +135,7 @@ export default function UserInfoPage() {
             </div>
         </div>
     );
+}
 
     // return (
     //     <div className="fullBox">
@@ -146,4 +147,4 @@ export default function UserInfoPage() {
     //         </div>
     //     </div>
     // );
-}
+

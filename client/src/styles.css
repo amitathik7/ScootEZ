@@ -791,7 +791,7 @@ label {
     min-height: 100vh;
     padding: 20px;
     text-align: center;
-    background-color: #f0f4f8;
+    background-color: #cdeed5;
 }
 
 .welcomeMessage {
@@ -821,4 +821,119 @@ label {
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* User Info Page Styles */
+.user-info-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--gray0);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-name {
+    font-size: 36px;
+    color: var(--dark);
+}
+
+.user-email, .user-address {
+    font-size: 20px;
+    color: var(--dark);
+}
+
+
+.rental-history-title {
+    font-size: 28px;
+    margin-top: 20px;
+    color: var(--dark);
+}
+
+.rental-history-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.rental-history-item {
+    background-color: var(--white);
+    border: 1px solid var(--gray2);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-history {
+    font-size: 18px;
+    color: var(--gray3);
+}
+
+.loading, .error {
+    font-size: 24px;
+    text-align: center;
+    color: var(--dark);
+}
+
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #dcf3d1, #e2e8f0);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    color: #2d3748;
+}
+
+.dashboard-header p {
+    font-size: 1.2rem;
+    color: #4a5568;
+}
+
+.dashboard-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.dashboard-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f2f6f3;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.dashboard-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-button img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+.dashboard-button p {
+    font-size: 1rem;
+    color: #2d3748;
+    margin: 0;
 }

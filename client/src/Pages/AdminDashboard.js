@@ -15,12 +15,20 @@ export default function AdminDashboard() {
 
     return (
         <div className="admin-dashboard">
-            <button className="circle-button" onClick={handleCreateEmployee}>
-                Create an employee account
-            </button>
-            <button className="circle-button" onClick={handleCreateAdmin}>
-                Create an administrator account
-            </button>
-        </div>
+            <div className="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <p>Manage your team efficiently and effectively</p>
+            </div>
+            <div className="dashboard-buttons">
+                <div className="dashboard-button" onClick={handleCreateEmployee}>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1256/1256650.png" alt="Create Employee" />
+                    <p>Create an employee account</p>
+                </div>
+                <div className="dashboard-button" onClick={handleCreateAdmin}>
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Create Admin" />
+                    <p>Create an administrator account</p>
+                </div>
+            </div>
+        </div> 
     );
 }
