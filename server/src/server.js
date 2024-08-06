@@ -506,11 +506,18 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 	try {
 		console.log("Request received to update scooter:", req.body);
 
-		const admin = await Admin.findById(req.user.id);
+		// const admin = await Admin.findById(req.user.id);
 
-		if (!admin) {
-			console.log("Invalid admin token");
-			throw new Error("Invalid Admin Token");
+		// if (!admin) {
+		// 	console.log("Invalid admin token");
+		// 	throw new Error("Invalid Admin Token");
+		// }
+
+		const admin = await Admin.findById(req.user.id);
+		const employee = await Employee.findById(req.user.id);
+
+		if (!admin && !employee) {
+			return res.status(403).send("Access denied.");
 		}
 
 		const { scooter_id, newData } = req.body;
