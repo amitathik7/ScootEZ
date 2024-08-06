@@ -700,8 +700,8 @@ label {
 }
 
 .addScooterButton {
-    background-color: var(--neon-green); /* Green color from CSS variables */
-    color: black; /* Text color */
+    background-color: var(--neon-green); 
+    color: black; 
     border: none;
     border-radius: 4px;
     padding: 10px 20px;
@@ -709,11 +709,11 @@ label {
 }
 
 .addScooterButton:hover {
-    background-color: var(--mid-green); /* Slightly darker green on hover */
+    background-color: var(--mid-green); 
 }
 
 .addScooterButton:active {
-    background-color: var(--dark-green); /* Dark green when pressed */
+    background-color: var(--dark-green); 
 }
 
 .addScooterForm {
@@ -749,4 +749,76 @@ label {
 
 .addScooterForm button[type="button"] {
     background-color: #6c757d;
+}
+
+.button-container {
+    margin-top: 20px; /* Adjust the spacing as needed */
+}
+
+.save {
+    background-color: #96ea59; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block; /* Block-level to stack vertically */
+    font-size: 16px;
+    margin: 4px 0; /* Vertical margin for spacing */
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.delete {
+    background-color: #f44336; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block; /* Block-level to stack vertically */
+    font-size: 16px;
+    margin: 4px 0; /* Vertical margin for spacing */
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+    background-color: #f0f4f8;
+}
+
+.welcomeMessage {
+    margin-bottom: 20px;
+}
+
+.welcomeMessage h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subtext {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.imageGallery {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.dashboardImage {
+    width: 300px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import '../styles.css';
 
 export default function UserInfoPage() {
     const { id } = useParams();
@@ -87,19 +88,19 @@ export default function UserInfoPage() {
     }
 
     function DeleteButton() {
-        const navigate = useNavigate();
         function handleClick() {
             deleteUser().then((result) => {
                 if (result) {
-                    navigate('/admin/users')
+                    navigate('/admin/users');
                 }
-            })
+            });
         }
+
         return (
-            <button onClick={handleClick} style={{ backgroundColor: 'red', color: 'white' }}>
+            <button className="delete" onClick={handleClick}>
                 Delete Account
             </button>
-        )
+        );
     }
 
     if (error) return <div>{error}</div>;

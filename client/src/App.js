@@ -93,7 +93,7 @@ function App() {
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>
-        {!isAdmin && <Footer />}
+        {!isAdmin && !isEmployee && <Footer />}
       </IsLoggedInContext.Provider>
     </div>
   );

@@ -1119,7 +1119,8 @@ app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 });
 
 app.delete("/api/delete_scooter", authenticateToken, async (req, res) => {
-	const { scooter_id } = req.body;
+	const { scooter_id } = req.query;
+	console.log(scooter_id);
 
 	try {
 		const employee = await Employee.findById(req.user.id);
@@ -1139,6 +1140,7 @@ app.delete("/api/delete_scooter", authenticateToken, async (req, res) => {
 		console.log("scooter deleted");
 		res.status(201).json({ msg: "scooter deleted" });
 	} catch (err) {
+		console.error("Error deleting scooter:", err);
 		return res.status(500).send(err);
 	}
 });

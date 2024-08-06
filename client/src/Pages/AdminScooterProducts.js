@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Navigate, NavLink } from 'react-router-dom';
+import { useParams, Navigate, NavLink, useNavigate } from 'react-router-dom';
 
 export default function AdminScooterProducts() {
     const { id } = useParams();
@@ -15,6 +15,8 @@ export default function AdminScooterProducts() {
         rentalPrice: null,
         waitTimeMinutes: null
     });
+
+    const navigate = useNavigate();
 
     async function getScooters() {
         try {
@@ -45,20 +47,20 @@ export default function AdminScooterProducts() {
         getScooters();
     }, [id]);
 
-    if (isScooterLoaded === false) {
-        (async function () {
-            await getScooters();
-        })();
+    // if (isScooterLoaded === false) {
+    //     (async function () {
+    //         await getScooters();
+    //     })();
 
-        return (
-            <div className="fullBox">
-                <div style={{ width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
-                    <h1>One Moment</h1>
-                    <h2>Loading scooter information...</h2>
-                </div>
-            </div>
-        );
-    }
+    //     return (
+    //         <div className="fullBox">
+    //             <div style={{ width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
+    //                 <h1>One Moment</h1>
+    //                 <h2>Loading scooter information...</h2>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     // if (isScooterLoaded === 'false') {
     //     (async function () {
@@ -218,6 +220,29 @@ export default function AdminScooterProducts() {
 //     }
 // }
 
+const handleDelete = async () => {
+    try {
+        const response = await fetch(`http://localhost:5000/api/delete_scooter?scooter_id=${scooterInfo._id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('token')}`,
+            }
+        });
+
+        if (response.ok) {
+            alert('Scooter deleted successfully.');
+            navigate('/admin/scooters');
+        } else {
+            const error = await response.json();
+            throw new Error(error.error || 'Network response was not ok');
+        }
+    } catch (error) {
+        console.error("Error deleting scooter:", error);
+        alert(`Error deleting scooter: ${error.message}`);
+    }
+};
+
 if (isScooterLoaded === 'error') {
     return <Navigate to='/admin/scooters' />;
 }
@@ -309,13 +334,16 @@ return (
                     </>
                 )}
             </ul>
-            <button className="button1" onClick={() => {
+            <button className="save" onClick={() => {
                     if (isEditing) {
                         handleSave();
                     }
                     setIsEditing(!isEditing);
                 }}>
                     {isEditing ? 'Save' : 'Edit'}
+                </button>
+                <button className="delete" onClick={handleDelete}>
+                        Delete Scooter
                 </button>
             </div>
         </div>

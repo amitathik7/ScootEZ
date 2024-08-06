@@ -66,10 +66,10 @@ export default function EmployeeInfoPage() {
             })
         }
         return (
-            <button onClick={handleClick} style={{ backgroundColor: 'red', color: 'white' }}>
+            <button className="delete" onClick={handleClick}>
                 Delete Account
             </button>
-        )
+        );
     }
 
     if (error) return <div>{error}</div>;
