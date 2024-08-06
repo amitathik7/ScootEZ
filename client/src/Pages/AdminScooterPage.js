@@ -31,7 +31,7 @@ export default function AdminScooterPage() {
     function EditInfoButton({ scooterId }) {
         const navigate = useNavigate();
         function handleClick() {
-            navigate(`admin/scooters/${scooterId}`, {});
+            navigate(`/admin/scooters/${scooterId}`);
         }
         return (
             <button className="button1" onClick={handleClick}>
