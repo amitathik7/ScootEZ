@@ -1083,7 +1083,7 @@ app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 	const {
 		latitude,
 		longitude,
-		batter,
+		battery,
 		model,
 		availability,
 		rentalPrice,
@@ -1100,14 +1100,14 @@ app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 		}
 
 		const new_scooter = new Scooter({
-			latitude: latitude,
-			longitude: longitude,
-			battery: battery,
-			model: model,
-			availability: availability,
-			rentalPrice: rentalPrice,
-			id: id,
-			waitTimeMinutes: waitTimeMinutes,
+			latitude,
+			longitude,
+			battery,
+			model,
+			availability,
+			rentalPrice,
+			id,
+			waitTimeMinutes,
 		});
 
 		await new_scooter.save();
@@ -1142,6 +1142,7 @@ app.delete("/api/delete_scooter", authenticateToken, async (req, res) => {
 		return res.status(500).send(err);
 	}
 });
+
 app.get("/api/users/history/:id", authenticateToken, async (req, res) => {
     try {
         const userId = req.params.id; 

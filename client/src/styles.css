@@ -699,3 +699,54 @@ label {
     font-size: 18px;
 }
 
+.addScooterButton {
+    background-color: var(--neon-green); /* Green color from CSS variables */
+    color: black; /* Text color */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.addScooterButton:hover {
+    background-color: var(--mid-green); /* Slightly darker green on hover */
+}
+
+.addScooterButton:active {
+    background-color: var(--dark-green); /* Dark green when pressed */
+}
+
+.addScooterForm {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    margin-bottom: 20px;
+}
+
+.addScooterForm label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.addScooterForm input,
+.addScooterForm select {
+    display: block;
+    margin-top: 5px;
+    padding: 8px;
+    width: 70%;
+}
+
+.addScooterForm button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #96ea59;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.addScooterForm button[type="button"] {
+    background-color: #6c757d;
+}
