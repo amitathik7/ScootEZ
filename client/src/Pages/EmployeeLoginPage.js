@@ -5,7 +5,7 @@ import styles from "../styles.css";
 
 export default function EmployeeLoginPage() {
     // global context
-    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+    const { isLoggedIn, setIsLoggedIn, setIsEmployee } = useContext(IsLoggedInContext);
 
     // states
     const [isInvalidCredentials, setIsInvalidCredentials] = useState(false);
@@ -43,7 +43,7 @@ export default function EmployeeLoginPage() {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/api/employee-login`, 
+                `http://localhost:5000/api/employee/login`, 
                 {
                     method: 'POST',
                     headers: {
@@ -57,6 +57,7 @@ export default function EmployeeLoginPage() {
                 const data = await response.json();
                 localStorage.setItem("token", data.token);
                 setIsLoggedIn(true);
+                setIsEmployee(true);
                 navigate('/employee-dashboard'); 
             } else {
                 setIsInvalidCredentials(true); 
@@ -104,7 +105,8 @@ export default function EmployeeLoginPage() {
     }
 
     return (
-        <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px", paddingTop: "150px", paddingBottom: "150px" }}>
+        <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px",
+            paddingTop: "150px", paddingBottom: "150px", backgroundColor: "#d5f1c0" }}>
             <div style={{ width: "60%", display: "inline-block", lineHeight: "40px" }}>
                 <h1>Employee Login</h1>
                 <InvalidCredentialsMessage />

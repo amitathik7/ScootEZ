@@ -2,22 +2,21 @@ import React, { useState, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IsLoggedInContext } from '../App.js';
 
-export default function CreateAccountPage() {
-    // global context
-    const { isLoggedIn, setIsLoggedIn } = useContext(IsLoggedInContext);
+export default function CreateEmployee() {
+    // Global context
+    const { setIsLoggedIn, setIsAdmin } = useContext(IsLoggedInContext);
 
-    // states
+    // States
     const [isIssueCreating, setIsIssueCreating] = useState(false);
     const [showPasswordMessage, setShowPasswordMessage] = useState(false);
     const [isCreateButtonActive, setIsCreateButtonActive] = useState(false);
     const [passwordValidity, setPasswordValidity] = useState(false);
 
-    // get references to the HTML elements
+    // Get references to the HTML elements
     const lowercaseRef = useRef(null);
     const capitalRef = useRef(null);
     const numberRef = useRef(null);
     const lengthRef = useRef(null);
-
     const firstNameRef = useRef(null);
     const lastNameRef = useRef(null);
     const emailRef = useRef(null);
@@ -30,125 +29,87 @@ export default function CreateAccountPage() {
         email: '',
         password: '',
     });
+
     function handleFirstNameChange(e) {
         setAccountInfo({
             ...accountInfo,
             firstName: e.target.value
         });
+        ValidateAllFields();
     }
+
     function handleLastNameChange(e) {
         setAccountInfo({
             ...accountInfo,
             lastName: e.target.value
         });
+        ValidateAllFields();
     }
+
     function handleEmailChange(e) {
         setAccountInfo({
             ...accountInfo,
             email: e.target.value
         });
+        ValidateAllFields();
     }
+
     function handlePasswordChange(e) {
         setAccountInfo({
             ...accountInfo,
             password: e.target.value
         });
+        ValidatePassword();
+        ValidateAllFields();
     }
 
-    // function that submits the info for the create new account
+    // Function that submits the info for the create new account
     async function CreateAccount() {
         try {
             console.log(accountInfo);
 
             const response = await fetch(
-                'http://localhost:5000/api/users/create',
+                'http://localhost:5000/api/admin/create_employee',
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
                     },
                     body: JSON.stringify(accountInfo)
                 }
             );
             if (response.ok) {
-                const data = await response.json(); // should return the token for the account
-                localStorage.setItem("token", data.token);
-                setIsLoggedIn(true);
+
+                console.log('successful');
                 return true;
-            }
-            else {
+            } else {
                 throw new Error(response.statusText);
             }
         } catch (error) {
-            alert("An error occured while creating the account; see console for details");
+            alert("An error occurred while creating the account; see console for details");
             console.error("error detected: ", error);
             return false;
         }
     }
 
-    // function that gets the query parameter passed in from previous page
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
-
-    // button that logs into account
-    function CreateAccountButton() {
+    // Button component that logs into account
+    function CreateEmployeeButton() {
         const navigate = useNavigate();
         function handleClick() {
-            // if a query parameter is present, put it into 'rediretUrl'
-            const redirectUrl = getQueryParam('redirect');
-
             setIsCreateButtonActive(false);
             CreateAccount().then((isSuccess) => {
-                if (isSuccess){
-                    // if 'redirectUrl' is not null, navigate to that page
-                    if (redirectUrl)
-                    {
-                        navigate(redirectUrl, {});
-                    }
-                    // else navigate to the map
-                    else
-                    {
-                        navigate("/map", {});
-                    }
-                }
-                else {
+                if (isSuccess) {
+                    navigate("/admin-dashboard");
+                } else {
                     setIsCreateButtonActive(true);
                 }
-            })   
+            });
         }
 
-        // button is active if both fields are true
-        if (isCreateButtonActive){
-            return (
-                <button className="button1" onClick={handleClick}>
-                    CREATE ACCOUNT
-                </button>
-            );
-        }
-        // button is disabled if either field is invalid
-        else {
-            return (
-                <button className="button1" disabled="true">
-                    CREATE ACCOUNT
-                </button>
-            );
-        }
-    }
-
-
-    
-    // button that switches between login box or create new account box
-    // caseIndex 0=create new account, 1=login, 2=forgot password
-    function SwitchButton() {
-        const navigate = useNavigate();
-        function handleClick() {
-            navigate("/login", {})
-        }
         return (
-            <button className="button2" onClick={handleClick}>
-                Already have an account? Login here
+            <button className="button1" onClick={handleClick} disabled={!isCreateButtonActive}>
+                CREATE EMPLOYEE
             </button>
         );
     }
@@ -215,7 +176,6 @@ export default function CreateAccountPage() {
     }
 
     function ToggleShowPassword() {
-        console.log("toggle clicked");
         if (passwordRef.current.type === "password") {
             passwordRef.current.type = "text";
         } else {
@@ -223,73 +183,55 @@ export default function CreateAccountPage() {
         }
     }
 
-    // shows the invalid message only if the showPasswordMessage state is true
     function IssueMessage() {
-        if (isIssueCreating) {
-            return (
-                <p className="warningText">
-                    &#9888; Sorry, there was an issue creating your new account.
-                </p>
-            );
-        }
-        else {
-            return (
-                <div />
-            );
-        }
+        return isIssueCreating ? (
+            <p className="warningText">
+                &#9888; Sorry, there was an issue creating your new account.
+            </p>
+        ) : null;
     }
 
-    // shows the password message only if the showPasswordMessage state is true
     function PasswordMessage() {
-        if (showPasswordMessage) {
-            return (
-                <div className="passwordMessage">
-                    <h3>Password must contain the following:</h3>
-                    <p ref={lowercaseRef} className="invalid">A <b>lowercase</b> letter</p>
-                    <p ref={capitalRef} className="invalid">An <b>uppercase</b> letter</p>
-                    <p ref={numberRef} className="invalid">A <b>number</b></p>
-                    <p ref={lengthRef} className="invalid">Minimum <b>8 characters</b></p>
-                </div>
-            );
-        }
-        else {
-            return (
-                <div />
-            );
-        }
+        return showPasswordMessage ? (
+            <div className="passwordMessage">
+                <h3>Password must contain the following:</h3>
+                <p ref={lowercaseRef} className="invalid">A <b>lowercase</b> letter</p>
+                <p ref={capitalRef} className="invalid">An <b>uppercase</b> letter</p>
+                <p ref={numberRef} className="invalid">A <b>number</b></p>
+                <p ref={lengthRef} className="invalid">Minimum <b>8 characters</b></p>
+            </div>
+        ) : null;
     }
-    
 
     return (
         <div className="fullBox">
-            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                <h1>Welcome!</h1>
-                <h2>Create your account!</h2>
+            <div style={{ width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
+                <h2>Create a new employee account</h2>
                 <IssueMessage />
-                <p>First Name:</p>
+                <div style={{ marginBottom: "20px" }} />
+                <p>Employee First Name:</p>
                 <input className="input1" required
                     type="text"
-                    placeholder="First Name"
+                    placeholder="Employee First Name"
                     ref={firstNameRef}
                     value={accountInfo.firstName}
                     onChange={handleFirstNameChange}
                 />
-                <p>Last Name:</p>
+                <p>Employee Last Name:</p>
                 <input className="input1" required
                     type="text"
-                    placeholder="Last Name"
+                    placeholder="Employee Last Name"
                     ref={lastNameRef}
                     value={accountInfo.lastName}
                     onChange={handleLastNameChange}
                 />
-                <p>Email:</p>
+                <p>Employee Email:</p>
                 <input className="input1" required
                     type="email"
-                    placeholder="Email"
+                    placeholder="Employee Email"
                     ref={emailRef}
                     value={accountInfo.email}
                     onChange={handleEmailChange}
-                    onInput={ValidateAllFields}
                 />
                 <p>Password:</p>
                 <input className="input1" required
@@ -299,21 +241,19 @@ export default function CreateAccountPage() {
                     ref={passwordRef}
                     value={accountInfo.password}
                     onChange={handlePasswordChange}
-                    onFocus={() => {setShowPasswordMessage(true)}}
+                    onFocus={() => setShowPasswordMessage(true)}
                     onBlur={() => {
-                        if(accountInfo.password.length <= 0 || passwordValidity) {setShowPasswordMessage(false)}
+                        if (accountInfo.password.length <= 0 || passwordValidity) { setShowPasswordMessage(false); }
                     }}
                     onKeyUp={ValidatePassword}
                     onInput={ValidateAllFields}
                 /> <br/>
                 <input type="checkbox" onClick={ToggleShowPassword}/> Show Password
                 <PasswordMessage />
-                <CreateAccountButton/> <br></br>
-                <SwitchButton /> <br></br>
+                <div style={{ paddingTop: "20px" }}>
+                    <CreateEmployeeButton />
+                </div>
             </div>
         </div>
     );
-
-
 }
-  

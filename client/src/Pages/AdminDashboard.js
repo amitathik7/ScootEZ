@@ -1,9 +1,26 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles.css'; 
 
 export default function AdminDashboard() {
+    const navigate = useNavigate();
+
+    const handleCreateEmployee = () => {
+        navigate('/create-employee'); 
+    };
+
+    const handleCreateAdmin = () => {
+        navigate('/create-admin'); 
+    };
+
     return (
-        <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px", paddingTop: "150px", paddingBottom: "150px" }}>
-            <h1>This is the Admin Dashboard</h1>
+        <div className="admin-dashboard">
+            <button className="circle-button" onClick={handleCreateEmployee}>
+                Create an employee account
+            </button>
+            <button className="circle-button" onClick={handleCreateAdmin}>
+                Create an administrator account
+            </button>
         </div>
     );
 }

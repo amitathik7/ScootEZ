@@ -65,14 +65,31 @@ export default function LoginPage() {
         
     }
 
+    // function that gets the query parameter passed in from previous page
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
     // button that logs into account
     function LoginButton() {
+        // if a query parameter is present, put it into 'rediretUrl'
+        const redirectUrl = getQueryParam('redirect');
         const navigate = useNavigate();
         function handleClick() {
             setIsLoginButtonActive(false);
             Login().then((isSuccess) => {
                 if (isSuccess){
-                    navigate("/map", {});
+                    // if 'redirectUrl' is not null, navigate to that page
+                    if (redirectUrl)
+                    {
+                        navigate(redirectUrl, {});
+                    }
+                    // else navigate to the map
+                    else
+                    {
+                        navigate("/map", {});
+                    }
                 }
                 else {
                     setIsInvalidCredentials(true);
@@ -101,9 +118,19 @@ export default function LoginPage() {
     
     // button that switches to the createaccount page
     function SwitchButton() {
+        // get the redirect url
+        const redirectUrl = getQueryParam('redirect');
+
         const navigate = useNavigate();
         function handleClick() {
-            navigate("/create-account", {});
+            if (redirectUrl) {
+                // if redirectUrl is present we want to pass it onto the create account page as a query
+                const href = '/create-account?redirect=' + encodeURIComponent(redirectUrl);
+                navigate(href, {});
+            }
+            else {
+                navigate("/create-account", {});
+            }
         }
         return (
             <button className="button1" onClick={handleClick}>
