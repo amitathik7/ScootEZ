@@ -185,8 +185,8 @@ export default function AdminProfilePage() {
         }
         return (
             <button className="button4"
-                style={{ display: `${isPasswordActive ? "none" : "inline"}` }}
-                onClick={handleClick}>
+            style={{ display: `${isPasswordActive ? "none" : "inline"}` }}
+            onClick={handleClick}>
                 CHANGE PASSWORD
             </button>
         );
@@ -308,51 +308,20 @@ export default function AdminProfilePage() {
                 passwordRef.current.type = "password";
             }
         }
-
-        if (isPasswordActive) {
-            if (oldPasswordValid) {
-                return (
-                    <div>
-                        <h3>Enter a New Password:</h3>
-                        <input type="password"
-                            placeholder="New Password"
-                            value={fieldInfo.password}
-                            name="new-password"
-                            ref={passwordRef}
-                            onChange={handlePasswordChange}
-                            onFocus={() => setShowPasswordMessage(true)}
-                            onBlur={() => setShowPasswordMessage(false)}
-                            onKeyUp={ValidatePassword}
-                            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                        />
-                        <br />
-                        <PasswordMessage />
-                        <button className="button4"
-                            style={{ display: `${passwordValidity ? "inline" : "none"}` }}
-                            onClick={handleSubmitNewPassword}
-                        >Submit</button>
-                        <br />
-                        <input type="checkbox" onClick={ToggleShowPassword} /> Show Password
-                    </div>
-                );
-            }
-            else {
-                return (
-                    <div>
-                        <h3>Please enter your current password to validate identity:</h3>
-                        <input type="password"
-                            placeholder="Current Password"
-                            name="current-password"
-                            value={oldPassword}
-                            onChange={handleOldPasswordChange}
-                            ref={oldPasswordRef}
-                            onKeyPress={handleKeyPress}
-                        />
-                        <br />
-                        <button className="button4" onClick={handleSubmitOldPassword}>Submit</button>
-                    </div>
-                );
-            }
+        if (oldPasswordValid) {
+            return (
+                <div>
+                    <input type="checkbox"
+                        onClick={ToggleShowPassword}
+                    />
+                    Show Password
+                </div>
+            );
+        }
+        else {
+            return (
+                <div />
+            );
         }
     }
 
@@ -360,174 +329,363 @@ export default function AdminProfilePage() {
 
     //#region UPDATE ACCOUNT INFO =======================================================================================
 
-    // handle submission of form
-    function handleSubmit(e) {
-        e.preventDefault();
-        console.log("clicked on form submit");
-
-        // save account data if we have it
-        let saveResults = [];
-        if (isFirstNameActive) {
-            saveResults.push(SaveAccountData({ firstName: fieldInfo.firstName }));
-        }
-        if (isLastNameActive) {
-            saveResults.push(SaveAccountData({ lastName: fieldInfo.lastName }));
-        }
-
-        Promise.all(saveResults).then(results => {
-            console.log("save results = ", results);
-            setConfirmationMessageStatus('success');
-        })
-            .catch(err => {
-                console.error(err);
-                setConfirmationMessageStatus('fail');
-            });
-
-        // clear the form
-        setFieldInfo({
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-        });
-
-        // deactivate fields
-        setIsFirstNameActive(false);
-        setIsLastNameActive(false);
-        setIsPasswordActive(false);
-
-    }
-
-    // handle cancel button
-    function handleCancel(e) {
-        e.preventDefault();
-        setFieldInfo({
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-        });
-        setIsFirstNameActive(false);
-        setIsLastNameActive(false);
-        setIsPasswordActive(false);
-    }
-
-    //#endregion =================================================================================================
-
-    //#region CHECK USER AUTHENTICATION ==================================================================================
-
-    useEffect(() => {
-        // if we have verified the user authentication state...
-        if (isAuthenticated !== "fetching") {
-            // if not authenticated, navigate back to login page
-            if (!isAuthenticated) {
-                setIsLoggedIn(false);
-                navigate('/admin-login');
-            }
+    // function to handle all the (pencil) edit buttons
+    function EditButton({buttonCase}) {
+        // case for firstName
+        if (buttonCase === 0) {
+            return (
+                <button className="button4"
+                    onClick={() => {
+                        if(isFirstNameActive && firstNameRef.current.validity.valid){
+                            SaveAccountData({firstName: fieldInfo.firstName});
+                            setConfirmationMessageStatus('success');
+                        }
+                        else if (isFirstNameActive) { 
+                            setConfirmationMessageStatus('fail'); // display error message
+                            setNeedsAccountData(true); // reload the fields
+                        }
+                        setIsFirstNameActive((props) => !props)
+                    }}>
+                    <PencilIcon style={{ height: "30px", fill: "black" }} />
+                </button>
+            );
         }
         else {
-            AuthenticateUser().then((result) => {
-                if (result) {
-                    setIsAuthenticated(true);
-                }
-                else {
-                    setIsAuthenticated(false);
-                }
-            })
+            return (
+                <button className="button4"
+                    onClick={() => {
+                        if(isLastNameActive && lastNameRef.current.validity.valid){
+                            SaveAccountData({lastName: fieldInfo.lastName});
+                            setConfirmationMessageStatus('success');
+                        }
+                        else if (isLastNameActive) { 
+                            setConfirmationMessageStatus('fail'); // display error message
+                            setNeedsAccountData(true); // reload the fields
+                        }
+                        setIsLastNameActive((props) => !props)
+                    }}>
+                    <PencilIcon style={{ height: "30px", fill: "black" }} />
+                </button>
+            );
         }
-    }, [isAuthenticated]);
-
-    // if we haven't already gotten the data, get the data from the backend
-    useEffect(() => {
-        if (needsAccountData) {
-            getAccountData().then((accountData) => {
-                if (accountData) {
-                    setFieldInfo({
-                        firstName: accountData.firstName,
-                        lastName: accountData.lastName,
-                        email: accountData.email,
-                        password: "",
-                    });
-                    setNeedsAccountData(false);
-                }
-            });
-        }
-    }, [needsAccountData]);
-
-    // when the email field changes
-    function handleEmailChange(e) {
-        console.log("email field cannot be edited");
-        return;
     }
 
-    //#endregion =================================================================================================
+    // shows the invalid message only if the showPasswordMessage state is true
+    function ConfirmationMessage() {
+        if (confirmationMessageStatus === 'success') {
+            return (
+                <p className="successText">
+                    &#x2713; Changes saved.
+                </p>
+            );
+        }
+        else if (confirmationMessageStatus === 'fail') {
+            return (
+                <p className="warningText">
+                    &#9888; Sorry, there was an issue saving your changes.
+                </p>
+            );
+        }
 
-    const navigate = useNavigate();
-    // if we haven't yet checked the token, display a blank page (or a loading indicator)
-    if (isAuthenticated === "fetching") {
-        return (
-            <div />
-        )
+        else {
+            return (
+                <div />
+            );
+        }
     }
-    else {
-        // otherwise display the profile page
-        return (
-            <div className="fullBox">
-                <div style={{width: "30%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                    <h2>My Profile</h2>
-                    <form onSubmit={handleSubmit}>
-                        <label>
-                            First Name:
-                            <input
-                                type="text"
-                                placeholder="First Name"
-                                value={fieldInfo.firstName}
-                                onChange={handleFirstNameChange}
-                                onFocus={() => setIsFirstNameActive(true)}
-                                required
-                            />
-                        </label>
-                        <br />
-                        <label>
-                            Last Name:
-                            <input
-                                type="text"
-                                placeholder="Last Name"
-                                value={fieldInfo.lastName}
-                                onChange={handleLastNameChange}
-                                onFocus={() => setIsLastNameActive(true)}
-                                required
-                            />
-                        </label>
-                        <br />
-                        <label>
-                            Email:
-                            <input
-                                type="email"
-                                placeholder="Email"
-                                value={fieldInfo.email}
-                                onChange={handleEmailChange}
-                                readOnly
-                            />
-                        </label>
-                        <br />
-                        <PasswordButton />
-                        <ShowPasswordBox />
-                        <button className="button4" type="submit">
-                            Save Changes
-                        </button>
-                        <button className="button4" onClick={handleCancel}>
-                            Cancel
-                        </button>
-                    </form>
-                    {confirmationMessageStatus === 'success' && (
-                        <div className="success-message">Changes saved successfully!</div>
-                    )}
-                    {confirmationMessageStatus === 'fail' && (
-                        <div className="error-message">Failed to save changes. Please try again.</div>
-                    )}
-                </div>
+
+    // handle submission of form
+//     function handleSubmit(e) {
+//         e.preventDefault();
+//         console.log("clicked on form submit");
+
+//         // save account data if we have it
+//         let saveResults = [];
+//         if (isFirstNameActive) {
+//             saveResults.push(SaveAccountData({ firstName: fieldInfo.firstName }));
+//         }
+//         if (isLastNameActive) {
+//             saveResults.push(SaveAccountData({ lastName: fieldInfo.lastName }));
+//         }
+
+//         Promise.all(saveResults).then(results => {
+//             console.log("save results = ", results);
+//             setConfirmationMessageStatus('success');
+//         })
+//             .catch(err => {
+//                 console.error(err);
+//                 setConfirmationMessageStatus('fail');
+//             });
+
+//         // clear the form
+//         setFieldInfo({
+//             firstName: "",
+//             lastName: "",
+//             email: "",
+//             password: "",
+//         });
+
+//         // deactivate fields
+//         setIsFirstNameActive(false);
+//         setIsLastNameActive(false);
+//         setIsPasswordActive(false);
+
+//     }
+
+//     // handle cancel button
+//     function handleCancel(e) {
+//         e.preventDefault();
+//         setFieldInfo({
+//             firstName: "",
+//             lastName: "",
+//             email: "",
+//             password: "",
+//         });
+//         setIsFirstNameActive(false);
+//         setIsLastNameActive(false);
+//         setIsPasswordActive(false);
+//     }
+
+//     //#endregion =================================================================================================
+
+//     //#region CHECK USER AUTHENTICATION ==================================================================================
+
+//     useEffect(() => {
+//         // if we have verified the user authentication state...
+//         if (isAuthenticated !== "fetching") {
+//             // if not authenticated, navigate back to login page
+//             if (!isAuthenticated) {
+//                 setIsLoggedIn(false);
+//                 navigate('/admin-login');
+//             }
+//         }
+//         else {
+//             AuthenticateUser().then((result) => {
+//                 if (result) {
+//                     setIsAuthenticated(true);
+//                 }
+//                 else {
+//                     setIsAuthenticated(false);
+//                 }
+//             })
+//         }
+//     }, [isAuthenticated]);
+
+//     // if we haven't already gotten the data, get the data from the backend
+//     useEffect(() => {
+//         if (needsAccountData) {
+//             getAccountData().then((accountData) => {
+//                 if (accountData) {
+//                     setFieldInfo({
+//                         firstName: accountData.firstName,
+//                         lastName: accountData.lastName,
+//                         email: accountData.email,
+//                         password: "",
+//                     });
+//                     setNeedsAccountData(false);
+//                 }
+//             });
+//         }
+//     }, [needsAccountData]);
+
+//     // when the email field changes
+//     function handleEmailChange(e) {
+//         console.log("email field cannot be edited");
+//         return;
+//     }
+
+//     //#endregion =================================================================================================
+
+//     const navigate = useNavigate();
+//     // if we haven't yet checked the token, display a blank page (or a loading indicator)
+//     if (isAuthenticated === "fetching") {
+//         return (
+//             <div />
+//         )
+//     }
+//     else {
+//         // otherwise display the profile page
+//         return (
+//             <div className="fullBox">
+//                 <div style={{width: "30%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+//                     <h2>My Profile</h2>
+//                     <form onSubmit={handleSubmit}>
+//                         <label>
+//                             First Name:
+//                             <input
+//                                 type="text"
+//                                 placeholder="First Name"
+//                                 value={fieldInfo.firstName}
+//                                 onChange={handleFirstNameChange}
+//                                 onFocus={() => setIsFirstNameActive(true)}
+//                                 required
+//                             />
+//                         </label>
+//                         <br />
+//                         <label>
+//                             Last Name:
+//                             <input
+//                                 type="text"
+//                                 placeholder="Last Name"
+//                                 value={fieldInfo.lastName}
+//                                 onChange={handleLastNameChange}
+//                                 onFocus={() => setIsLastNameActive(true)}
+//                                 required
+//                             />
+//                         </label>
+//                         <br />
+//                         <label>
+//                             Email:
+//                             <input
+//                                 type="email"
+//                                 placeholder="Email"
+//                                 value={fieldInfo.email}
+//                                 onChange={handleEmailChange}
+//                                 readOnly
+//                             />
+//                         </label>
+//                         <br />
+//                         <PasswordButton />
+//                         <ShowPasswordBox />
+//                         <button className="button4" type="submit">
+//                             Save Changes
+//                         </button>
+//                         <button className="button4" onClick={handleCancel}>
+//                             Cancel
+//                         </button>
+//                     </form>
+//                     {confirmationMessageStatus === 'success' && (
+//                         <div className="success-message">Changes saved successfully!</div>
+//                     )}
+//                     {confirmationMessageStatus === 'fail' && (
+//                         <div className="error-message">Failed to save changes. Please try again.</div>
+//                     )}
+//                 </div>
+//             </div>
+//         );
+//     }
+// }
+if (isAuthenticated === 'fetching') {
+    // call authentification function
+    (async function(){
+        const result = await AuthenticateUser();
+        if (result) {
+            setIsLoggedIn(true);
+            setIsAuthenticated('true');
+        }
+        else {setIsAuthenticated('false');}
+    })();
+
+    return (
+        <div className="fullBox">
+            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                <h1>One Moment</h1>
+                <h2>Loading your account...</h2>
             </div>
-        );
+        </div>
+    );
+}
+else if (isAuthenticated === 'true') {
+
+    if (needsAccountData) {
+        console.log("GETTING ACCOUNT DATA");
+        // call authentification function
+        (async function(){
+            const data = await getAccountData();
+            console.log("the fetched data: ");
+            console.log(data);
+
+            setFieldInfo(data);
+
+            setNeedsAccountData(false);
+        })();
     }
+
+    return (
+        <div className="fullBox">
+            <div style={{width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
+                <h1>Administrator Profile</h1>
+                <ConfirmationMessage />
+                <p>First Name:</p>
+                <input className="input2" disabled={ isFirstNameActive ? false : true } required
+                    type="text"
+                    placeholder="First Name"
+                    ref={firstNameRef}
+                    value={fieldInfo.firstName}
+                    onChange={handleFirstNameChange}
+                />
+                <EditButton buttonCase={0} />
+
+                <p>Last Name:</p>
+                <input className="input2" disabled={ isLastNameActive ? false : true } required
+                    type="text"
+                    placeholder="Last Name"
+                    ref={lastNameRef}
+                    value={fieldInfo.lastName}
+                    onChange={handleLastNameChange}
+                />
+                <EditButton buttonCase={1} />
+
+                <p>Email:</p>
+                <input className="input2" disabled required
+                    type="email"
+                    placeholder="Email"
+                    value={fieldInfo.email}
+                />
+
+                <p>Password:</p>
+                <PasswordButton />
+                <p style={{display: `${isPasswordActive && !oldPasswordValid ? "inline" : "none"}`}}> <br/>Please enter your <i>current</i> password:</p>
+                <input className="input2" style={{display: `${isPasswordActive && !oldPasswordValid ? "inline" : "none"}`}} required
+                    type="password"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    placeholder="Current Password"
+                    ref={oldPasswordRef}
+                    value={oldPassword}
+                    onChange={handleOldPasswordChange}
+                />
+                <button className="button4" style={{display: `${isPasswordActive && !oldPasswordValid ? "inline" : "none"}`}}
+                onClick={handleSubmitOldPassword}>
+                    SUBMIT
+                </button>
+                <button className="button4" style={{display: `${isPasswordActive && !oldPasswordValid ? "inline" : "none"}`}}
+                onClick={() => setIsPasswordActive(false)}>
+                    CANCEL
+                </button>
+
+                <p style={{display: `${oldPasswordValid ? "inline" : "none"}`}}> <br/>Please enter your <i>new</i> password:</p>
+                <input className="input2" style={{display: `${oldPasswordValid ? "inline" : "none"}`}} required
+                    type="password"
+                    pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                    placeholder="Password"
+                    ref={passwordRef}
+                    value={fieldInfo.password}
+                    onChange={handlePasswordChange}
+                    onFocus={() => {setShowPasswordMessage(true)}}
+                    onBlur={() => {
+                        if(passwordValidity) {setShowPasswordMessage(false)}
+                    }}
+                    onKeyUp={ValidatePassword}
+                />
+                <br/>
+                <ShowPasswordBox/>
+                <PasswordMessage/>
+                <button className="button4" style={{display: `${oldPasswordValid ? "inline" : "none"}`}}
+                onClick={handleSubmitNewPassword}>
+                    SUBMIT
+                </button>
+                <button className="button4" style={{display: `${oldPasswordValid ? "inline" : "none"}`}}
+                onClick={() => setIsPasswordActive(false)}>
+                    CANCEL
+                </button>
+            </div>
+        </div>
+    );
+}
+else {
+    setIsLoggedIn(false);
+    return (
+        <Navigate to='/admin/login' />
+    );
+}
 }
