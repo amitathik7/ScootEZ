@@ -504,34 +504,44 @@ app.get("/api/scooters", async (req, res) => {
 
 app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 	try {
+		console.log("Request received to update scooter:", req.body);
+
 		const admin = await Admin.findById(req.user.id);
 
 		if (!admin) {
+			console.log("Invalid admin token");
 			throw new Error("Invalid Admin Token");
 		}
 
 		const { scooter_id, newData } = req.body;
+		console.log("scooter_id:", scooter_id);
+        console.log("newData:", newData);
+		//const scooterIdStr = scooter_id.toString();
 
 		const scooter = await Scooter.findByIdAndUpdate(scooter_id, newData, {
 			new: true,
 		});
 
 		if (!scooter) {
+			console.log("Scooter not found");
 			return res.status(404);
 		}
 
-		res.json({
-			latitude: Number,
-			longitude: Number,
-			battery: Number,
-			model: String,
-			availability: Boolean,
-			rentalPrice: Number,
-			id: Number,
-		});
-		res.status(200);
+		// res.json({
+		// 	latitude: Number,
+		// 	longitude: Number,
+		// 	battery: Number,
+		// 	model: String,
+		// 	availability: Boolean,
+		// 	rentalPrice: Number,
+		// 	id: Number,
+		// });
+		res.json(scooter);
+		console.log("Scooter updated successfully:", scooter);
+		//return res.status(200);
 	} catch (err) {
-		res.status(500).send(err);
+		console.error("Error updating scooter:", err);
+		return res.status(500).json({ error: err.message });
 	}
 });
 
@@ -971,56 +981,6 @@ app.delete("/api/employee/delete/:id", authenticateToken, async (req, res) => {
         res.status(500).send(error);
     }
 });
-
-// app.put("api/scooters/update", authenticateToken, async (req, res) => {
-//     try {
-//         const { id, model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes } = req.body;
-
-//         // Validate request data
-//         if (!id) {
-//             console.error('Scooter ID is required');
-//             return res.status(400).json({ message: 'Scooter ID is required' });
-//         }
-
-//         // Validate ObjectId
-//         if (!mongoose.Types.ObjectId.isValid(id)) {
-//             console.error('Invalid Scooter ID');
-//             return res.status(400).json({ message: 'Invalid Scooter ID' });
-//         }
-
-//         console.log('Updating scooter with ID:', id);
-//         console.log('New values:', { model, latitude, longitude, battery, availability, rentalPrice, waitTimeMinutes });
-
-//         // Find and update scooter
-//         const updatedScooter = await Scooter.findByIdAndUpdate(
-//             id,
-//             {
-//                 model,
-//                 latitude,
-//                 longitude,
-//                 battery,
-//                 availability,
-//                 rentalPrice,
-//                 waitTimeMinutes
-//             },
-//             { new: true }
-//         );
-
-//         if (!updatedScooter) {
-//             console.error('Scooter not found');
-//             return res.status(404).json({ message: 'Scooter not found' });
-//         }
-
-//         // Respond with updated scooter data
-//         res.json(updatedScooter);
-//     } catch (error) {
-//         console.error("Update error:", error);
-//         res.status(500).json({ message: 'Server error', error: error.message });
-//     }
-// });
-
-//generate a lot of database data
-//generateUsers();
 
 
 module.exports = { app };
