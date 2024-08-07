@@ -5,10 +5,12 @@ import '../styles.css';
 export default function AdminDashboard() {
     const navigate = useNavigate();
 
+    // go to create employee page
     const handleCreateEmployee = () => {
         navigate('/create-employee'); 
     };
 
+    // go to create admin page
     const handleCreateAdmin = () => {
         navigate('/create-admin'); 
     };
