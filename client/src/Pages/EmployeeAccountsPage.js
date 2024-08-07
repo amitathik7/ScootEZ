@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { IsLoggedInContext } from '../App';
 import styles from '../styles.css';
 
-
-// this might not work yet i havent tested it
 export default function EmployeeAccountsPage() {
     const { isLoggedIn, isAdmin } = useContext(IsLoggedInContext);
     const [users, setUsers] = useState([]);

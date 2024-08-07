@@ -12,6 +12,7 @@ export default function EmployeeInfoPage() {
         }
     }, [id]);
 
+    // get employee
     const fetchUser = async () => {
         try {
             const response = await fetch(`http://localhost:5000/api/employee/${id}`, {
@@ -34,6 +35,7 @@ export default function EmployeeInfoPage() {
         }
     };
 
+    // delete employee
     async function deleteEmployee() {
         try {
             const response = await fetch(`http://localhost:5000/api/employee/delete/${id}`, { 
@@ -66,10 +68,10 @@ export default function EmployeeInfoPage() {
             })
         }
         return (
-            <button onClick={handleClick} style={{ backgroundColor: 'red', color: 'white' }}>
+            <button className="delete" onClick={handleClick}>
                 Delete Account
             </button>
-        )
+        );
     }
 
     if (error) return <div>{error}</div>;
@@ -77,9 +79,9 @@ export default function EmployeeInfoPage() {
 
     return (
         <div className="fullBox">
-            <div style={{width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-                <h1>{user.firstName} {user.lastName}</h1>
-                <p>Email: {user.email}</p>
+            <div className="user-info-container">
+                <h1 className="user-name">{user.firstName} {user.lastName}</h1>
+                <p className="user-email">Email: {user.email}</p>
                 <DeleteButton />
             </div>
         </div>

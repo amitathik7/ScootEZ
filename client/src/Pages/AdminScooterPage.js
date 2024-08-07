@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 export default function AdminScooterPage() {
     const [isScooterLoaded, setIsScooterLoaded] = useState(false);
     const [scooters, setScooters] = useState(null);
-    const [error, setError] = useState(null); // State to track errors
+    const [error, setError] = useState(null); 
+    const [isFormVisible, setIsFormVisible] = useState(false);
 
     const { id } = useParams();
 
@@ -15,6 +16,7 @@ export default function AdminScooterPage() {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`,
                 },
             });
             if (!response.ok) {
@@ -38,6 +40,44 @@ export default function AdminScooterPage() {
                 EDIT INFO
             </button>
         );
+    }
+
+    function AddScooterButton() {
+        setIsFormVisible(!isFormVisible); // Toggle form visibility
+    }
+
+    async function AddScooterSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        const newScooter = {
+            id: parseInt(formData.get('id'), 10), // Convert to number
+            model: formData.get('model'), // Keep as string
+            latitude: parseFloat(formData.get('latitude')), // Convert to number
+            longitude: parseFloat(formData.get('longitude')), // Convert to number
+            battery: parseInt(formData.get('battery'), 10), // Convert to number
+            rentalPrice: parseFloat(formData.get('rentalPrice')), // Convert to number
+            availability: formData.get('availability') === 'true', // Convert to boolean
+            waitTimeMinutes: parseInt(formData.get('waitTimeMinutes'), 10), // Convert to number
+        };
+
+        try {
+            const response = await fetch("http://localhost:5000/api/add_scooter", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify(newScooter),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            setIsFormVisible(false); 
+            setIsScooterLoaded(false); 
+        } catch (error) {
+            setError(error.message);
+        }
     }
 
     // useEffect to fetch data when the component mounts
@@ -74,6 +114,59 @@ export default function AdminScooterPage() {
                 <div className="fullBox">
                     <div style={{ width: "70%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
                         <h1>Our Scooters</h1>
+                        <button 
+                            className="addScooterButton" 
+                            onClick={AddScooterButton}
+                            style={{ marginBottom: '20px' }} 
+                        >
+                            Add Scooter
+                        </button>
+                        
+                        {/* Popup form */}
+                        {isFormVisible && (
+                            <div className="addScooterForm">
+                                <h2>Add Scooter</h2>
+                                <form onSubmit={AddScooterSubmit}>
+                                    <label>
+                                        Latitude:
+                                        <input type="text" name="latitude" required />
+                                    </label>
+                                    <label>
+                                        Longitude:
+                                        <input type="text" name="longitude" required />
+                                    </label>
+                                    <label>
+                                        Battery:
+                                        <input type="number" name="battery" required />
+                                    </label>
+                                    <label>
+                                        Model:
+                                        <input type="text" name="model" required />
+                                    </label>
+                                    <label>
+                                        Availability:
+                                        <select name="availability" required>
+                                            <option value="true">Available</option>
+                                            <option value="false">Not Available</option>
+                                        </select>
+                                    </label>
+                                    <label>
+                                        Rental Price:
+                                        <input type="number" name="rentalPrice" required />
+                                    </label>
+                                    <label>
+                                        ID:
+                                        <input type="text" name="id" required />
+                                    </label>
+                                    <label>
+                                        Wait Time Minutes:
+                                        <input type="number" name="waitTimeMinutes" required />
+                                    </label>
+                                    <button type="submit">Add Scooter</button>
+                                    <button type="button" onClick={() => setIsFormVisible(false)}>Close</button>
+                                </form>
+                            </div>
+                        )}
                         <ul className="scooterList">
                             {scooters.map((scooter, index) => (
                                 <li className="scooterListItems" key={index}>

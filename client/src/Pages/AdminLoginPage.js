@@ -31,6 +31,7 @@ export default function AdminLoginPage() {
     try {
       console.log(loginInfo);
 
+      // request to login
       const response = await fetch("http://localhost:5000/api/admin/login", {
         method: "POST",
         headers: {
@@ -60,6 +61,7 @@ export default function AdminLoginPage() {
       setIsLoginButtonActive(false);
       Login().then((isSuccess) => {
         if (isSuccess) {
+         setIsAdmin(true);
           navigate("/admin-dashboard", {});
         } else {
           setIsInvalidCredentials(true);
@@ -98,33 +100,17 @@ export default function AdminLoginPage() {
   );
 
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px",
-      paddingTop: "150px", paddingBottom: "150px", backgroundColor: "#c8e6b2" }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0px", paddingTop: "150px", paddingBottom: "150px" }}>
       <div style={{ width: "60%", display: "inline-block", lineHeight: "40px" }}>
         <h1>Administrator Login</h1>
         <InvalidCredentialsMessage />
         <p>Email:</p>
-        <input className="input1"
-          required type="email"
-          placeholder="Email"
-          ref={emailRef}
-          value={loginInfo.email}
-          onChange={handleEmailChange}
-          onInput={ValidateAllFields}
-        />
+        <input className="input1" required type="email" placeholder="Email" ref={emailRef} value={loginInfo.email} onChange={handleEmailChange} onInput={ValidateAllFields} />
         <p>Password:</p>
-        <input className="input1" required
-          type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-          placeholder="Password" ref={passwordRef}
-          value={loginInfo.password}
-          onChange={handlePasswordChange}
-          onInput={ValidateAllFields}
-        /><br />
+        <input className="input1" required type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Password" ref={passwordRef} value={loginInfo.password} onChange={handlePasswordChange} onInput={ValidateAllFields} /> <br />
         <input type="checkbox" onClick={ToggleShowPassword} /> Show Password
         <br />
-        <div style={{ marginTop: '20px' }}>
-          <LoginButton />
-        </div>
+        <LoginButton />
       </div>
     </div>
   );

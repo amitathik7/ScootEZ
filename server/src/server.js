@@ -839,12 +839,12 @@ app.put("/api/employee/update", authenticateToken, async (req, res) => {
 		res.json({
 			firstName: employee.firstName,
 			lastName: employee.lastName,
-			email: employee.email,
+			//email: employee.email,
 			password: employee.password,
-			address: employee.address,
-			creditCardNumber: employee.creditCardNumber,
-			creditCardExpirationDate: employee.creditCardExpirationDate,
-			creditCardCVV: employee.creditCardCVV,
+			//address: employee.address,
+			//creditCardNumber: employee.creditCardNumber,
+			//creditCardExpirationDate: employee.creditCardExpirationDate,
+			//creditCardCVV: employee.creditCardCVV,
 		});
 		res.status(200);
 	} catch (error) {
@@ -1083,7 +1083,7 @@ app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 	const {
 		latitude,
 		longitude,
-		batter,
+		battery,
 		model,
 		availability,
 		rentalPrice,
@@ -1100,14 +1100,14 @@ app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 		}
 
 		const new_scooter = new Scooter({
-			latitude: latitude,
-			longitude: longitude,
-			battery: battery,
-			model: model,
-			availability: availability,
-			rentalPrice: rentalPrice,
-			id: id,
-			waitTimeMinutes: waitTimeMinutes,
+			latitude,
+			longitude,
+			battery,
+			model,
+			availability,
+			rentalPrice,
+			id,
+			waitTimeMinutes,
 		});
 
 		await new_scooter.save();
@@ -1119,7 +1119,8 @@ app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 });
 
 app.delete("/api/delete_scooter", authenticateToken, async (req, res) => {
-	const { scooter_id } = req.body;
+	const { scooter_id } = req.query;
+	console.log(scooter_id);
 
 	try {
 		const employee = await Employee.findById(req.user.id);
@@ -1139,8 +1140,34 @@ app.delete("/api/delete_scooter", authenticateToken, async (req, res) => {
 		console.log("scooter deleted");
 		res.status(201).json({ msg: "scooter deleted" });
 	} catch (err) {
+		console.error("Error deleting scooter:", err);
 		return res.status(500).send(err);
 	}
+});
+
+app.get("/api/users/history/:id", authenticateToken, async (req, res) => {
+    try {
+        const userId = req.params.id; 
+
+        const admin = await Admin.findById(req.user.id);
+        const employee = await Employee.findById(req.user.id);
+
+        if (!admin && !employee) {
+            return res.status(404).send("User not found");
+        }
+
+        const histories = await RentalHistory.find({
+            "account._id": userId, 
+            rental_end: { $exists: true }
+        });
+
+        console.log('Histories:', histories); 
+        res.status(200).json(histories);
+		
+    } catch (error) {
+        console.error('Server Error:', error);
+        res.status(500).send(error.message); 
+    }
 });
 
 module.exports = { app };
