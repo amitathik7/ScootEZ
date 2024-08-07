@@ -119,7 +119,7 @@ async function generateUsers() {
 
 	// Create a readline interface
 	const readInterface = readline.createInterface({
-	input: readStream
+		input: readStream,
 	});
 
 	// Initialize an array to store the parsed data
@@ -127,8 +127,8 @@ async function generateUsers() {
 
 	// Event handler for reading lines
 	readInterface.on("line", (line) => {
-	const row = line.split(",");
-	output.push(row);
+		const row = line.split(",");
+		output.push(row);
 	});
 
 	// Event handler for the end of file
@@ -136,21 +136,25 @@ async function generateUsers() {
 		//generate random users
 		for (let i = 2950; i < 3000; i++) {
 			try {
-				bcrypt.hash((output[i][3]).toUpperCase() + (output[i][3]).toLowerCase() + "11", 10).then((result) => {
-					const accountDocument = new Account({
-						firstName: (output[i][3]).toLowerCase(),
-						lastName: (output[Math.trunc(Math.random() * 100) + 100][3]).toLowerCase(),
-						email: (output[i][3]).toLowerCase() + "@mail.com",
-						password: result,
-					});
-					console.log(accountDocument);
+				bcrypt
+					.hash(
+						output[i][3].toUpperCase() + output[i][3].toLowerCase() + "11",
+						10
+					)
+					.then((result) => {
+						const accountDocument = new Account({
+							firstName: output[i][3].toLowerCase(),
+							lastName:
+								output[Math.trunc(Math.random() * 100) + 100][3].toLowerCase(),
+							email: output[i][3].toLowerCase() + "@mail.com",
+							password: result,
+						});
+						console.log(accountDocument);
 
-					// save the new account to DB
-					accountDocument.save();
-				})
-				
-			}
-			catch(err) {
+						// save the new account to DB
+						accountDocument.save();
+					});
+			} catch (err) {
 				console.log(err);
 			}
 		}
@@ -158,10 +162,9 @@ async function generateUsers() {
 
 	// Event handler for handling errors
 	readInterface.on("error", (err) => {
-	console.error("Error reading the CSV file:", err);
+		console.error("Error reading the CSV file:", err);
 	});
 }
-
 
 app.post("/api/users/create", async (req, res) => {
 	const {
@@ -430,39 +433,50 @@ app.post("/api/users/end_rental", authenticateToken, async (req, res) => {
 		// get and update the scooter
 		const scooter = await Scooter.findById(scooterId);
 		if (!scooter) {
-			console.log("Invalid Scooter ID")
+			console.log("Invalid Scooter ID");
 			throw new Error("Invalid Scooter ID");
 		}
 
 		// get the old history
-		const oldHistory = await RentalHistory.findOne({ account: account, scooter: scooter, rental_end: {$exists: false} });
+		const oldHistory = await RentalHistory.findOne({
+			account: account,
+			scooter: scooter,
+			rental_end: { $exists: false },
+		});
 		if (!oldHistory) {
-			console.log("Couldn't find history")
+			console.log("Couldn't find history");
 			throw new Error("Couldn't find history");
 		}
 
 		// get and update the history
 		const updatedHistory = await RentalHistory.findOneAndUpdate(
-			{ account: account, scooter: scooter, rental_end: {$exists: false} },
-			{ $set: {
-				endLatitude: latitude,
-				endLongitude: longitude,
-				rental_end: Date.now(),
-				cost: ((Date.now() - new Date(oldHistory.rental_start).getTime()) / (60 *60 * 1000)) * scooter.rentalPrice
-			} },
-			{ new: true },
+			{ account: account, scooter: scooter, rental_end: { $exists: false } },
+			{
+				$set: {
+					endLatitude: latitude,
+					endLongitude: longitude,
+					rental_end: Date.now(),
+					cost:
+						((Date.now() - new Date(oldHistory.rental_start).getTime()) /
+							(60 * 60 * 1000)) *
+						scooter.rentalPrice,
+				},
+			},
+			{ new: true }
 		);
 
 		// update the scooter
 		await Scooter.findByIdAndUpdate(
 			scooterId,
-			{ $set: {
-				latitude: latitude,
-				longitude: longitude,
-				availability: true,
-				waitTimeMinutes: 0
-			} },
-			{new: true}
+			{
+				$set: {
+					latitude: latitude,
+					longitude: longitude,
+					availability: true,
+					waitTimeMinutes: 0,
+				},
+			},
+			{ new: true }
 		);
 
 		res.status(201).json(updatedHistory);
@@ -486,9 +500,10 @@ app.get(
 			}
 
 			const ongoing_rentals = await RentalHistory.find({
+				account: account,
 				rental_end: { $exists: false },
 			});
-			res.json({ ongoing_rentals });
+			res.json(ongoing_rentals);
 			res.status(200);
 		} catch (err) {
 			res.status(500).send(err);
@@ -528,7 +543,7 @@ app.put("/api/scooters/update", authenticateToken, async (req, res) => {
 
 		const { scooter_id, newData } = req.body;
 		console.log("scooter_id:", scooter_id);
-        console.log("newData:", newData);
+		console.log("newData:", newData);
 		//const scooterIdStr = scooter_id.toString();
 
 		const scooter = await Scooter.findByIdAndUpdate(scooter_id, newData, {
@@ -642,7 +657,10 @@ app.get("/api/history", authenticateToken, async (req, res) => {
 			return res.status(404).send("Invalid token");
 		}
 
-		const histories = await RentalHistory.find({ account: account, rental_end : { $exists: true } });
+		const histories = await RentalHistory.find({
+			account: account,
+			rental_end: { $exists: true },
+		});
 
 		res.json(histories);
 		res.status(200);
@@ -791,33 +809,29 @@ app.post(
 	}
 );
 
-app.post(
-	"/api/admin/check_password",
-	authenticateToken,
-	async (req, res) => {
-		try {
-			const accountId = req.user.id;
+app.post("/api/admin/check_password", authenticateToken, async (req, res) => {
+	try {
+		const accountId = req.user.id;
 
-			const input_password = req.body;
+		const input_password = req.body;
 
-			const admin = await Admin.findById(accountId);
+		const admin = await Admin.findById(accountId);
 
-			if (
-				admin &&
-				(await bcrypt.compare(input_password.oldPassword, admin.password))
-			) {
-				res.json(true);
-				res.status(201);
-			} else {
-				res.json(false);
-				res.status(400);
-			}
-		} catch (err) {
-			console.log(err);
-			res.status(500).send(err);
+		if (
+			admin &&
+			(await bcrypt.compare(input_password.oldPassword, admin.password))
+		) {
+			res.json(true);
+			res.status(201);
+		} else {
+			res.json(false);
+			res.status(400);
 		}
+	} catch (err) {
+		console.log(err);
+		res.status(500).send(err);
 	}
-);
+});
 
 app.put("/api/employee/update", authenticateToken, async (req, res) => {
 	try {
@@ -907,10 +921,9 @@ app.post("/api/admin/create_employee", authenticateToken, async (req, res) => {
 
 		await employeeDocument.save();
 
-
 		// const token = jwt.sign({ id: employee._id }, "secret");
 		// res.status(201).json({ token });
-		res.status(201).json({message: "Successfully created account"});
+		res.status(201).json({ message: "Successfully created account" });
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -939,7 +952,7 @@ app.post("/api/admin/create_admin", authenticateToken, async (req, res) => {
 		await adminDocument.save();
 
 		//const token = jwt.sign({ id: admin_account._id }, "secret");
-		res.status(201).json({message: "Successfully created account"});
+		res.status(201).json({ message: "Successfully created account" });
 	} catch (error) {
 		res.status(500).send(error);
 	}
@@ -1008,82 +1021,80 @@ app.get("/api/employee/accountName", authenticateToken, async (req, res) => {
 });
 
 app.get("/api/users/:id", authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const account = await Account.findById(id);
+	try {
+		const { id } = req.params;
+		const account = await Account.findById(id);
 
-        if (!account) {
-            return res.status(404).json({ message: "User not found" });
-        }
+		if (!account) {
+			return res.status(404).json({ message: "User not found" });
+		}
 
-        res.json({
-            firstName: account.firstName,
-            lastName: account.lastName,
-            email: account.email,
-            address: account.address,
-        });
-    } catch (error) {
-        res.status(500).send(error);
-    }
+		res.json({
+			firstName: account.firstName,
+			lastName: account.lastName,
+			email: account.email,
+			address: account.address,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
 app.delete("/api/users/delete/:id", authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
+	try {
+		const { id } = req.params;
 		const account = await Account.findByIdAndDelete(id);
 
-        if (!account) {
-            return res.status(404).json({ message: "User not found" });
-        }
+		if (!account) {
+			return res.status(404).json({ message: "User not found" });
+		}
 		console.log("user account deleted");
 		res.status(200).json({ message: "successfully deleted" });
-
-    } catch (error) {
-        res.status(500).send(error);
-    }
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
 app.get("/api/employee/:id", authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const account = await Employee.findById(id);
+	try {
+		const { id } = req.params;
+		const account = await Employee.findById(id);
 
-        if (!account) {
-            return res.status(404).json({ message: "Employee not found" });
-        }
+		if (!account) {
+			return res.status(404).json({ message: "Employee not found" });
+		}
 
-        res.json({
-            firstName: account.firstName,
-            lastName: account.lastName,
-            email: account.email,
-            address: account.address,
-        });
-    } catch (error) {
-        res.status(500).send(error);
-    }
+		res.json({
+			firstName: account.firstName,
+			lastName: account.lastName,
+			email: account.email,
+			address: account.address,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
 app.delete("/api/employee/delete/:id", authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
+	try {
+		const { id } = req.params;
 		const account = await Employee.findByIdAndDelete(id);
 
-        if (!account) {
-            return res.status(404).json({ message: "Employee account not found" });
-        }
+		if (!account) {
+			return res.status(404).json({ message: "Employee account not found" });
+		}
 		console.log("employee account deleted");
 		res.status(200).json({ message: "successfully deleted" });
-
-    } catch (error) {
-        res.status(500).send(error);
-    }
+	} catch (error) {
+		res.status(500).send(error);
+	}
 });
 
 app.post("/api/add_scooter", authenticateToken, async (req, res) => {
 	const {
 		latitude,
 		longitude,
-		batter,
+		battery,
 		model,
 		availability,
 		rentalPrice,
