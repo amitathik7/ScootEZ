@@ -47,41 +47,6 @@ export default function AdminScooterProducts() {
         getScooters();
     }, [id]);
 
-    // if (isScooterLoaded === false) {
-    //     (async function () {
-    //         await getScooters();
-    //     })();
-
-    //     return (
-    //         <div className="fullBox">
-    //             <div style={{ width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
-    //                 <h1>One Moment</h1>
-    //                 <h2>Loading scooter information...</h2>
-    //             </div>
-    //         </div>
-    //     );
-    // }
-
-    // if (isScooterLoaded === 'false') {
-    //     (async function () {
-    //         const result = await getScooters();
-    //         setIsScooterLoaded('true');
-    //         if (!result) {
-    //             setIsScooterLoaded('error');
-    //         } else {
-    //             setScooterInfo(result);
-    //         }
-    //     })();
-
-    //     return (
-    //         <div className="fullBox">
-    //             <div style={{ width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
-    //                 <h1>One Moment</h1>
-    //                 <h2>Loading scooter information...</h2>
-    //             </div>
-    //         </div>
-    //     );
-    // }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -119,106 +84,7 @@ export default function AdminScooterProducts() {
         }
     };
 
-//     if (isScooterLoaded === 'true') {
-//         return (
-//             <div className="fullBox">
-//                 <div style={{ width: "40%", placeSelf: "center", display: "inline-block", lineHeight: "40px" }}>
-//                     <h1>{scooterInfo.model}</h1>
-//                     <h2>Scooter information:</h2>
-//                     <ul>
-//                         {isEditing ? (
-//                             <>
-//                                 <li>
-//                                     <label>Model: </label>
-//                                     <input
-//                                         type="text"
-//                                         name="model"
-//                                         value={scooterInfo.model}
-//                                         onChange={handleInputChange}
-//                                     />
-//                                 </li>
-//                                 <li>
-//                                     <label>Latitude: </label>
-//                                     <input
-//                                         type="number"
-//                                         name="latitude"
-//                                         value={scooterInfo.latitude}
-//                                         onChange={handleInputChange}
-//                                     />
-//                                 </li>
-//                                 <li>
-//                                     <label>Longitude: </label>
-//                                     <input
-//                                         type="number"
-//                                         name="longitude"
-//                                         value={scooterInfo.longitude}
-//                                         onChange={handleInputChange}
-//                                     />
-//                                 </li>
-//                                 <li>
-//                                     <label>Battery: </label>
-//                                     <input
-//                                         type="number"
-//                                         name="battery"
-//                                         value={scooterInfo.battery}
-//                                         onChange={handleInputChange}
-//                                     />
-//                                 </li>
-//                                 <li>
-//                                     <label>Rental Price: </label>
-//                                     <input
-//                                         type="number"
-//                                         name="rentalPrice"
-//                                         value={scooterInfo.rentalPrice}
-//                                         onChange={handleInputChange}
-//                                     />
-//                                 </li>
-//                                 <li>
-//                                     <label>Availability: </label>
-//                                     <input
-//                                         type="checkbox"
-//                                         name="availability"
-//                                         checked={scooterInfo.availability}
-//                                         onChange={(e) =>
-//                                             setScooterInfo({
-//                                                 ...scooterInfo,
-//                                                 availability: e.target.checked,
-//                                             })
-//                                         }
-//                                     />
-//                                 </li>
-//                                 <li>
-//                                     <label>Wait Time Minutes: </label>
-//                                     <input
-//                                         type="number"
-//                                         name="waitTimeMinutes"
-//                                         value={scooterInfo.waitTimeMinutes}
-//                                         onChange={handleInputChange}
-//                                     />
-//                                 </li>
-//                             </>
-//                         ) : (
-//                             <>
-//                                 <li><strong>Model</strong>: {scooterInfo.model}</li>
-//                                 <li><strong>Starting location</strong>: {scooterInfo.latitude}, {scooterInfo.longitude}</li>
-//                                 <li><strong>Battery charge</strong>: {scooterInfo.battery}%</li>
-//                                 <li><strong>Rental price</strong>: ${scooterInfo.rentalPrice}</li>
-//                                 <li><strong>Availability</strong>: {scooterInfo.availability ? "available to rent now" : scooterInfo.waitTimeMinutes + " minutes wait"}</li>
-//                             </>
-//                         )}
-//                     </ul>
-//                     <button className="button1" onClick={() => setIsEditing(!isEditing)}>
-//                         {isEditing ? 'Save' : 'Edit'}
-//                     </button>
-//                 </div>
-//             </div>
-//         );
-//     } else {
-//         return (
-//             <Navigate to='/admin/scooters' />
-//         );
-//     }
-// }
+
 
 const handleDelete = async () => {
     try {

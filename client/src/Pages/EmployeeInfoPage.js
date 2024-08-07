@@ -12,6 +12,7 @@ export default function EmployeeInfoPage() {
         }
     }, [id]);
 
+    // get employee
     const fetchUser = async () => {
         try {
             const response = await fetch(`http://localhost:5000/api/employee/${id}`, {
@@ -34,6 +35,7 @@ export default function EmployeeInfoPage() {
         }
     };
 
+    // delete employee
     async function deleteEmployee() {
         try {
             const response = await fetch(`http://localhost:5000/api/employee/delete/${id}`, { 

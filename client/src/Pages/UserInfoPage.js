@@ -17,6 +17,7 @@ export default function UserInfoPage() {
         }
     }, [id]);
 
+    // get user
     const fetchUser = async () => {
         try {
             const response = await fetch(`http://localhost:5000/api/users/${id}`, {
@@ -39,6 +40,7 @@ export default function UserInfoPage() {
         }
     };
 
+    // get user rental history
     async function fetchRentalHistory() {
         try {
             const response = await fetch( `http://localhost:5000/api/users/history/${id}`,
@@ -64,6 +66,7 @@ export default function UserInfoPage() {
         }
     } 
 
+    // delete user
     async function deleteUser() {
         try {
             const response = await fetch(`http://localhost:5000/api/users/delete/${id}`, {
@@ -136,15 +139,4 @@ export default function UserInfoPage() {
         </div>
     );
 }
-
-    // return (
-    //     <div className="fullBox">
-    //         <div style={{width: "50%", placeSelf: "center", display: "inline-block", lineHeight: "40px"}}>
-    //             <h1>{user.firstName} {user.lastName}</h1>
-    //             <p>Email: {user.email}</p>
-    //             <p>Address: {user.address}</p>
-    //             <DeleteButton />
-    //         </div>
-    //     </div>
-    // );
 
